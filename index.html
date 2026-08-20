@@ -370,6 +370,146 @@
     .item:hover .item-del { opacity: 1; }
     .item-del:hover { background: #feeaea; color: #e44; }
 
+    /* ── Child items ── */
+    .item-block { border-radius: 12px; }
+    .parent-item { cursor: pointer; }
+    .child-tools {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 39px 5px 8px;
+      min-height: 25px;
+    }
+    .child-add-btn {
+      border: none;
+      background: none;
+      color: #aaa;
+      font-family: inherit;
+      font-size: 0.72rem;
+      cursor: pointer;
+      padding: 3px 7px;
+      border-radius: 7px;
+      transition: all 0.15s;
+    }
+    .child-add-btn:hover { background: #f4f1ef; color: #777; }
+    .child-count { font-size: 0.68rem; color: #c8c3c0; }
+    .child-area {
+      display: none;
+      margin: 0 14px 6px 18px;
+      padding: 5px 8px 7px;
+      border-right: 2px solid #eee9e6;
+      border-radius: 0 0 10px 0;
+      background: #fcfbfa;
+    }
+    .child-area.show { display: block; }
+    .child-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 6px;
+      border-radius: 9px;
+    }
+    .child-item:hover { background: #f7f4f2; }
+    .child-item .item-check { width: 19px; height: 19px; font-size: 9px; }
+    .child-item .item-text { font-size: 0.84rem; }
+    .child-item .item-del { opacity: 0.55; font-size: 1rem; }
+    .child-add-form {
+      display: flex;
+      gap: 6px;
+      margin-top: 5px;
+      padding: 2px 4px 0;
+    }
+    .child-add-form input {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid #e7e2df;
+      border-radius: 9px;
+      padding: 8px 10px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      outline: none;
+      direction: rtl;
+      background: white;
+    }
+    .child-add-form input:focus { border-color: #b9aaa4; }
+    .child-save-btn {
+      border: none;
+      border-radius: 9px;
+      padding: 0 11px;
+      background: #777;
+      color: white;
+      font-family: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .due-badge {
+      flex-shrink: 0;
+      font-size: 0.66rem;
+      color: #9a756d;
+      background: #f8efec;
+      border-radius: 7px;
+      padding: 2px 6px;
+      white-space: nowrap;
+    }
+
+    /* ── Owner tabs ── */
+    .owner-tabs {
+      display: flex;
+      gap: 7px;
+      margin-top: 12px;
+      padding: 4px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 13px;
+    }
+    .owner-tab {
+      flex: 1;
+      border: none;
+      border-radius: 10px;
+      padding: 7px 8px;
+      background: transparent;
+      color: rgba(255,255,255,0.78);
+      font-family: inherit;
+      font-size: 0.76rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.18s;
+      white-space: nowrap;
+    }
+    .owner-tab:hover { background: rgba(255,255,255,0.12); color: white; }
+    .owner-tab.active {
+      background: white;
+      color: #a75f58;
+      box-shadow: 0 2px 8px rgba(80,35,30,0.16);
+    }
+
+    /* ── Notifications ── */
+    .notif-banner {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: #fff8e8;
+      border: 1px solid #f0dfb6;
+      color: #755f2e;
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+    .notif-banner.show { display: flex; }
+    .notif-enable {
+      flex-shrink: 0;
+      border: none;
+      border-radius: 9px;
+      background: #b5726a;
+      color: white;
+      font-family: inherit;
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 7px 10px;
+      cursor: pointer;
+    }
+
     /* ── Routine progress bar ── */
     .routine-progress {
       display: flex;
@@ -561,6 +701,49 @@
       margin: 4px 8px 0;
     }
 
+    /* ── Change Password overlay ── */
+    .chpass-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(30,20,20,0.55);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .chpass-overlay.show { display: flex; }
+    .chpass-box {
+      background: #fff;
+      border-radius: 22px;
+      padding: 28px 24px 24px;
+      width: 100%;
+      max-width: 320px;
+      text-align: center;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+      animation: fadeScale 0.2s ease;
+    }
+    .chpass-box .cp-icon { font-size: 2rem; margin-bottom: 8px; }
+    .chpass-box h3 { font-size: 1.05rem; font-weight: 900; margin-bottom: 16px; }
+    .chpass-box input {
+      width: 100%;
+      border: 1.5px solid #ebebeb;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      text-align: center;
+      letter-spacing: 3px;
+      margin-bottom: 8px;
+      direction: ltr;
+      background: #fafafa;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .chpass-box input:focus { border-color: #b5726a; box-shadow: 0 0 0 3px rgba(181,114,106,0.1); }
+    .chpass-box .cp-err { color: #d44; font-size: 0.8rem; margin-bottom: 10px; display: none; }
+    .chpass-box .cp-actions { display: flex; gap: 8px; margin-top: 4px; }
+
     /* hide main app initially */
     #app { display: none; }
   </style>
@@ -616,6 +799,23 @@
   </div>
 </div>
 
+<!-- ══ CHANGE PASSWORD OVERLAY ══ -->
+<div class="chpass-overlay" id="chpassOverlay">
+  <div class="chpass-box">
+    <div class="cp-icon">🔑</div>
+    <h3>تغيير الباسورد</h3>
+    <input type="password" id="cpOld"  placeholder="الباسورد الحالي"  oninput="clearCpErr()">
+    <input type="password" id="cpNew1" placeholder="الباسورد الجديد"  oninput="clearCpErr()">
+    <input type="password" id="cpNew2" placeholder="تأكيد الباسورد الجديد" oninput="clearCpErr()"
+           onkeydown="if(event.key==='Enter') doChangePass()">
+    <div class="cp-err" id="cpErr"></div>
+    <div class="cp-actions">
+      <button class="btn-primary" id="cpSaveBtn" onclick="doChangePass()">حفظ ✓</button>
+      <button class="btn-secondary" onclick="closeChangePass()">إلغاء</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ FIREBASE SETUP OVERLAY ══ -->
 <div class="overlay" id="overlay">
   <div class="overlay-box">
@@ -660,13 +860,24 @@
         <div class="date" id="headerDate"></div>
       </div>
       <div class="header-right">
+        <button class="hdr-btn" onclick="openChangePass()" title="تغيير الباسورد">🔑</button>
         <button class="hdr-btn" onclick="doLogout()" title="خروج">🚪</button>
         <button class="hdr-btn" onclick="openOverlay()" title="إعدادات Firebase">⚙️</button>
       </div>
     </div>
+    <div class="owner-tabs" id="ownerTabs" aria-label="عرض العناصر حسب صاحبها">
+      <button class="owner-tab" id="ownerTabAll" onclick="setOwnerFilter('all')">أنا وهي</button>
+      <button class="owner-tab" id="ownerTabMine" onclick="setOwnerFilter('mine')">أنا</button>
+      <button class="owner-tab" id="ownerTabOther" onclick="setOwnerFilter('other')">هي</button>
+    </div>
   </header>
 
   <div class="container">
+
+    <div class="notif-banner" id="notifBanner">
+      <span id="notifBannerText">🔔 فعّل الإشعارات علشان يوصلك تذكير قبل المواعيد.</span>
+      <button class="notif-enable" onclick="enableNotifications()">تفعيل</button>
+    </div>
 
     <!-- SHOPPING -->
     <div class="card sec-shop">
@@ -747,6 +958,14 @@ let currentUser = null; // 'yousra' | 'ahmed'
 
 let routineItems       = [];
 let routineCompletions = new Set();
+let shoppingItems      = [];
+let taskItems          = [];
+let childItems         = [];
+let expandedChildren   = new Set();
+let reminderTimer      = null;
+let ownerFilter        = 'all'; // 'all' | 'mine' | 'other'
+
+const SESSION_KEY = 'yhSession';
 
 // ── Utils ─────────────────────────────────────────────────────────────────────
 const todayStr = () => new Date().toISOString().slice(0, 10);
@@ -765,6 +984,296 @@ function dayLabel(dateStr) {
   if (diff === 1) return { label:'امبارح', today: false };
   if (diff === 2) return { label:'أول امبارح', today: false };
   return { label:`منذ ${diff} أيام`, today: false };
+}
+
+// ── Owner tabs ────────────────────────────────────────────────────────────────
+function ownerFilterKey() {
+  return currentUser ? `yhOwnerFilter_${currentUser}` : 'yhOwnerFilter';
+}
+
+function loadOwnerFilter() {
+  const saved = currentUser ? localStorage.getItem(ownerFilterKey()) : null;
+  ownerFilter = ['all','mine','other'].includes(saved) ? saved : 'all';
+}
+
+function updateOwnerTabs() {
+  if (!currentUser) return;
+  const isAhmed = currentUser === 'ahmed';
+  const allBtn   = document.getElementById('ownerTabAll');
+  const mineBtn  = document.getElementById('ownerTabMine');
+  const otherBtn = document.getElementById('ownerTabOther');
+  if (!allBtn || !mineBtn || !otherBtn) return;
+
+  allBtn.textContent   = isAhmed ? 'أنا وهي' : 'أنا وهو';
+  mineBtn.textContent  = 'أنا';
+  otherBtn.textContent = isAhmed ? 'هي' : 'هو';
+
+  allBtn.classList.toggle('active', ownerFilter === 'all');
+  mineBtn.classList.toggle('active', ownerFilter === 'mine');
+  otherBtn.classList.toggle('active', ownerFilter === 'other');
+}
+
+function filterByOwner(items) {
+  if (!currentUser || ownerFilter === 'all') return items;
+  if (ownerFilter === 'mine') return items.filter(i => i.by === currentUser);
+  return items.filter(i => i.by && i.by !== currentUser);
+}
+
+window.setOwnerFilter = function(filter) {
+  if (!['all','mine','other'].includes(filter)) return;
+  ownerFilter = filter;
+  if (currentUser) localStorage.setItem(ownerFilterKey(), ownerFilter);
+  updateOwnerTabs();
+  renderAllLists();
+};
+
+// ── Smart dates + reminders ───────────────────────────────────────────────────
+function normalizeArabicDigits(s) {
+  const ar = '٠١٢٣٤٥٦٧٨٩';
+  const fa = '۰۱۲۳۴۵۶۷۸۹';
+  return String(s).replace(/[٠-٩]/g, d => ar.indexOf(d)).replace(/[۰-۹]/g, d => fa.indexOf(d));
+}
+
+function normalizeForDateParse(s) {
+  return normalizeArabicDigits(s)
+    .toLowerCase()
+    .replace(/[\u064b-\u065f\u0670]/g, '')
+    .replace(/[أإآ]/g, 'ا')
+    .replace(/ى/g, 'ي')
+    .replace(/ـ/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function parseSmartDate(text, base = new Date()) {
+  const raw = normalizeForDateParse(text);
+  if (!raw) return null;
+
+  const target = new Date(base);
+  target.setSeconds(0, 0);
+  let dateFound = false;
+  let timeFound = false;
+  let weekdayFound = false;
+
+  const setDate = (y, m, d) => {
+    const test = new Date(y, m, d);
+    if (test.getFullYear() !== y || test.getMonth() !== m || test.getDate() !== d) return false;
+    target.setFullYear(y, m, d);
+    dateFound = true;
+    return true;
+  };
+
+  let m = raw.match(/\b(20\d{2})[\/.\-](\d{1,2})[\/.\-](\d{1,2})\b/);
+  if (m) setDate(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+
+  if (!dateFound) {
+    m = raw.match(/\b(\d{1,2})[\/.\-](\d{1,2})[\/.\-](20\d{2})\b/);
+    if (m) setDate(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
+  }
+
+  if (!dateFound) {
+    m = raw.match(/(?:^|\s)(\d{1,2})[\/.\-](\d{1,2})(?=\s|$)/);
+    if (m) setDate(base.getFullYear(), Number(m[2]) - 1, Number(m[1]));
+  }
+
+  if (!dateFound) {
+    const monthMap = {
+      'يناير':0, 'فبراير':1, 'مارس':2, 'ابريل':3, 'مايو':4, 'يونيو':5,
+      'يوليو':6, 'اغسطس':7, 'سبتمبر':8, 'اكتوبر':9, 'نوفمبر':10, 'ديسمبر':11
+    };
+    const monthNames = Object.keys(monthMap).join('|');
+    m = raw.match(new RegExp(`\\b(\\d{1,2})\\s+(${monthNames})(?:\\s+(20\\d{2}))?\\b`));
+    if (m) setDate(Number(m[3] || base.getFullYear()), monthMap[m[2]], Number(m[1]));
+  }
+
+  const addDays = days => {
+    target.setFullYear(base.getFullYear(), base.getMonth(), base.getDate());
+    target.setDate(target.getDate() + days);
+    dateFound = true;
+  };
+
+  if (!dateFound) {
+    if (/بعد بكره|بعد بكرة|day after tomorrow/.test(raw)) addDays(2);
+    else if (/بكره|بكرة|غدا|\btomorrow\b/.test(raw)) addDays(1);
+    else if (/النهارده|اليوم|\btoday\b/.test(raw)) addDays(0);
+    else if (/بعد يومين/.test(raw)) addDays(2);
+    else {
+      m = raw.match(/بعد\s+(\d{1,3})\s*(?:يوم|ايام|يومًا|يوما)/);
+      if (m) addDays(Number(m[1]));
+    }
+  }
+
+  if (!dateFound && /الاسبوع الجاي|الاسبوع القادم|next week/.test(raw)) addDays(7);
+
+  if (!dateFound) {
+    const weekdays = [
+      { day:0, names:['الاحد','الاحد الجاي','sunday'] },
+      { day:1, names:['الاثنين','الاتنين','monday'] },
+      { day:2, names:['الثلاثاء','التلات','الثلاثا','tuesday'] },
+      { day:3, names:['الاربعاء','الاربع','wednesday'] },
+      { day:4, names:['الخميس','thursday'] },
+      { day:5, names:['الجمعه','الجمعة','friday'] },
+      { day:6, names:['السبت','saturday'] }
+    ];
+    for (const w of weekdays) {
+      if (w.names.some(name => raw.includes(name))) {
+        let delta = (w.day - base.getDay() + 7) % 7;
+        const asksNext = /الجاي|الجايه|الجاية|القادم|القادمه|القادمة|next/.test(raw);
+        if (delta === 0 && asksNext) delta = 7;
+        addDays(delta);
+        weekdayFound = true;
+        break;
+      }
+    }
+  }
+
+  m = raw.match(/(?:الساعه|الساعة|ساعه|ساعة|at)\s*(\d{1,2})(?::(\d{1,2}))?\s*(ص|م|صباحا|صباح|مساء|مساءا|am|pm)?/);
+  if (!m && dateFound) m = raw.match(/\b(\d{1,2}):(\d{2})\s*(ص|م|am|pm)?\b/);
+  if (m) {
+    let h = Number(m[1]);
+    const min = Number(m[2] || 0);
+    const mer = m[3] || '';
+    if ((mer === 'م' || mer.startsWith('مساء') || mer === 'pm') && h < 12) h += 12;
+    if ((mer === 'ص' || mer.startsWith('صباح') || mer === 'am') && h === 12) h = 0;
+    if (h <= 23 && min <= 59) {
+      target.setHours(h, min, 0, 0);
+      timeFound = true;
+    }
+  }
+
+  if (!timeFound) {
+    if (/الصبح|صباح/.test(raw)) { target.setHours(9, 0, 0, 0); timeFound = true; }
+    else if (/الظهر/.test(raw)) { target.setHours(12, 0, 0, 0); timeFound = true; }
+    else if (/العصر/.test(raw)) { target.setHours(15, 0, 0, 0); timeFound = true; }
+    else if (/المغرب/.test(raw)) { target.setHours(18, 0, 0, 0); timeFound = true; }
+    else if (/بالليل|المساء/.test(raw)) { target.setHours(20, 0, 0, 0); timeFound = true; }
+  }
+
+  if (!dateFound && !timeFound) return null;
+  if (dateFound && !timeFound) target.setHours(9, 0, 0, 0);
+  if (!dateFound && timeFound) {
+    target.setFullYear(base.getFullYear(), base.getMonth(), base.getDate());
+    if (target <= base) target.setDate(target.getDate() + 1);
+  }
+  if (weekdayFound && target <= base) target.setDate(target.getDate() + 7);
+
+  return Number.isNaN(target.getTime()) ? null : target;
+}
+
+function reminderFields(text) {
+  const due = parseSmartDate(text);
+  return due ? { dueAt: due.getTime(), dueSource: text } : {};
+}
+
+function formatDue(ts) {
+  if (!ts) return '';
+  try {
+    return new Intl.DateTimeFormat('ar-EG', {
+      weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit'
+    }).format(new Date(ts));
+  } catch { return new Date(ts).toLocaleString(); }
+}
+
+function dueBadge(item) {
+  return item && item.dueAt ? `<span class="due-badge" title="موعد مفهوم تلقائيًا">⏰ ${esc(formatDue(item.dueAt))}</span>` : '';
+}
+
+function updateNotificationBanner() {
+  const banner = document.getElementById('notifBanner');
+  const text   = document.getElementById('notifBannerText');
+  if (!banner || !text) return;
+  if (!('Notification' in window)) {
+    text.textContent = '🔕 المتصفح ده لا يدعم إشعارات الويب.';
+    banner.classList.add('show');
+    const btn = banner.querySelector('button');
+    if (btn) btn.style.display = 'none';
+    return;
+  }
+  if (Notification.permission === 'granted') {
+    banner.classList.remove('show');
+  } else if (Notification.permission === 'denied') {
+    text.textContent = '🔕 الإشعارات مقفولة من إعدادات المتصفح. فعّلها للموقع علشان توصلك التذكيرات.';
+    banner.classList.add('show');
+    const btn = banner.querySelector('button');
+    if (btn) btn.style.display = 'none';
+  } else {
+    text.textContent = '🔔 فعّل الإشعارات علشان يوصلك تذكير قبل الموعد بيوم وقبلها بساعتين.';
+    banner.classList.add('show');
+    const btn = banner.querySelector('button');
+    if (btn) btn.style.display = '';
+  }
+}
+
+window.enableNotifications = async function() {
+  if (!('Notification' in window)) { updateNotificationBanner(); return; }
+  try { await Notification.requestPermission(); } catch {}
+  updateNotificationBanner();
+  checkAllReminders();
+};
+
+async function requestNotificationsOnEntry() {
+  updateNotificationBanner();
+  if (!('Notification' in window) || Notification.permission !== 'default') return;
+  try {
+    await Notification.requestPermission();
+  } catch {}
+  updateNotificationBanner();
+}
+
+function reminderStorageKey(type, id, offset) {
+  return `yhReminder_${type}_${id}_${offset}`;
+}
+
+function showReminderNotification(item, type, offset) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const when = offset === '2h' ? 'فاضل أقل من ساعتين' : 'فاضل أقل من يوم';
+  try {
+    new Notification('⏰ تذكير موعد', {
+      body: `${when}: ${item.text}`,
+      tag: `yh-${type}-${item.id}-${offset}`
+    });
+  } catch {}
+}
+
+function getAllReminderItems() {
+  return [
+    ...shoppingItems.map(i => ({ ...i, _type:'shopping' })),
+    ...taskItems.map(i => ({ ...i, _type:'tasks' })),
+    ...routineItems.map(i => ({ ...i, _type:'routine' })),
+    ...childItems.map(i => ({ ...i, _type:'child' }))
+  ].filter(i => i.dueAt && !i.done);
+}
+
+function checkAllReminders() {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const now = Date.now();
+  const TWO_HOURS = 2 * 60 * 60 * 1000;
+  const ONE_DAY   = 24 * 60 * 60 * 1000;
+
+  getAllReminderItems().forEach(item => {
+    const left = Number(item.dueAt) - now;
+    if (left <= 0 || left > ONE_DAY) return;
+
+    const key24 = reminderStorageKey(item._type, item.id, '24h');
+    const key2  = reminderStorageKey(item._type, item.id, '2h');
+
+    if (left <= TWO_HOURS) {
+      if (!localStorage.getItem(key2)) {
+        showReminderNotification(item, item._type, '2h');
+        localStorage.setItem(key2, String(now));
+      }
+      if (!localStorage.getItem(key24)) localStorage.setItem(key24, String(now));
+    } else if (!localStorage.getItem(key24)) {
+      showReminderNotification(item, item._type, '24h');
+      localStorage.setItem(key24, String(now));
+    }
+  });
+}
+
+function startReminderWatcher() {
+  if (reminderTimer) clearInterval(reminderTimer);
+  checkAllReminders();
+  reminderTimer = setInterval(checkAllReminders, 30000);
 }
 
 // ── Header date ───────────────────────────────────────────────────────────────
@@ -908,7 +1417,16 @@ function loginSuccess() {
   document.getElementById('app').style.display = 'block';
   document.getElementById('loginPass').value = '';
 
+  // restore the last selected owner tab for this account
+  loadOwnerFilter();
+  updateOwnerTabs();
+
+  // keep this device signed in until the user logs out manually
+  localStorage.setItem(SESSION_KEY, JSON.stringify({ user: currentUser, ts: Date.now() }));
+
   boot(FIREBASE_CONFIG);
+  requestNotificationsOnEntry();
+  startReminderWatcher();
 }
 
 window.doLogout = function() {
@@ -916,6 +1434,9 @@ window.doLogout = function() {
   subs = [];
   db = null;
   currentUser = null;
+  localStorage.removeItem(SESSION_KEY);
+  if (reminderTimer) clearInterval(reminderTimer);
+  reminderTimer = null;
   document.getElementById('app').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
   document.querySelectorAll('.user-btn').forEach(b => b.classList.remove('selected'));
@@ -923,6 +1444,20 @@ window.doLogout = function() {
   document.getElementById('loginBtn').disabled = true;
   document.getElementById('statusDot').className = 'dot offline';
 };
+
+function restoreSession() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+    if (!saved || !USERS[saved.user]) {
+      localStorage.removeItem(SESSION_KEY);
+      return;
+    }
+    currentUser = saved.user;
+    loginSuccess();
+  } catch {
+    localStorage.removeItem(SESSION_KEY);
+  }
+}
 
 // ── Firebase config (hardcoded — security handled by Firestore Rules) ─────────
 const FIREBASE_CONFIG = {
@@ -987,13 +1522,92 @@ function whoBadge(by) {
 // Firestore Rules بتتحقق منه قبل ما تسمح بأي write
 const sw = (data) => ({ ...data, _s: APP_SECRET });
 
+// ── Child items helpers ───────────────────────────────────────────────────────
+function childKey(type, parentId) { return `${type}:${parentId}`; }
+function childAreaId(type, parentId) { return `childArea-${type}-${parentId}`; }
+function childInputId(type, parentId) { return `childInput-${type}-${parentId}`; }
+
+function childrenOf(type, parentId) {
+  return childItems.filter(c => c.parentType === type && c.parentId === parentId).sort((a,b) => a.ts - b.ts);
+}
+
+function renderChildSection(type, parentId) {
+  const key = childKey(type, parentId);
+  const children = childrenOf(type, parentId);
+  const expanded = expandedChildren.has(key);
+
+  return `
+    <div class="child-tools">
+      <button class="child-add-btn" onclick="event.stopPropagation();openChildComposer('${type}','${parentId}')">＋ عنصر فرعي</button>
+      ${children.length ? `<span class="child-count">${children.length} فرعي</span>` : ''}
+    </div>
+    <div class="child-area${expanded ? ' show' : ''}" id="${childAreaId(type, parentId)}">
+      ${children.map(child => `
+        <div class="child-item">
+          <div class="item-check${child.done ? ' done' : ''}"
+               onclick="toggleChild('${child.id}',${!child.done})">${child.done ? '✓' : ''}</div>
+          <div class="item-text${child.done ? ' done' : ''}">${esc(child.text)}</div>
+          ${dueBadge(child)}
+          ${whoBadge(child.by)}
+          <button class="item-del" onclick="delChild('${child.id}')">×</button>
+        </div>`).join('')}
+      <div class="child-add-form">
+        <input type="text" id="${childInputId(type, parentId)}" placeholder="اكتب العنصر الفرعي..."
+               onkeydown="if(event.key==='Enter') addChild('${type}','${parentId}')">
+        <button class="child-save-btn" onclick="addChild('${type}','${parentId}')">إضافة</button>
+      </div>
+    </div>`;
+}
+
+window.toggleChildrenUI = function(type, parentId) {
+  const key = childKey(type, parentId);
+  if (expandedChildren.has(key)) expandedChildren.delete(key);
+  else expandedChildren.add(key);
+  const area = document.getElementById(childAreaId(type, parentId));
+  if (area) area.classList.toggle('show', expandedChildren.has(key));
+};
+
+window.openChildComposer = function(type, parentId) {
+  const key = childKey(type, parentId);
+  expandedChildren.add(key);
+  const area = document.getElementById(childAreaId(type, parentId));
+  if (area) area.classList.add('show');
+  setTimeout(() => document.getElementById(childInputId(type, parentId))?.focus(), 0);
+};
+
+window.addChild = async function(type, parentId) {
+  if (!db) return;
+  const el = document.getElementById(childInputId(type, parentId));
+  const txt = el?.value.trim();
+  if (!txt) return;
+  await addDoc(collection(db,'child_items'), sw({
+    parentType: type, parentId, text: txt, done: false, ts: Date.now(), by: currentUser, ...reminderFields(txt)
+  }));
+  el.value = '';
+  expandedChildren.add(childKey(type, parentId));
+};
+
+window.toggleChild = (id, done) => db && updateDoc(doc(db,'child_items',id), sw({ done }));
+window.delChild    = (id)       => db && deleteDoc(doc(db,'child_items',id));
+
+async function deleteChildrenForParent(type, parentId) {
+  const children = childrenOf(type, parentId);
+  await Promise.all(children.map(c => deleteDoc(doc(db,'child_items',c.id))));
+}
+
+function renderAllLists() {
+  renderShopping(shoppingItems);
+  renderTasks(taskItems);
+  renderRoutine();
+}
+
 // ── SHOPPING ──────────────────────────────────────────────────────────────────
 window.addShopping = function() {
   if (!db) { alert('اعمل إعداد Firebase من ⚙️ الأول'); return; }
   const el = document.getElementById('shopIn');
   const txt = el.value.trim();
   if (!txt) return;
-  addDoc(collection(db,'shopping'), sw({ text: txt, date: todayStr(), done: false, ts: Date.now(), by: currentUser }));
+  addDoc(collection(db,'shopping'), sw({ text: txt, date: todayStr(), done: false, ts: Date.now(), by: currentUser, ...reminderFields(txt) }));
   el.value = '';
 };
 
@@ -1003,7 +1617,7 @@ function renderShopping(items) {
   cutoff.setDate(cutoff.getDate() - 15);
   const cutoffStr = cutoff.toISOString().slice(0, 10);
 
-  const visible = items.filter(i => i.date >= cutoffStr);
+  const visible = filterByOwner(items).filter(i => i.date >= cutoffStr);
   if (!visible.length) { list.innerHTML = '<div class="empty">لا في حاجات دلوقتي ✨</div>'; return; }
 
   const groups = {};
@@ -1014,19 +1628,27 @@ function renderShopping(items) {
     return `<div class="day-group">
       <div class="day-label${today ? ' today' : ''}">${label}</div>
       ${groups[date].map(item => `
-        <div class="item">
-          <div class="item-check${item.done ? ' done' : ''}"
-               onclick="toggleShop('${item.id}',${!item.done})">${item.done ? '✓' : ''}</div>
-          <div class="item-text${item.done ? ' done' : ''}">${esc(item.text)}</div>
-          ${whoBadge(item.by)}
-          <button class="item-del" onclick="delShop('${item.id}')">×</button>
+        <div class="item-block">
+          <div class="item parent-item" onclick="toggleChildrenUI('shopping','${item.id}')">
+            <div class="item-check${item.done ? ' done' : ''}"
+                 onclick="event.stopPropagation();toggleShop('${item.id}',${!item.done})">${item.done ? '✓' : ''}</div>
+            <div class="item-text${item.done ? ' done' : ''}">${esc(item.text)}</div>
+            ${dueBadge(item)}
+            ${whoBadge(item.by)}
+            <button class="item-del" onclick="event.stopPropagation();delShop('${item.id}')">×</button>
+          </div>
+          ${renderChildSection('shopping', item.id)}
         </div>`).join('')}
     </div>`;
   }).join('');
 }
 
 window.toggleShop = (id, done) => db && updateDoc(doc(db,'shopping',id), sw({ done }));
-window.delShop    = (id)       => db && deleteDoc(doc(db,'shopping',id));
+window.delShop = async function(id) {
+  if (!db) return;
+  await deleteChildrenForParent('shopping', id);
+  await deleteDoc(doc(db,'shopping',id));
+};
 
 // ── TASKS ─────────────────────────────────────────────────────────────────────
 window.addTask = function() {
@@ -1034,7 +1656,7 @@ window.addTask = function() {
   const el = document.getElementById('taskIn');
   const txt = el.value.trim();
   if (!txt) return;
-  addDoc(collection(db,'tasks'), sw({ text: txt, done: false, urgent: false, ts: Date.now(), by: currentUser }));
+  addDoc(collection(db,'tasks'), sw({ text: txt, done: false, urgent: false, ts: Date.now(), by: currentUser, ...reminderFields(txt) }));
   el.value = '';
 };
 
@@ -1042,20 +1664,26 @@ function renderTasks(items) {
   const list = document.getElementById('taskList');
   if (!items.length) { list.innerHTML = '<div class="empty">مفيش مهام معلقة 👍</div>'; return; }
 
-  const pending = items.filter(i => !i.done).sort((a,b) => (b.urgent?1:0)-(a.urgent?1:0) || a.ts-b.ts);
-  const done    = items.filter(i =>  i.done).sort((a,b) => a.ts - b.ts);
+  const visible = filterByOwner(items);
+  if (!visible.length) { list.innerHTML = '<div class="empty">مفيش عناصر في التاب ده ✨</div>'; return; }
+  const pending = visible.filter(i => !i.done).sort((a,b) => (b.urgent?1:0)-(a.urgent?1:0) || a.ts-b.ts);
+  const done    = visible.filter(i =>  i.done).sort((a,b) => a.ts - b.ts);
 
   const renderItem = item => `
-    <div class="item">
-      <div class="item-check${item.done ? ' done' : ''}"
-           onclick="toggleTask('${item.id}',${!item.done})">${item.done ? '✓' : ''}</div>
-      <div class="item-text${item.done ? ' done' : ''}">${esc(item.text)}</div>
-      ${whoBadge(item.by)}
-      <button class="${item.urgent ? 'badge-urgent' : 'badge-normal'}"
-              onclick="toggleUrgent('${item.id}',${!item.urgent})">
-        ${item.urgent ? '🔴 عاجل' : '···'}
-      </button>
-      <button class="item-del" onclick="delTask('${item.id}')">×</button>
+    <div class="item-block">
+      <div class="item parent-item" onclick="toggleChildrenUI('tasks','${item.id}')">
+        <div class="item-check${item.done ? ' done' : ''}"
+             onclick="event.stopPropagation();toggleTask('${item.id}',${!item.done})">${item.done ? '✓' : ''}</div>
+        <div class="item-text${item.done ? ' done' : ''}">${esc(item.text)}</div>
+        ${dueBadge(item)}
+        ${whoBadge(item.by)}
+        <button class="${item.urgent ? 'badge-urgent' : 'badge-normal'}"
+                onclick="event.stopPropagation();toggleUrgent('${item.id}',${!item.urgent})">
+          ${item.urgent ? '🔴 عاجل' : '···'}
+        </button>
+        <button class="item-del" onclick="event.stopPropagation();delTask('${item.id}')">×</button>
+      </div>
+      ${renderChildSection('tasks', item.id)}
     </div>`;
 
   list.innerHTML = pending.map(renderItem).join('') +
@@ -1064,7 +1692,11 @@ function renderTasks(items) {
 
 window.toggleTask   = (id, done)   => db && updateDoc(doc(db,'tasks',id), sw({ done }));
 window.toggleUrgent = (id, urgent) => db && updateDoc(doc(db,'tasks',id), sw({ urgent }));
-window.delTask      = (id)         => db && deleteDoc(doc(db,'tasks',id));
+window.delTask = async function(id) {
+  if (!db) return;
+  await deleteChildrenForParent('tasks', id);
+  await deleteDoc(doc(db,'tasks',id));
+};
 
 // ── ROUTINE ───────────────────────────────────────────────────────────────────
 window.addRoutine = function() {
@@ -1072,29 +1704,34 @@ window.addRoutine = function() {
   const el = document.getElementById('routineIn');
   const txt = el.value.trim();
   if (!txt) return;
-  addDoc(collection(db,'routine_items'), sw({ text: txt, ts: Date.now(), by: currentUser }));
+  addDoc(collection(db,'routine_items'), sw({ text: txt, ts: Date.now(), by: currentUser, ...reminderFields(txt) }));
   el.value = '';
 };
 
 function renderRoutine() {
-  const list  = document.getElementById('routineList');
-  const total = routineItems.length;
-  const done  = routineItems.filter(i => routineCompletions.has(i.id)).length;
+  const list    = document.getElementById('routineList');
+  const visible = filterByOwner(routineItems);
+  const total   = visible.length;
+  const done    = visible.filter(i => routineCompletions.has(i.id)).length;
   const pct   = total ? Math.round(done / total * 100) : 0;
   document.getElementById('progFill').style.width = pct + '%';
   document.getElementById('progText').textContent = `${done}/${total}`;
 
   if (!total) { list.innerHTML = '<div class="empty">ما فيش روتين اتضاف لسه</div>'; return; }
 
-  list.innerHTML = routineItems.map(item => {
+  list.innerHTML = visible.map(item => {
     const isDone = routineCompletions.has(item.id);
     return `
-      <div class="item">
-        <div class="item-check${isDone ? ' done' : ''}"
-             onclick="toggleRoutine('${item.id}',${!isDone})">${isDone ? '✓' : ''}</div>
-        <div class="item-text${isDone ? ' done' : ''}">${esc(item.text)}</div>
-        ${whoBadge(item.by)}
-        <button class="item-del" onclick="delRoutineItem('${item.id}')">×</button>
+      <div class="item-block">
+        <div class="item parent-item" onclick="toggleChildrenUI('routine','${item.id}')">
+          <div class="item-check${isDone ? ' done' : ''}"
+               onclick="event.stopPropagation();toggleRoutine('${item.id}',${!isDone})">${isDone ? '✓' : ''}</div>
+          <div class="item-text${isDone ? ' done' : ''}">${esc(item.text)}</div>
+          ${dueBadge(item)}
+          ${whoBadge(item.by)}
+          <button class="item-del" onclick="event.stopPropagation();delRoutineItem('${item.id}')">×</button>
+        </div>
+        ${renderChildSection('routine', item.id)}
       </div>`;
   }).join('');
 }
@@ -1113,10 +1750,74 @@ window.toggleRoutine = async function(itemId, completed) {
   renderRoutine();
 };
 
-window.delRoutineItem = function(id) {
+window.delRoutineItem = async function(id) {
   if (!db) return;
   if (!confirm('تمسح النشاط ده من الروتين؟')) return;
-  deleteDoc(doc(db,'routine_items',id));
+  await deleteChildrenForParent('routine', id);
+  await deleteDoc(doc(db,'routine_items',id));
+};
+
+// ── Change Password ───────────────────────────────────────────────────────────
+window.openChangePass = function() {
+  document.getElementById('cpOld').value  = '';
+  document.getElementById('cpNew1').value = '';
+  document.getElementById('cpNew2').value = '';
+  document.getElementById('cpErr').style.display = 'none';
+  document.getElementById('chpassOverlay').classList.add('show');
+  document.getElementById('cpOld').focus();
+};
+
+window.closeChangePass = function() {
+  document.getElementById('chpassOverlay').classList.remove('show');
+};
+
+window.clearCpErr = function() {
+  document.getElementById('cpErr').style.display = 'none';
+};
+
+window.doChangePass = async function() {
+  const oldPass = document.getElementById('cpOld').value;
+  const newPass  = document.getElementById('cpNew1').value;
+  const confirm  = document.getElementById('cpNew2').value;
+  const err      = document.getElementById('cpErr');
+
+  if (!oldPass || !newPass || !confirm) {
+    err.textContent = 'املأ كل الحقول';
+    err.style.display = 'block'; return;
+  }
+  if (newPass.length < 4) {
+    err.textContent = 'الباسورد الجديد لازم يكون 4 حروف على الأقل';
+    err.style.display = 'block'; return;
+  }
+  if (newPass !== confirm) {
+    err.textContent = '❌ الباسورد الجديد مش متطابق';
+    err.style.display = 'block'; return;
+  }
+
+  const btn = document.getElementById('cpSaveBtn');
+  btn.textContent = '...';
+  btn.disabled = true;
+
+  const oldHash     = await hashPass(oldPass);
+  const storedHash  = await getRemoteHash(currentUser);
+
+  if (oldHash !== storedHash) {
+    err.textContent = '❌ الباسورد الحالي غلط';
+    err.style.display = 'block';
+    btn.textContent = 'حفظ ✓';
+    btn.disabled = false;
+    document.getElementById('cpOld').value = '';
+    document.getElementById('cpOld').focus();
+    return;
+  }
+
+  const newHash = await hashPass(newPass);
+  await setRemoteHash(currentUser, newHash);
+
+  btn.textContent = 'حفظ ✓';
+  btn.disabled = false;
+  closeChangePass();
+  alert('✅ اتغير الباسورد بنجاح!');
 };
 
 // ── Listeners ─────────────────────────────────────────────────────────────────
@@ -1124,21 +1825,28 @@ function startListeners() {
   const today = todayStr();
   subs.push(onSnapshot(
     query(collection(db,'shopping'), orderBy('ts','desc')),
-    snap => renderShopping(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+    snap => { shoppingItems = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderShopping(shoppingItems); checkAllReminders(); }
   ));
   subs.push(onSnapshot(
     query(collection(db,'tasks'), orderBy('ts','asc')),
-    snap => renderTasks(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+    snap => { taskItems = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderTasks(taskItems); checkAllReminders(); }
   ));
   subs.push(onSnapshot(
     query(collection(db,'routine_items'), orderBy('ts','asc')),
-    snap => { routineItems = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderRoutine(); }
+    snap => { routineItems = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderRoutine(); checkAllReminders(); }
   ));
   subs.push(onSnapshot(
     query(collection(db,'routine_completions'), where('date','==',today)),
     snap => { routineCompletions = new Set(snap.docs.map(d => d.data().itemId)); renderRoutine(); }
   ));
+  subs.push(onSnapshot(
+    query(collection(db,'child_items'), orderBy('ts','asc')),
+    snap => { childItems = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderAllLists(); checkAllReminders(); }
+  ));
 }
+
+// restore the last valid login on this device
+restoreSession();
 </script>
 </body>
 </html>
