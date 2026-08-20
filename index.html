@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Yousra's Home">
+  <title>Yousra's Home</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, 'Segoe UI', 'Helvetica Neue', sans-serif;
+      background: #f5f0eb;
+      color: #2d2d2d;
+      min-height: 100vh;
+      padding-bottom: 48px;
+    }
+
+    /* ── Login Screen ── */
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: linear-gradient(160deg, #f5f0eb 0%, #ede0d8 100%);
+    }
+    .login-box {
+      background: #fff;
+      border-radius: 24px;
+      padding: 36px 28px 32px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: 0 8px 40px rgba(181,114,106,0.15), 0 2px 8px rgba(0,0,0,0.06);
+      text-align: center;
+    }
+    .login-logo { font-size: 2.8rem; margin-bottom: 6px; }
+    .login-box h1 { font-size: 1.4rem; font-weight: 900; color: #2d2d2d; margin-bottom: 4px; }
+    .login-box .sub { font-size: 0.82rem; color: #bbb; margin-bottom: 28px; }
+
+    .user-pick {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .user-btn {
+      flex: 1;
+      border: 2.5px solid #eee;
+      border-radius: 16px;
+      padding: 16px 10px;
+      cursor: pointer;
+      background: #fafafa;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .user-btn:hover { border-color: #b5726a; background: #fdf6f5; }
+    .user-btn.selected { border-color: #b5726a; background: #fdf6f5; box-shadow: 0 0 0 3px rgba(181,114,106,0.12); }
+    .user-btn .avatar { font-size: 1.8rem; margin-bottom: 6px; }
+    .user-btn .uname { font-size: 0.88rem; font-weight: 800; color: #2d2d2d; }
+    .user-btn .ulabel { font-size: 0.72rem; color: #bbb; margin-top: 1px; }
+
+    .pass-section { margin-bottom: 18px; }
+    .pass-section label {
+      display: block;
+      text-align: right;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #888;
+      margin-bottom: 7px;
+    }
+    .pass-section input {
+      width: 100%;
+      border: 1.5px solid #ebebeb;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+      text-align: center;
+      letter-spacing: 3px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      direction: ltr;
+      background: #fafafa;
+    }
+    .pass-section input:focus { border-color: #b5726a; box-shadow: 0 0 0 3px rgba(181,114,106,0.1); }
+    .pass-hint { font-size: 0.76rem; color: #b5726a; margin-top: 6px; display: none; }
+
+    .btn-login {
+      width: 100%;
+      background: linear-gradient(135deg, #b5726a, #d9948c);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .btn-login:hover { opacity: 0.9; }
+    .btn-login:active { transform: scale(0.98); }
+    .btn-login:disabled { opacity: 0.5; cursor: default; }
+
+    .login-err {
+      color: #d44;
+      font-size: 0.82rem;
+      margin-top: 10px;
+      display: none;
+    }
+
+    /* setup btn shown on login */
+    .setup-link {
+      font-size: 0.75rem;
+      color: #ccc;
+      margin-top: 18px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: inherit;
+      display: block;
+      width: 100%;
+      text-align: center;
+    }
+    .setup-link:hover { color: #aaa; }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, #b5726a 0%, #d9948c 60%, #e8b0a8 100%);
+      color: white;
+      padding: 20px 20px 16px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 16px rgba(181,114,106,0.35);
+    }
+    header .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header h1 { font-size: 1.45rem; font-weight: 800; flex: 1; text-align: center; }
+    header .date { font-size: 0.82rem; opacity: 0.88; margin-top: 5px; text-align: center; }
+
+    .header-left, .header-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 0 0 auto;
+    }
+
+    .user-chip {
+      background: rgba(255,255,255,0.22);
+      border-radius: 20px;
+      padding: 4px 10px 4px 7px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .user-chip .chip-avatar { font-size: 1rem; }
+
+    .hdr-btn {
+      background: rgba(255,255,255,0.18);
+      border: none;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 6px 9px;
+      border-radius: 10px;
+      transition: background 0.2s;
+    }
+    .hdr-btn:hover { background: rgba(255,255,255,0.3); }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 580px;
+      margin: 0 auto;
+      padding: 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: #fff;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px 2px;
+    }
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 1rem;
+      font-weight: 800;
+    }
+    .card-title .icon { font-size: 1.15rem; }
+    .card-subtitle { font-size: 0.72rem; color: #bbb; font-weight: 500; }
+
+    .sec-shop  .card-title { color: #b5726a; }
+    .sec-tasks .card-title { color: #5580cc; }
+    .sec-daily .card-title { color: #4aa068; }
+
+    /* ── Add form ── */
+    .add-form {
+      display: flex;
+      gap: 8px;
+      padding: 10px 12px 8px;
+    }
+    .add-form input {
+      flex: 1;
+      border: 1.5px solid #ebebeb;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 0.93rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background: #fafafa;
+      direction: rtl;
+    }
+    .add-form input::placeholder { color: #c5c5c5; }
+    .sec-shop  .add-form input:focus { border-color: #b5726a; box-shadow: 0 0 0 3px rgba(181,114,106,0.1); }
+    .sec-tasks .add-form input:focus { border-color: #5580cc; box-shadow: 0 0 0 3px rgba(85,128,204,0.1); }
+    .sec-daily .add-form input:focus { border-color: #4aa068; box-shadow: 0 0 0 3px rgba(74,160,104,0.1); }
+
+    .btn-add {
+      border: none;
+      border-radius: 12px;
+      width: 40px;
+      height: 40px;
+      font-size: 1.4rem;
+      font-weight: 300;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+    .btn-add:active { transform: scale(0.93); }
+    .sec-shop  .btn-add { background: #b5726a; }
+    .sec-tasks .btn-add { background: #5580cc; }
+    .sec-daily .btn-add { background: #4aa068; }
+
+    /* ── Items list ── */
+    .items-list { padding: 0 8px 10px; }
+
+    .day-group { margin-bottom: 4px; }
+    .day-label {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: #c0b8b5;
+      padding: 8px 8px 3px;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+    .day-label.today { color: #b5726a; }
+
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 8px;
+      border-radius: 11px;
+      transition: background 0.15s;
+    }
+    .item:hover { background: #faf8f7; }
+
+    .item-check {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid #ddd;
+      cursor: pointer;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.18s;
+      font-size: 11px;
+      color: white;
+      font-weight: 900;
+    }
+    .item-check:hover { border-color: #aaa; }
+    .item-check.done { color: white; }
+    .sec-shop  .item-check.done { background: #b5726a; border-color: #b5726a; }
+    .sec-tasks .item-check.done { background: #5580cc; border-color: #5580cc; }
+    .sec-daily .item-check.done { background: #4aa068; border-color: #4aa068; }
+
+    .item-text {
+      flex: 1;
+      font-size: 0.93rem;
+      line-height: 1.4;
+      transition: all 0.2s;
+      word-break: break-word;
+    }
+    .item-text.done { text-decoration: line-through; color: #ccc; }
+
+    /* who-added badge */
+    .who-badge {
+      font-size: 0.7rem;
+      font-weight: 800;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: white;
+    }
+    .who-A { background: #5580cc; }
+    .who-Y { background: #b5726a; }
+
+    .badge-urgent {
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: #fde8e8;
+      color: #d44;
+      flex-shrink: 0;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+    .badge-urgent:hover { background: #fcd0d0; }
+    .badge-normal {
+      font-size: 0.72rem;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: none;
+      color: #ccc;
+      flex-shrink: 0;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      transition: color 0.15s;
+    }
+    .badge-normal:hover { color: #aaa; }
+
+    .item-del {
+      opacity: 0;
+      background: none;
+      border: none;
+      color: #ccc;
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+      padding: 2px 5px;
+      border-radius: 7px;
+      transition: all 0.18s;
+      flex-shrink: 0;
+    }
+    .item:hover .item-del { opacity: 1; }
+    .item-del:hover { background: #feeaea; color: #e44; }
+
+    /* ── Routine progress bar ── */
+    .routine-progress {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 2px 16px 6px;
+    }
+    .prog-bar {
+      flex: 1;
+      height: 6px;
+      background: #f0f0f0;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .prog-fill {
+      height: 100%;
+      background: #4aa068;
+      border-radius: 3px;
+      transition: width 0.35s ease;
+    }
+    .prog-text {
+      font-size: 0.78rem;
+      color: #bbb;
+      font-weight: 700;
+      flex-shrink: 0;
+      min-width: 28px;
+      text-align: center;
+    }
+
+    /* ── Empty state ── */
+    .empty {
+      text-align: center;
+      color: #d5d0cc;
+      font-size: 0.84rem;
+      padding: 18px 12px;
+    }
+
+    /* ── Firebase Setup Overlay ── */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(30,20,20,0.55);
+      z-index: 1000;
+      justify-content: center;
+      align-items: flex-end;
+      padding: 0;
+    }
+    .overlay.show { display: flex; }
+
+    .overlay-box {
+      background: #fff;
+      border-radius: 22px 22px 0 0;
+      padding: 24px 20px 36px;
+      width: 100%;
+      max-width: 580px;
+      box-shadow: 0 -4px 32px rgba(0,0,0,0.15);
+      animation: slideUp 0.25s ease;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(60px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+    .overlay-box h2 { font-size: 1.1rem; margin-bottom: 8px; }
+    .setup-hint {
+      background: #fdf6f0;
+      border: 1px solid #ecddd4;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 0.82rem;
+      color: #8b6050;
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+    .setup-hint strong { font-weight: 800; }
+    .setup-hint a { color: #b5726a; }
+    .overlay-box label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #888;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .overlay-box textarea {
+      width: 100%;
+      height: 160px;
+      border: 1.5px solid #e5e5e5;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 0.78rem;
+      font-family: 'Menlo','Consolas',monospace;
+      resize: none;
+      outline: none;
+      direction: ltr;
+      transition: border-color 0.2s;
+    }
+    .overlay-box textarea:focus { border-color: #b5726a; }
+    .err-msg { color: #d44; font-size: 0.8rem; margin-top: 6px; display: none; }
+    .overlay-actions { display: flex; gap: 10px; margin-top: 14px; }
+    .btn-primary {
+      flex: 1;
+      background: #b5726a;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 13px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover { background: #9e5e57; }
+    .btn-secondary {
+      background: #f2f2f2;
+      color: #666;
+      border: none;
+      border-radius: 12px;
+      padding: 13px 18px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    .btn-secondary:hover { background: #e8e8e8; }
+
+    /* ── Set password overlay ── */
+    .pass-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(30,20,20,0.55);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .pass-overlay.show { display: flex; }
+    .pass-overlay-box {
+      background: #fff;
+      border-radius: 22px;
+      padding: 30px 24px 26px;
+      width: 100%;
+      max-width: 320px;
+      text-align: center;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+      animation: fadeScale 0.2s ease;
+    }
+    @keyframes fadeScale {
+      from { transform: scale(0.92); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
+    .pass-overlay-box .po-icon { font-size: 2.2rem; margin-bottom: 8px; }
+    .pass-overlay-box h3 { font-size: 1.05rem; font-weight: 900; margin-bottom: 4px; }
+    .pass-overlay-box p { font-size: 0.82rem; color: #aaa; margin-bottom: 20px; line-height: 1.5; }
+    .pass-overlay-box input {
+      width: 100%;
+      border: 1.5px solid #ebebeb;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      text-align: center;
+      letter-spacing: 3px;
+      margin-bottom: 8px;
+      direction: ltr;
+      background: #fafafa;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .pass-overlay-box input:focus { border-color: #b5726a; box-shadow: 0 0 0 3px rgba(181,114,106,0.1); }
+    .pass-overlay-box .po-err { color: #d44; font-size: 0.8rem; margin-bottom: 10px; display: none; }
+
+    /* ── Connection status ── */
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .dot.online  { background: #5cb85c; box-shadow: 0 0 0 2px rgba(92,184,92,0.25); }
+    .dot.offline { background: rgba(255,255,255,0.4); }
+
+    .tasks-sep {
+      font-size: 0.7rem;
+      color: #ddd;
+      text-align: center;
+      padding: 4px 0;
+      border-top: 1px dashed #f0f0f0;
+      margin: 4px 8px 0;
+    }
+
+    /* hide main app initially */
+    #app { display: none; }
+  </style>
+</head>
+<body>
+
+<!-- ══ LOGIN SCREEN ══ -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-box">
+    <div class="login-logo">🏠</div>
+    <h1>Yousra's Home</h1>
+    <div class="sub">اختار حسابك</div>
+
+    <div class="user-pick">
+      <button class="user-btn" id="btnYousra" onclick="selectUser('yousra')">
+        <div class="avatar">👩</div>
+        <div class="uname">Yousra</div>
+        <div class="ulabel">يسرا</div>
+      </button>
+      <button class="user-btn" id="btnAhmed" onclick="selectUser('ahmed')">
+        <div class="avatar">👨</div>
+        <div class="uname">Ahmed</div>
+        <div class="ulabel">أحمد</div>
+      </button>
+    </div>
+
+    <div class="pass-section">
+      <label id="passLabel">الباسورد</label>
+      <input type="password" id="loginPass" placeholder="••••••"
+             onkeydown="if(event.key==='Enter') doLogin()"
+             oninput="clearLoginErr()">
+      <div class="pass-hint" id="passHint"></div>
+    </div>
+
+    <button class="btn-login" id="loginBtn" onclick="doLogin()" disabled>دخول ✓</button>
+    <div class="login-err" id="loginErr"></div>
+
+    <button class="setup-link" onclick="openOverlay()">⚙️ إعداد Firebase</button>
+  </div>
+</div>
+
+<!-- ══ SET-PASSWORD OVERLAY ══ -->
+<div class="pass-overlay" id="passOverlay">
+  <div class="pass-overlay-box">
+    <div class="po-icon" id="poIcon"></div>
+    <h3 id="poTitle"></h3>
+    <p id="poDesc"></p>
+    <input type="password" id="poPass1" placeholder="اختار باسورد" oninput="clearPoErr()">
+    <input type="password" id="poPass2" placeholder="تأكيد الباسورد" oninput="clearPoErr()"
+           onkeydown="if(event.key==='Enter') confirmSetPass()">
+    <div class="po-err" id="poErr"></div>
+    <button class="btn-primary" onclick="confirmSetPass()">حفظ الباسورد ✓</button>
+  </div>
+</div>
+
+<!-- ══ FIREBASE SETUP OVERLAY ══ -->
+<div class="overlay" id="overlay">
+  <div class="overlay-box">
+    <h2>⚙️ إعداد Firebase (لمرة واحدة)</h2>
+    <div class="setup-hint">
+      <strong>خطوات سريعة:</strong><br>
+      1. روح <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a><br>
+      2. New Project → اسمي المشروع أي اسم<br>
+      3. Build → Firestore Database → Create (Start in test mode)<br>
+      4. Project Settings ⚙️ → Your Apps → Web → Register → انسخ الـ firebaseConfig
+    </div>
+    <label>الصق الـ firebaseConfig هنا (JSON):</label>
+    <textarea id="cfgInput" placeholder='{
+  "apiKey": "AIza...",
+  "authDomain": "my-project.firebaseapp.com",
+  "projectId": "my-project",
+  "storageBucket": "my-project.appspot.com",
+  "messagingSenderId": "123456789",
+  "appId": "1:123:web:abc"
+}'></textarea>
+    <div class="err-msg" id="cfgErr">❌ الـ JSON مش صح أو ناقص fields — حاول تاني</div>
+    <div class="overlay-actions">
+      <button class="btn-primary" onclick="saveConfig()">حفظ وتشغيل ✓</button>
+      <button class="btn-secondary" id="cancelBtn" onclick="closeOverlay()">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MAIN APP ══ -->
+<div id="app">
+  <header>
+    <div class="header-inner">
+      <div class="header-left">
+        <div class="user-chip">
+          <span class="chip-avatar" id="chipAvatar"></span>
+          <span id="chipName"></span>
+          <span class="dot offline" id="statusDot"></span>
+        </div>
+      </div>
+      <div style="flex:1;text-align:center">
+        <h1>Yousra's Home 🏠</h1>
+        <div class="date" id="headerDate"></div>
+      </div>
+      <div class="header-right">
+        <button class="hdr-btn" onclick="doLogout()" title="خروج">🚪</button>
+        <button class="hdr-btn" onclick="openOverlay()" title="إعدادات Firebase">⚙️</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- SHOPPING -->
+    <div class="card sec-shop">
+      <div class="card-header">
+        <div class="card-title"><span class="icon">🛒</span> محتاجين</div>
+        <div class="card-subtitle">آخر 15 يوم</div>
+      </div>
+      <div class="add-form">
+        <button class="btn-add" onclick="addShopping()">+</button>
+        <input type="text" id="shopIn" placeholder="أضف حاجة محتاجينها اليوم..."
+               onkeydown="if(event.key==='Enter') addShopping()">
+      </div>
+      <div class="items-list" id="shopList">
+        <div class="empty">لا في حاجات دلوقتي ✨</div>
+      </div>
+    </div>
+
+    <!-- TASKS -->
+    <div class="card sec-tasks">
+      <div class="card-header">
+        <div class="card-title"><span class="icon">📋</span> مهام قريبة</div>
+        <div class="card-subtitle">تفضل لحد ما تتشطب</div>
+      </div>
+      <div class="add-form">
+        <button class="btn-add" onclick="addTask()">+</button>
+        <input type="text" id="taskIn" placeholder="أضف مهمة..."
+               onkeydown="if(event.key==='Enter') addTask()">
+      </div>
+      <div class="items-list" id="taskList">
+        <div class="empty">مفيش مهام معلقة 👍</div>
+      </div>
+    </div>
+
+    <!-- DAILY ROUTINE -->
+    <div class="card sec-daily">
+      <div class="card-header">
+        <div class="card-title"><span class="icon">🔄</span> الروتين اليومي</div>
+        <div class="card-subtitle">بيتجدد كل يوم</div>
+      </div>
+      <div class="routine-progress">
+        <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+        <div class="prog-text" id="progText">0/0</div>
+      </div>
+      <div class="add-form">
+        <button class="btn-add" onclick="addRoutine()">+</button>
+        <input type="text" id="routineIn" placeholder="أضف نشاط يومي..."
+               onkeydown="if(event.key==='Enter') addRoutine()">
+      </div>
+      <div class="items-list" id="routineList">
+        <div class="empty">ما فيش روتين اتضاف لسه</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp }          from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import {
+  getFirestore, collection, addDoc, onSnapshot,
+  doc, updateDoc, deleteDoc, setDoc, query, orderBy, where, getDoc
+} from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+// ── Users config ──────────────────────────────────────────────────────────────
+const USERS = {
+  yousra: { label: 'Yousra', avatar: '👩', initial: 'Y', color: 'who-Y' },
+  ahmed:  { label: 'Ahmed',  avatar: '👨', initial: 'A', color: 'who-A' },
+};
+
+// ── App secret (must match Firestore Rules) ───────────────────────────────────
+// غيّر القيمة دي لأي كلمة سر تختارها، وحطها برضو في Firestore Rules
+const APP_SECRET = 'YousefFadl';
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let db          = null;
+let subs        = [];
+let currentUser = null; // 'yousra' | 'ahmed'
+
+let routineItems       = [];
+let routineCompletions = new Set();
+
+// ── Utils ─────────────────────────────────────────────────────────────────────
+const todayStr = () => new Date().toISOString().slice(0, 10);
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function dayLabel(dateStr) {
+  const [y,m,d] = dateStr.split('-').map(Number);
+  const item  = new Date(y, m-1, d);
+  const [ty,tm,td] = todayStr().split('-').map(Number);
+  const today = new Date(ty, tm-1, td);
+  const diff  = Math.round((today - item) / 86400000);
+  if (diff === 0) return { label:'النهارده', today: true };
+  if (diff === 1) return { label:'امبارح', today: false };
+  if (diff === 2) return { label:'أول امبارح', today: false };
+  return { label:`منذ ${diff} أيام`, today: false };
+}
+
+// ── Header date ───────────────────────────────────────────────────────────────
+const AR_DAYS   = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const AR_MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو',
+                   'يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+function updateHeader() {
+  const n = new Date();
+  document.getElementById('headerDate').textContent =
+    `${AR_DAYS[n.getDay()]}، ${n.getDate()} ${AR_MONTHS[n.getMonth()]} ${n.getFullYear()}`;
+}
+updateHeader();
+setInterval(updateHeader, 60000);
+
+// ── Password helpers (hashed in localStorage) ─────────────────────────────────
+async function hashPass(pass) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('yhsalt_' + pass));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+function getStoredHash(user)       { return localStorage.getItem(`yhPass_${user}`); }
+function setStoredHash(user, hash) { localStorage.setItem(`yhPass_${user}`, hash); }
+function isFirstTime(user)         { return !getStoredHash(user); }
+
+// ── Login logic ───────────────────────────────────────────────────────────────
+window.selectUser = function(u) {
+  currentUser = u;
+  document.querySelectorAll('.user-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById(u === 'yousra' ? 'btnYousra' : 'btnAhmed').classList.add('selected');
+  document.getElementById('loginBtn').disabled = false;
+  document.getElementById('loginPass').focus();
+
+  if (isFirstTime(u)) {
+    document.getElementById('passLabel').textContent = 'اختار باسورد جديد';
+    document.getElementById('passHint').style.display = 'block';
+    document.getElementById('passHint').textContent = '👆 أول مرة — هتختار باسورد خاص بيك';
+  } else {
+    document.getElementById('passLabel').textContent = 'الباسورد';
+    document.getElementById('passHint').style.display = 'none';
+  }
+};
+
+window.clearLoginErr = function() {
+  document.getElementById('loginErr').style.display = 'none';
+};
+
+window.doLogin = async function() {
+  if (!currentUser) return;
+  const pass = document.getElementById('loginPass').value;
+  if (!pass) return;
+
+  if (isFirstTime(currentUser)) {
+    // First time: open set-password modal
+    openSetPass(currentUser, pass);
+  } else {
+    const entered = await hashPass(pass);
+    const stored  = getStoredHash(currentUser);
+    if (entered === stored) {
+      loginSuccess();
+    } else {
+      const err = document.getElementById('loginErr');
+      err.textContent = '❌ الباسورد غلط، حاول تاني';
+      err.style.display = 'block';
+      document.getElementById('loginPass').value = '';
+      document.getElementById('loginPass').focus();
+    }
+  }
+};
+
+// ── Set Password Overlay ──────────────────────────────────────────────────────
+let pendingUser  = null;
+let pendingFirst = '';
+
+function openSetPass(user, firstEntry) {
+  pendingUser  = user;
+  pendingFirst = firstEntry;
+  const u = USERS[user];
+  document.getElementById('poIcon').textContent  = u.avatar;
+  document.getElementById('poTitle').textContent = `أهلاً ${u.label}!`;
+  document.getElementById('poDesc').textContent  =
+    'أول مرة تدخل — اختار باسورد سري خاص بيك وهيتحفظ على الجهاز ده.';
+  document.getElementById('poPass1').value = firstEntry;
+  document.getElementById('poPass2').value = '';
+  document.getElementById('poErr').style.display = 'none';
+  document.getElementById('passOverlay').classList.add('show');
+  document.getElementById('poPass2').focus();
+}
+
+window.clearPoErr = function() {
+  document.getElementById('poErr').style.display = 'none';
+};
+
+window.confirmSetPass = async function() {
+  const p1 = document.getElementById('poPass1').value;
+  const p2 = document.getElementById('poPass2').value;
+  const err = document.getElementById('poErr');
+
+  if (p1.length < 4) {
+    err.textContent = 'الباسورد لازم يكون 4 حروف على الأقل';
+    err.style.display = 'block'; return;
+  }
+  if (p1 !== p2) {
+    err.textContent = '❌ الباسوردين مش متطابقين';
+    err.style.display = 'block'; return;
+  }
+
+  const hash = await hashPass(p1);
+  setStoredHash(pendingUser, hash);
+  currentUser = pendingUser;
+  document.getElementById('passOverlay').classList.remove('show');
+  loginSuccess();
+};
+
+function loginSuccess() {
+  // update header chip
+  const u = USERS[currentUser];
+  document.getElementById('chipAvatar').textContent = u.avatar;
+  document.getElementById('chipName').textContent   = u.label;
+
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('loginPass').value = '';
+
+  const cfg = getStoredConfig();
+  if (cfg) boot(cfg);
+  else openOverlay();
+}
+
+window.doLogout = function() {
+  subs.forEach(fn => fn());
+  subs = [];
+  db = null;
+  currentUser = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.querySelectorAll('.user-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginBtn').disabled = true;
+  document.getElementById('statusDot').className = 'dot offline';
+};
+
+// ── Firebase config ───────────────────────────────────────────────────────────
+function getStoredConfig() {
+  try { return JSON.parse(localStorage.getItem('yhFbCfg') || 'null'); }
+  catch { return null; }
+}
+
+window.saveConfig = function() {
+  try {
+    const raw = document.getElementById('cfgInput').value.trim();
+    const cfg = JSON.parse(raw);
+    if (!cfg.apiKey || !cfg.projectId) throw new Error('missing');
+    localStorage.setItem('yhFbCfg', JSON.stringify(cfg));
+    document.getElementById('cfgErr').style.display = 'none';
+    closeOverlay();
+    if (currentUser) boot(cfg);
+  } catch {
+    document.getElementById('cfgErr').style.display = 'block';
+  }
+};
+
+window.openOverlay = function() {
+  const cfg = getStoredConfig();
+  if (cfg) document.getElementById('cfgInput').value = JSON.stringify(cfg, null, 2);
+  document.getElementById('cancelBtn').style.display = cfg ? '' : 'none';
+  document.getElementById('overlay').classList.add('show');
+};
+window.closeOverlay = function() {
+  document.getElementById('overlay').classList.remove('show');
+};
+
+// ── Boot Firebase ─────────────────────────────────────────────────────────────
+function boot(cfg) {
+  subs.forEach(fn => fn());
+  subs = [];
+  try {
+    const app = initializeApp(cfg, 'yh-' + Date.now());
+    db = getFirestore(app);
+    document.getElementById('statusDot').className = 'dot online';
+    startListeners();
+  } catch(e) {
+    console.error(e);
+    alert('مشكلة في الاتصال — تأكد من الـ Firebase config');
+  }
+}
+
+// ── Who badge ─────────────────────────────────────────────────────────────────
+function whoBadge(by) {
+  if (!by || !USERS[by]) return '';
+  const u = USERS[by];
+  return `<span class="who-badge ${u.color}" title="${u.label}">${u.initial}</span>`;
+}
+
+// ── Secure write helper ───────────────────────────────────────────────────────
+// كل document بيتكتب فيه حقل _s = المفتاح السري
+// Firestore Rules بتتحقق منه قبل ما تسمح بأي write
+const sw = (data) => ({ ...data, _s: APP_SECRET });
+
+// ── SHOPPING ──────────────────────────────────────────────────────────────────
+window.addShopping = function() {
+  if (!db) { alert('اعمل إعداد Firebase من ⚙️ الأول'); return; }
+  const el = document.getElementById('shopIn');
+  const txt = el.value.trim();
+  if (!txt) return;
+  addDoc(collection(db,'shopping'), sw({ text: txt, date: todayStr(), done: false, ts: Date.now(), by: currentUser }));
+  el.value = '';
+};
+
+function renderShopping(items) {
+  const list = document.getElementById('shopList');
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - 15);
+  const cutoffStr = cutoff.toISOString().slice(0, 10);
+
+  const visible = items.filter(i => i.date >= cutoffStr);
+  if (!visible.length) { list.innerHTML = '<div class="empty">لا في حاجات دلوقتي ✨</div>'; return; }
+
+  const groups = {};
+  visible.forEach(i => { (groups[i.date] = groups[i.date] || []).push(i); });
+
+  list.innerHTML = Object.keys(groups).sort().reverse().map(date => {
+    const { label, today } = dayLabel(date);
+    return `<div class="day-group">
+      <div class="day-label${today ? ' today' : ''}">${label}</div>
+      ${groups[date].map(item => `
+        <div class="item">
+          <div class="item-check${item.done ? ' done' : ''}"
+               onclick="toggleShop('${item.id}',${!item.done})">${item.done ? '✓' : ''}</div>
+          <div class="item-text${item.done ? ' done' : ''}">${esc(item.text)}</div>
+          ${whoBadge(item.by)}
+          <button class="item-del" onclick="delShop('${item.id}')">×</button>
+        </div>`).join('')}
+    </div>`;
+  }).join('');
+}
+
+window.toggleShop = (id, done) => db && updateDoc(doc(db,'shopping',id), sw({ done }));
+window.delShop    = (id)       => db && deleteDoc(doc(db,'shopping',id));
+
+// ── TASKS ─────────────────────────────────────────────────────────────────────
+window.addTask = function() {
+  if (!db) { alert('اعمل إعداد Firebase من ⚙️ الأول'); return; }
+  const el = document.getElementById('taskIn');
+  const txt = el.value.trim();
+  if (!txt) return;
+  addDoc(collection(db,'tasks'), sw({ text: txt, done: false, urgent: false, ts: Date.now(), by: currentUser }));
+  el.value = '';
+};
+
+function renderTasks(items) {
+  const list = document.getElementById('taskList');
+  if (!items.length) { list.innerHTML = '<div class="empty">مفيش مهام معلقة 👍</div>'; return; }
+
+  const pending = items.filter(i => !i.done).sort((a,b) => (b.urgent?1:0)-(a.urgent?1:0) || a.ts-b.ts);
+  const done    = items.filter(i =>  i.done).sort((a,b) => a.ts - b.ts);
+
+  const renderItem = item => `
+    <div class="item">
+      <div class="item-check${item.done ? ' done' : ''}"
+           onclick="toggleTask('${item.id}',${!item.done})">${item.done ? '✓' : ''}</div>
+      <div class="item-text${item.done ? ' done' : ''}">${esc(item.text)}</div>
+      ${whoBadge(item.by)}
+      <button class="${item.urgent ? 'badge-urgent' : 'badge-normal'}"
+              onclick="toggleUrgent('${item.id}',${!item.urgent})">
+        ${item.urgent ? '🔴 عاجل' : '···'}
+      </button>
+      <button class="item-del" onclick="delTask('${item.id}')">×</button>
+    </div>`;
+
+  list.innerHTML = pending.map(renderItem).join('') +
+    (done.length ? `<div class="tasks-sep">مُنجز (${done.length})</div>` + done.map(renderItem).join('') : '');
+}
+
+window.toggleTask   = (id, done)   => db && updateDoc(doc(db,'tasks',id), sw({ done }));
+window.toggleUrgent = (id, urgent) => db && updateDoc(doc(db,'tasks',id), sw({ urgent }));
+window.delTask      = (id)         => db && deleteDoc(doc(db,'tasks',id));
+
+// ── ROUTINE ───────────────────────────────────────────────────────────────────
+window.addRoutine = function() {
+  if (!db) { alert('اعمل إعداد Firebase من ⚙️ الأول'); return; }
+  const el = document.getElementById('routineIn');
+  const txt = el.value.trim();
+  if (!txt) return;
+  addDoc(collection(db,'routine_items'), sw({ text: txt, ts: Date.now(), by: currentUser }));
+  el.value = '';
+};
+
+function renderRoutine() {
+  const list  = document.getElementById('routineList');
+  const total = routineItems.length;
+  const done  = routineItems.filter(i => routineCompletions.has(i.id)).length;
+  const pct   = total ? Math.round(done / total * 100) : 0;
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progText').textContent = `${done}/${total}`;
+
+  if (!total) { list.innerHTML = '<div class="empty">ما فيش روتين اتضاف لسه</div>'; return; }
+
+  list.innerHTML = routineItems.map(item => {
+    const isDone = routineCompletions.has(item.id);
+    return `
+      <div class="item">
+        <div class="item-check${isDone ? ' done' : ''}"
+             onclick="toggleRoutine('${item.id}',${!isDone})">${isDone ? '✓' : ''}</div>
+        <div class="item-text${isDone ? ' done' : ''}">${esc(item.text)}</div>
+        ${whoBadge(item.by)}
+        <button class="item-del" onclick="delRoutineItem('${item.id}')">×</button>
+      </div>`;
+  }).join('');
+}
+
+window.toggleRoutine = async function(itemId, completed) {
+  if (!db) return;
+  const today = todayStr();
+  const compId = `${today}_${itemId}`;
+  if (completed) {
+    await setDoc(doc(db,'routine_completions',compId), sw({ itemId, date: today, ts: Date.now(), by: currentUser }));
+    routineCompletions.add(itemId);
+  } else {
+    await deleteDoc(doc(db,'routine_completions',compId));
+    routineCompletions.delete(itemId);
+  }
+  renderRoutine();
+};
+
+window.delRoutineItem = function(id) {
+  if (!db) return;
+  if (!confirm('تمسح النشاط ده من الروتين؟')) return;
+  deleteDoc(doc(db,'routine_items',id));
+};
+
+// ── Listeners ─────────────────────────────────────────────────────────────────
+function startListeners() {
+  const today = todayStr();
+  subs.push(onSnapshot(
+    query(collection(db,'shopping'), orderBy('ts','desc')),
+    snap => renderShopping(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+  ));
+  subs.push(onSnapshot(
+    query(collection(db,'tasks'), orderBy('ts','asc')),
+    snap => renderTasks(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+  ));
+  subs.push(onSnapshot(
+    query(collection(db,'routine_items'), orderBy('ts','asc')),
+    snap => { routineItems = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderRoutine(); }
+  ));
+  subs.push(onSnapshot(
+    query(collection(db,'routine_completions'), where('date','==',today)),
+    snap => { routineCompletions = new Set(snap.docs.map(d => d.data().itemId)); renderRoutine(); }
+  ));
+}
+</script>
+</body>
+</html>
