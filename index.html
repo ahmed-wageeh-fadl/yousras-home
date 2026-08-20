@@ -887,9 +887,7 @@ function loginSuccess() {
   document.getElementById('app').style.display = 'block';
   document.getElementById('loginPass').value = '';
 
-  const cfg = getStoredConfig();
-  if (cfg) boot(cfg);
-  else openOverlay();
+  boot(FIREBASE_CONFIG);
 }
 
 window.doLogout = function() {
@@ -905,11 +903,17 @@ window.doLogout = function() {
   document.getElementById('statusDot').className = 'dot offline';
 };
 
-// ── Firebase config ───────────────────────────────────────────────────────────
-function getStoredConfig() {
-  try { return JSON.parse(localStorage.getItem('yhFbCfg') || 'null'); }
-  catch { return null; }
-}
+// ── Firebase config (hardcoded — security handled by Firestore Rules) ─────────
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDxYlpOfYY8TP5tZUMuM0h7ULIwfLQCQ4w",
+  authDomain: "yousras-home.firebaseapp.com",
+  projectId: "yousras-home",
+  storageBucket: "yousras-home.firebasestorage.app",
+  messagingSenderId: "378506030119",
+  appId: "1:378506030119:web:660c3a82016b721dd3f202"
+};
+
+function getStoredConfig() { return FIREBASE_CONFIG; }
 
 window.saveConfig = function() {
   try {
