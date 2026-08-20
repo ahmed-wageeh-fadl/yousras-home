@@ -784,9 +784,22 @@ async function hashPass(pass) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('yhsalt_' + pass));
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
-function getStoredHash(user)       { return localStorage.getItem(`yhPass_${user}`); }
-function setStoredHash(user, hash) { localStorage.setItem(`yhPass_${user}`, hash); }
-function isFirstTime(user)         { return !getStoredHash(user); }
+
+// passwords stored in Firestore under 'passwords' collection
+async function getRemoteHash(user) {
+  try {
+    const app = initializeApp(FIREBASE_CONFIG, 'yh-pass-check');
+    const fdb  = getFirestore(app);
+    const snap = await getDoc(doc(fdb, 'passwords', user));
+    return snap.exists() ? snap.data().hash : null;
+  } catch { return null; }
+}
+
+async function setRemoteHash(user, hash) {
+  const app = initializeApp(FIREBASE_CONFIG, 'yh-pass-set-' + Date.now());
+  const fdb  = getFirestore(app);
+  await setDoc(doc(fdb, 'passwords', user), { hash, _s: APP_SECRET });
+}
 
 // ── Login logic ───────────────────────────────────────────────────────────────
 window.selectUser = function(u) {
@@ -795,15 +808,8 @@ window.selectUser = function(u) {
   document.getElementById(u === 'yousra' ? 'btnYousra' : 'btnAhmed').classList.add('selected');
   document.getElementById('loginBtn').disabled = false;
   document.getElementById('loginPass').focus();
-
-  if (isFirstTime(u)) {
-    document.getElementById('passLabel').textContent = 'اختار باسورد جديد';
-    document.getElementById('passHint').style.display = 'block';
-    document.getElementById('passHint').textContent = '👆 أول مرة — هتختار باسورد خاص بيك';
-  } else {
-    document.getElementById('passLabel').textContent = 'الباسورد';
-    document.getElementById('passHint').style.display = 'none';
-  }
+  document.getElementById('passLabel').textContent = 'الباسورد';
+  document.getElementById('passHint').style.display = 'none';
 };
 
 window.clearLoginErr = function() {
@@ -815,21 +821,30 @@ window.doLogin = async function() {
   const pass = document.getElementById('loginPass').value;
   if (!pass) return;
 
-  if (isFirstTime(currentUser)) {
-    // First time: open set-password modal
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true;
+  btn.textContent = '...';
+
+  const entered    = await hashPass(pass);
+  const storedHash = await getRemoteHash(currentUser);
+
+  if (storedHash === null) {
+    // first time ever — set password
+    btn.disabled = false;
+    btn.textContent = 'دخول ✓';
     openSetPass(currentUser, pass);
+  } else if (entered === storedHash) {
+    btn.disabled = false;
+    btn.textContent = 'دخول ✓';
+    loginSuccess();
   } else {
-    const entered = await hashPass(pass);
-    const stored  = getStoredHash(currentUser);
-    if (entered === stored) {
-      loginSuccess();
-    } else {
-      const err = document.getElementById('loginErr');
-      err.textContent = '❌ الباسورد غلط، حاول تاني';
-      err.style.display = 'block';
-      document.getElementById('loginPass').value = '';
-      document.getElementById('loginPass').focus();
-    }
+    btn.disabled = false;
+    btn.textContent = 'دخول ✓';
+    const err = document.getElementById('loginErr');
+    err.textContent = '❌ الباسورد غلط، حاول تاني';
+    err.style.display = 'block';
+    document.getElementById('loginPass').value = '';
+    document.getElementById('loginPass').focus();
   }
 };
 
@@ -844,7 +859,7 @@ function openSetPass(user, firstEntry) {
   document.getElementById('poIcon').textContent  = u.avatar;
   document.getElementById('poTitle').textContent = `أهلاً ${u.label}!`;
   document.getElementById('poDesc').textContent  =
-    'أول مرة تدخل — اختار باسورد سري خاص بيك وهيتحفظ على الجهاز ده.';
+    'أول مرة تدخل — اختار باسورد سري خاص بيك وهيتحفظ في الـ cloud.';
   document.getElementById('poPass1').value = firstEntry;
   document.getElementById('poPass2').value = '';
   document.getElementById('poErr').style.display = 'none';
@@ -857,8 +872,8 @@ window.clearPoErr = function() {
 };
 
 window.confirmSetPass = async function() {
-  const p1 = document.getElementById('poPass1').value;
-  const p2 = document.getElementById('poPass2').value;
+  const p1  = document.getElementById('poPass1').value;
+  const p2  = document.getElementById('poPass2').value;
   const err = document.getElementById('poErr');
 
   if (p1.length < 4) {
@@ -870,9 +885,15 @@ window.confirmSetPass = async function() {
     err.style.display = 'block'; return;
   }
 
+  const confirmBtn = document.querySelector('.pass-overlay-box .btn-primary');
+  confirmBtn.textContent = '...';
+  confirmBtn.disabled = true;
+
   const hash = await hashPass(p1);
-  setStoredHash(pendingUser, hash);
+  await setRemoteHash(pendingUser, hash);
   currentUser = pendingUser;
+  confirmBtn.textContent = 'حفظ الباسورد ✓';
+  confirmBtn.disabled = false;
   document.getElementById('passOverlay').classList.remove('show');
   loginSuccess();
 };
