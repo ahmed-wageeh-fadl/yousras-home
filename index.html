@@ -414,11 +414,12 @@
     .child-item .item-text { font-size: 0.84rem; }
     .child-item .item-del { opacity: 0.55; font-size: 1rem; }
     .child-add-form {
-      display: flex;
+      display: none;
       gap: 6px;
       margin-top: 5px;
       padding: 2px 4px 0;
     }
+    .child-add-form.show { display: flex; }
     .child-add-form input {
       flex: 1;
       min-width: 0;
@@ -451,6 +452,49 @@
       padding: 2px 6px;
       white-space: nowrap;
     }
+
+    /* ── Completed dropdown ── */
+    .completed-wrap {
+      margin: 3px 8px 8px;
+      border-top: 1px dashed #ece8e5;
+      padding-top: 7px;
+    }
+    .completed-toggle {
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: #faf9f8;
+      color: #888;
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .completed-toggle:hover { background: #f5f2f0; }
+    .completed-toggle:disabled { cursor: default; opacity: 0.65; }
+    .completed-arrow { font-size: 0.72rem; transition: transform 0.18s; }
+    .completed-toggle.open .completed-arrow { transform: rotate(180deg); }
+    .completed-panel {
+      display: none;
+      padding: 5px 2px 0;
+    }
+    .completed-panel.show { display: block; }
+    .completed-child-meta {
+      font-size: 0.68rem;
+      color: #aaa;
+      margin-top: 2px;
+      line-height: 1.35;
+    }
+    .completed-child-text { flex: 1; min-width: 0; }
+    .sec-shop .completed-toggle { color: #a46861; background: #fdf8f7; }
+    .sec-tasks .completed-toggle { color: #5579b8; background: #f6f8fc; }
+    .sec-daily .completed-toggle { color: #4d9164; background: #f6fbf7; }
 
     /* ── Owner tabs ── */
     .owner-tabs {
@@ -962,6 +1006,8 @@ let shoppingItems      = [];
 let taskItems          = [];
 let childItems         = [];
 let expandedChildren   = new Set();
+let openChildComposers = new Set();
+let expandedCompleted  = new Set();
 let reminderTimer      = null;
 let ownerFilter        = 'all'; // 'all' | 'mine' | 'other'
 
@@ -1526,15 +1572,26 @@ const sw = (data) => ({ ...data, _s: APP_SECRET });
 function childKey(type, parentId) { return `${type}:${parentId}`; }
 function childAreaId(type, parentId) { return `childArea-${type}-${parentId}`; }
 function childInputId(type, parentId) { return `childInput-${type}-${parentId}`; }
+function childFormId(type, parentId) { return `childForm-${type}-${parentId}`; }
+function completedAreaId(type) { return `completedArea-${type}`; }
+function completedToggleId(type) { return `completedToggle-${type}`; }
 
 function childrenOf(type, parentId) {
   return childItems.filter(c => c.parentType === type && c.parentId === parentId).sort((a,b) => a.ts - b.ts);
 }
 
+function parentFor(type, parentId) {
+  if (type === 'shopping') return shoppingItems.find(i => i.id === parentId) || null;
+  if (type === 'tasks') return taskItems.find(i => i.id === parentId) || null;
+  if (type === 'routine') return routineItems.find(i => i.id === parentId) || null;
+  return null;
+}
+
 function renderChildSection(type, parentId) {
   const key = childKey(type, parentId);
-  const children = childrenOf(type, parentId);
+  const children = childrenOf(type, parentId).filter(c => !c.done);
   const expanded = expandedChildren.has(key);
+  const composerOpen = openChildComposers.has(key);
 
   return `
     <div class="child-tools">
@@ -1544,14 +1601,14 @@ function renderChildSection(type, parentId) {
     <div class="child-area${expanded ? ' show' : ''}" id="${childAreaId(type, parentId)}">
       ${children.map(child => `
         <div class="child-item">
-          <div class="item-check${child.done ? ' done' : ''}"
-               onclick="toggleChild('${child.id}',${!child.done})">${child.done ? '✓' : ''}</div>
-          <div class="item-text${child.done ? ' done' : ''}">${esc(child.text)}</div>
+          <div class="item-check"
+               onclick="toggleChild('${child.id}',true)"></div>
+          <div class="item-text">${esc(child.text)}</div>
           ${dueBadge(child)}
           ${whoBadge(child.by)}
           <button class="item-del" onclick="delChild('${child.id}')">×</button>
         </div>`).join('')}
-      <div class="child-add-form">
+      <div class="child-add-form${composerOpen ? ' show' : ''}" id="${childFormId(type, parentId)}">
         <input type="text" id="${childInputId(type, parentId)}" placeholder="اكتب العنصر الفرعي..."
                onkeydown="if(event.key==='Enter') addChild('${type}','${parentId}')">
         <button class="child-save-btn" onclick="addChild('${type}','${parentId}')">إضافة</button>
@@ -1561,22 +1618,32 @@ function renderChildSection(type, parentId) {
 
 window.toggleChildrenUI = function(type, parentId) {
   const key = childKey(type, parentId);
-  if (expandedChildren.has(key)) expandedChildren.delete(key);
-  else expandedChildren.add(key);
+  if (expandedChildren.has(key)) {
+    expandedChildren.delete(key);
+    openChildComposers.delete(key);
+  } else {
+    expandedChildren.add(key);
+  }
   const area = document.getElementById(childAreaId(type, parentId));
   if (area) area.classList.toggle('show', expandedChildren.has(key));
+  const form = document.getElementById(childFormId(type, parentId));
+  if (form) form.classList.toggle('show', openChildComposers.has(key));
 };
 
 window.openChildComposer = function(type, parentId) {
   const key = childKey(type, parentId);
   expandedChildren.add(key);
+  openChildComposers.add(key);
   const area = document.getElementById(childAreaId(type, parentId));
   if (area) area.classList.add('show');
+  const form = document.getElementById(childFormId(type, parentId));
+  if (form) form.classList.add('show');
   setTimeout(() => document.getElementById(childInputId(type, parentId))?.focus(), 0);
 };
 
 window.addChild = async function(type, parentId) {
   if (!db) return;
+  const key = childKey(type, parentId);
   const el = document.getElementById(childInputId(type, parentId));
   const txt = el?.value.trim();
   if (!txt) return;
@@ -1584,15 +1651,123 @@ window.addChild = async function(type, parentId) {
     parentType: type, parentId, text: txt, done: false, ts: Date.now(), by: currentUser, ...reminderFields(txt)
   }));
   el.value = '';
-  expandedChildren.add(childKey(type, parentId));
+  expandedChildren.add(key);
+  openChildComposers.delete(key);
+  document.getElementById(childFormId(type, parentId))?.classList.remove('show');
 };
 
-window.toggleChild = (id, done) => db && updateDoc(doc(db,'child_items',id), sw({ done }));
-window.delChild    = (id)       => db && deleteDoc(doc(db,'child_items',id));
+async function restoreParentForChild(child) {
+  if (!child) return;
+  const parent = parentFor(child.parentType, child.parentId);
+  if (!parent) return;
+
+  if (child.parentType === 'shopping' && parent.done) {
+    await updateDoc(doc(db,'shopping',parent.id), sw({ done:false }));
+  } else if (child.parentType === 'tasks' && parent.done) {
+    await updateDoc(doc(db,'tasks',parent.id), sw({ done:false }));
+  } else if (child.parentType === 'routine' && routineCompletions.has(parent.id)) {
+    const compId = `${todayStr()}_${parent.id}`;
+    await deleteDoc(doc(db,'routine_completions',compId));
+    routineCompletions.delete(parent.id);
+  }
+}
+
+window.toggleChild = async function(id, done) {
+  if (!db) return;
+  const child = childItems.find(c => c.id === id);
+  if (!child) return;
+  if (!done) {
+    expandedChildren.add(childKey(child.parentType, child.parentId));
+    await restoreParentForChild(child);
+  }
+  await updateDoc(doc(db,'child_items',id), sw({ done }));
+};
+window.delChild = (id) => db && deleteDoc(doc(db,'child_items',id));
 
 async function deleteChildrenForParent(type, parentId) {
   const children = childrenOf(type, parentId);
   await Promise.all(children.map(c => deleteDoc(doc(db,'child_items',c.id))));
+}
+
+window.toggleCompletedUI = function(type) {
+  if (expandedCompleted.has(type)) expandedCompleted.delete(type);
+  else expandedCompleted.add(type);
+  const area = document.getElementById(completedAreaId(type));
+  const btn = document.getElementById(completedToggleId(type));
+  const open = expandedCompleted.has(type);
+  if (area) area.classList.toggle('show', open);
+  if (btn) {
+    btn.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+};
+
+function renderCompletedParent(type, item) {
+  const toggle = type === 'shopping'
+    ? `toggleShop('${item.id}',false)`
+    : type === 'tasks'
+      ? `toggleTask('${item.id}',false)`
+      : `toggleRoutine('${item.id}',false)`;
+  const del = type === 'shopping'
+    ? `delShop('${item.id}')`
+    : type === 'tasks'
+      ? `delTask('${item.id}')`
+      : `delRoutineItem('${item.id}')`;
+  const urgent = type === 'tasks'
+    ? `<button class="${item.urgent ? 'badge-urgent' : 'badge-normal'}" onclick="event.stopPropagation();toggleUrgent('${item.id}',${!item.urgent})">${item.urgent ? '🔴 عاجل' : '···'}</button>`
+    : '';
+
+  return `
+    <div class="item-block">
+      <div class="item">
+        <div class="item-check done" onclick="event.stopPropagation();${toggle}">✓</div>
+        <div class="item-text done">${esc(item.text)}</div>
+        ${dueBadge(item)}
+        ${whoBadge(item.by)}
+        ${urgent}
+        <button class="item-del" onclick="event.stopPropagation();${del}">×</button>
+      </div>
+    </div>`;
+}
+
+function renderCompletedChild(child) {
+  const parent = parentFor(child.parentType, child.parentId);
+  const parentName = parent ? parent.text : 'العنصر الرئيسي';
+  return `
+    <div class="child-item">
+      <div class="item-check done" onclick="toggleChild('${child.id}',false)">✓</div>
+      <div class="completed-child-text">
+        <div class="item-text done">${esc(child.text)}</div>
+        <div class="completed-child-meta">↳ تابع لـ: ${esc(parentName)}</div>
+      </div>
+      ${dueBadge(child)}
+      ${whoBadge(child.by)}
+      <button class="item-del" onclick="delChild('${child.id}')">×</button>
+    </div>`;
+}
+
+function renderCompletedSection(type, completedParents, completedChildren) {
+  const count = completedParents.length + completedChildren.length;
+  const open = expandedCompleted.has(type);
+  return `
+    <div class="completed-wrap">
+      <button class="completed-toggle${open ? ' open' : ''}" id="${completedToggleId(type)}"
+              onclick="toggleCompletedUI('${type}')" aria-expanded="${open ? 'true' : 'false'}" ${count ? '' : 'disabled'}>
+        <span>✓ تم إنجازه (${count})</span>
+        <span class="completed-arrow">⌄</span>
+      </button>
+      <div class="completed-panel${open ? ' show' : ''}" id="${completedAreaId(type)}">
+        ${completedParents.map(item => renderCompletedParent(type, item)).join('')}
+        ${completedChildren.map(renderCompletedChild).join('')}
+      </div>
+    </div>`;
+}
+
+function completedChildrenFor(type, visibleParents) {
+  const parentIds = new Set(visibleParents.map(i => i.id));
+  return childItems
+    .filter(c => c.parentType === type && c.done && parentIds.has(c.parentId))
+    .sort((a,b) => a.ts - b.ts);
 }
 
 function renderAllLists() {
@@ -1618,21 +1793,23 @@ function renderShopping(items) {
   const cutoffStr = cutoff.toISOString().slice(0, 10);
 
   const visible = filterByOwner(items).filter(i => i.date >= cutoffStr);
-  if (!visible.length) { list.innerHTML = '<div class="empty">لا في حاجات دلوقتي ✨</div>'; return; }
+  const pending = visible.filter(i => !i.done);
+  const completedParents = visible.filter(i => i.done).sort((a,b) => a.ts - b.ts);
+  const completedChildren = completedChildrenFor('shopping', visible);
 
   const groups = {};
-  visible.forEach(i => { (groups[i.date] = groups[i.date] || []).push(i); });
+  pending.forEach(i => { (groups[i.date] = groups[i.date] || []).push(i); });
 
-  list.innerHTML = Object.keys(groups).sort().reverse().map(date => {
+  const pendingHtml = pending.length ? Object.keys(groups).sort().reverse().map(date => {
     const { label, today } = dayLabel(date);
     return `<div class="day-group">
       <div class="day-label${today ? ' today' : ''}">${label}</div>
       ${groups[date].map(item => `
         <div class="item-block">
           <div class="item parent-item" onclick="toggleChildrenUI('shopping','${item.id}')">
-            <div class="item-check${item.done ? ' done' : ''}"
-                 onclick="event.stopPropagation();toggleShop('${item.id}',${!item.done})">${item.done ? '✓' : ''}</div>
-            <div class="item-text${item.done ? ' done' : ''}">${esc(item.text)}</div>
+            <div class="item-check"
+                 onclick="event.stopPropagation();toggleShop('${item.id}',true)"></div>
+            <div class="item-text">${esc(item.text)}</div>
             ${dueBadge(item)}
             ${whoBadge(item.by)}
             <button class="item-del" onclick="event.stopPropagation();delShop('${item.id}')">×</button>
@@ -1640,7 +1817,9 @@ function renderShopping(items) {
           ${renderChildSection('shopping', item.id)}
         </div>`).join('')}
     </div>`;
-  }).join('');
+  }).join('') : '<div class="empty">لا في حاجات دلوقتي ✨</div>';
+
+  list.innerHTML = pendingHtml + renderCompletedSection('shopping', completedParents, completedChildren);
 }
 
 window.toggleShop = (id, done) => db && updateDoc(doc(db,'shopping',id), sw({ done }));
@@ -1662,19 +1841,17 @@ window.addTask = function() {
 
 function renderTasks(items) {
   const list = document.getElementById('taskList');
-  if (!items.length) { list.innerHTML = '<div class="empty">مفيش مهام معلقة 👍</div>'; return; }
-
   const visible = filterByOwner(items);
-  if (!visible.length) { list.innerHTML = '<div class="empty">مفيش عناصر في التاب ده ✨</div>'; return; }
   const pending = visible.filter(i => !i.done).sort((a,b) => (b.urgent?1:0)-(a.urgent?1:0) || a.ts-b.ts);
-  const done    = visible.filter(i =>  i.done).sort((a,b) => a.ts - b.ts);
+  const completedParents = visible.filter(i => i.done).sort((a,b) => a.ts - b.ts);
+  const completedChildren = completedChildrenFor('tasks', visible);
 
   const renderItem = item => `
     <div class="item-block">
       <div class="item parent-item" onclick="toggleChildrenUI('tasks','${item.id}')">
-        <div class="item-check${item.done ? ' done' : ''}"
-             onclick="event.stopPropagation();toggleTask('${item.id}',${!item.done})">${item.done ? '✓' : ''}</div>
-        <div class="item-text${item.done ? ' done' : ''}">${esc(item.text)}</div>
+        <div class="item-check"
+             onclick="event.stopPropagation();toggleTask('${item.id}',true)"></div>
+        <div class="item-text">${esc(item.text)}</div>
         ${dueBadge(item)}
         ${whoBadge(item.by)}
         <button class="${item.urgent ? 'badge-urgent' : 'badge-normal'}"
@@ -1686,8 +1863,11 @@ function renderTasks(items) {
       ${renderChildSection('tasks', item.id)}
     </div>`;
 
-  list.innerHTML = pending.map(renderItem).join('') +
-    (done.length ? `<div class="tasks-sep">مُنجز (${done.length})</div>` + done.map(renderItem).join('') : '');
+  const pendingHtml = pending.length
+    ? pending.map(renderItem).join('')
+    : `<div class="empty">${visible.length ? 'كل المهام خلصت 👍' : 'مفيش عناصر في التاب ده ✨'}</div>`;
+
+  list.innerHTML = pendingHtml + renderCompletedSection('tasks', completedParents, completedChildren);
 }
 
 window.toggleTask   = (id, done)   => db && updateDoc(doc(db,'tasks',id), sw({ done }));
@@ -1713,27 +1893,28 @@ function renderRoutine() {
   const visible = filterByOwner(routineItems);
   const total   = visible.length;
   const done    = visible.filter(i => routineCompletions.has(i.id)).length;
-  const pct   = total ? Math.round(done / total * 100) : 0;
+  const pct     = total ? Math.round(done / total * 100) : 0;
   document.getElementById('progFill').style.width = pct + '%';
   document.getElementById('progText').textContent = `${done}/${total}`;
 
-  if (!total) { list.innerHTML = '<div class="empty">ما فيش روتين اتضاف لسه</div>'; return; }
+  const pending = visible.filter(i => !routineCompletions.has(i.id));
+  const completedParents = visible.filter(i => routineCompletions.has(i.id));
+  const completedChildren = completedChildrenFor('routine', visible);
 
-  list.innerHTML = visible.map(item => {
-    const isDone = routineCompletions.has(item.id);
-    return `
+  const pendingHtml = pending.length ? pending.map(item => `
       <div class="item-block">
         <div class="item parent-item" onclick="toggleChildrenUI('routine','${item.id}')">
-          <div class="item-check${isDone ? ' done' : ''}"
-               onclick="event.stopPropagation();toggleRoutine('${item.id}',${!isDone})">${isDone ? '✓' : ''}</div>
-          <div class="item-text${isDone ? ' done' : ''}">${esc(item.text)}</div>
+          <div class="item-check"
+               onclick="event.stopPropagation();toggleRoutine('${item.id}',true)"></div>
+          <div class="item-text">${esc(item.text)}</div>
           ${dueBadge(item)}
           ${whoBadge(item.by)}
           <button class="item-del" onclick="event.stopPropagation();delRoutineItem('${item.id}')">×</button>
         </div>
         ${renderChildSection('routine', item.id)}
-      </div>`;
-  }).join('');
+      </div>`).join('') : `<div class="empty">${total ? 'روتين النهارده خلص ✨' : 'ما فيش روتين اتضاف لسه'}</div>`;
+
+  list.innerHTML = pendingHtml + renderCompletedSection('routine', completedParents, completedChildren);
 }
 
 window.toggleRoutine = async function(itemId, completed) {
