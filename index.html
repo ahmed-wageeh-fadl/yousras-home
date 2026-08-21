@@ -310,6 +310,235 @@
     }
     .item-text.done { text-decoration: line-through; color: #ccc; }
 
+
+    .item-text.editable {
+      cursor: text;
+      border-radius: 7px;
+      padding: 2px 4px;
+      margin: -2px -4px;
+    }
+    .item-text.editable:hover { background: #f2eeeb; }
+    .inline-edit-input {
+      width: 100%;
+      min-width: 0;
+      border: 1.5px solid #b9aaa4;
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-family: inherit;
+      font-size: inherit;
+      line-height: 1.3;
+      outline: none;
+      background: white;
+      direction: rtl;
+      box-shadow: 0 0 0 3px rgba(181,114,106,0.1);
+      text-decoration: none;
+      color: #2d2d2d;
+    }
+
+    /* Monthly budget */
+    .app-view {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .app-view.hidden { display: none; }
+    .budget-card { overflow: visible; }
+    .budget-hero {
+      padding: 18px 18px 12px;
+      background: linear-gradient(145deg, #fff8f0, #fff);
+      border-bottom: 1px solid #f2e7dc;
+    }
+    .budget-kicker {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #b68a66;
+      margin-bottom: 4px;
+    }
+    .budget-cycle {
+      font-size: 0.82rem;
+      color: #9a8b82;
+      margin-bottom: 14px;
+    }
+    .budget-remaining-label {
+      font-size: 0.8rem;
+      color: #8d817a;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+    .budget-remaining {
+      font-size: 2rem;
+      font-weight: 900;
+      color: #4a8b61;
+      letter-spacing: -0.5px;
+    }
+    .budget-remaining.over { color: #d45454; }
+    .budget-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 15px;
+    }
+    .budget-stat {
+      background: rgba(255,255,255,0.8);
+      border: 1px solid #eee4dc;
+      border-radius: 12px;
+      padding: 9px 11px;
+    }
+    .budget-stat-label { font-size: 0.68rem; color: #aaa; margin-bottom: 3px; }
+    .budget-stat-value { font-size: 0.92rem; font-weight: 900; color: #544b46; }
+    .budget-progress {
+      height: 9px;
+      background: #eee7e2;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+    .budget-progress-fill {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, #73ad82, #4a8b61);
+      border-radius: inherit;
+      transition: width 0.35s ease;
+    }
+    .budget-progress-fill.over { background: linear-gradient(90deg, #e07b72, #cf4f4f); }
+    .budget-progress-text {
+      text-align: left;
+      color: #aaa;
+      font-size: 0.68rem;
+      font-weight: 800;
+      margin-top: 4px;
+      direction: ltr;
+    }
+    .expense-form {
+      display: grid;
+      grid-template-columns: minmax(90px, 0.8fr) minmax(0, 1.5fr) auto;
+      gap: 7px;
+      padding: 13px 12px 12px;
+    }
+    .expense-form input {
+      min-width: 0;
+      border: 1.5px solid #e8e2de;
+      border-radius: 11px;
+      padding: 10px 11px;
+      font-family: inherit;
+      font-size: 0.84rem;
+      outline: none;
+      background: #fafafa;
+    }
+    .expense-form input:focus {
+      border-color: #b5726a;
+      box-shadow: 0 0 0 3px rgba(181,114,106,0.1);
+    }
+    .expense-form .amount-input { direction: ltr; text-align: center; }
+    .expense-add-btn {
+      border: none;
+      border-radius: 11px;
+      padding: 0 14px;
+      background: #b5726a;
+      color: white;
+      font-family: inherit;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .expense-add-btn:active { transform: scale(0.97); }
+    .expense-list { padding: 5px 10px 12px; }
+    .expense-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 7px;
+      border-bottom: 1px solid #f2efed;
+    }
+    .expense-row:last-child { border-bottom: none; }
+    .expense-main { flex: 1; min-width: 0; }
+    .expense-topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .expense-note {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #4a4542;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .expense-amount {
+      flex-shrink: 0;
+      color: #b5726a;
+      font-size: 0.9rem;
+      font-weight: 900;
+    }
+    .expense-meta { font-size: 0.68rem; color: #b6afaa; margin-top: 3px; }
+    .expense-delete {
+      border: none;
+      background: #fff0ef;
+      color: #d26760;
+      width: 28px;
+      height: 28px;
+      border-radius: 9px;
+      cursor: pointer;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .budget-history { padding: 5px 10px 12px; }
+    .history-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      gap: 10px;
+      padding: 12px 7px;
+      border-bottom: 1px solid #f1eeec;
+      align-items: center;
+    }
+    .history-row:last-child { border-bottom: none; }
+    .history-period { font-size: 0.78rem; font-weight: 900; color: #555; }
+    .history-meta { font-size: 0.67rem; color: #aaa; margin-top: 3px; }
+    .history-values { text-align: left; }
+    .history-spent { font-size: 0.82rem; font-weight: 900; color: #5e5651; }
+    .history-result { font-size: 0.68rem; color: #4a8b61; margin-top: 3px; }
+    .history-result.over { color: #d45454; }
+    .closed-badge {
+      display: inline-block;
+      margin-right: 5px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: #f1eeee;
+      color: #999;
+      font-size: 0.62rem;
+      font-weight: 800;
+    }
+    .app-toast {
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translate(-50%, 18px);
+      width: calc(100% - 28px);
+      max-width: 440px;
+      background: #2f2c2a;
+      color: white;
+      border-radius: 14px;
+      padding: 12px 14px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 3000;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .app-toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .app-toast-title { font-size: 0.84rem; font-weight: 900; margin-bottom: 2px; }
+    .app-toast-body { font-size: 0.75rem; color: rgba(255,255,255,0.8); line-height: 1.45; }
+
+    @media (max-width: 430px) {
+      .owner-tab { font-size: 0.68rem; padding: 6px 2px; }
+      .expense-form { grid-template-columns: 1fr auto; }
+      .expense-form .expense-note-input { grid-column: 1 / -1; grid-row: 2; }
+      .expense-form .expense-add-btn { grid-column: 2; grid-row: 1; min-height: 40px; }
+      .history-row { grid-template-columns: 1fr; gap: 5px; }
+      .history-values { text-align: right; }
+    }
+
     /* who-added badge */
     .who-badge {
       font-size: 0.7rem;
@@ -498,8 +727,9 @@
 
     /* ── Owner tabs ── */
     .owner-tabs {
-      display: flex;
-      gap: 7px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
       margin-top: 12px;
       padding: 4px;
       background: rgba(255,255,255,0.15);
@@ -517,7 +747,10 @@
       font-weight: 800;
       cursor: pointer;
       transition: all 0.18s;
-      white-space: nowrap;
+      white-space: normal;
+      line-height: 1.2;
+      min-width: 0;
+      min-height: 34px;
     }
     .owner-tab:hover { background: rgba(255,255,255,0.12); color: white; }
     .owner-tab.active {
@@ -913,12 +1146,14 @@
       <button class="owner-tab" id="ownerTabAll" onclick="setOwnerFilter('all')">أنا وهي</button>
       <button class="owner-tab" id="ownerTabMine" onclick="setOwnerFilter('mine')">أنا</button>
       <button class="owner-tab" id="ownerTabOther" onclick="setOwnerFilter('other')">هي</button>
+      <button class="owner-tab" id="ownerTabBudget" onclick="openBudgetView()">الاستهلاك الشهري</button>
     </div>
   </header>
 
   <div class="container">
 
-    <div class="notif-banner" id="notifBanner">
+    <div id="homeView" class="app-view">
+      <div class="notif-banner" id="notifBanner">
       <span id="notifBannerText">🔔 فعّل الإشعارات علشان يوصلك تذكير قبل المواعيد.</span>
       <button class="notif-enable" onclick="enableNotifications()">تفعيل</button>
     </div>
@@ -975,6 +1210,63 @@
       </div>
     </div>
 
+
+    </div>
+
+    <div id="budgetView" class="app-view hidden">
+      <div class="card budget-card">
+        <div class="budget-hero">
+          <div class="budget-kicker">ميزانية الدورة الحالية</div>
+          <div class="budget-cycle" id="budgetCycleLabel"></div>
+          <div class="budget-remaining-label" id="budgetRemainingLabel">المتبقي من ميزانية الشهر</div>
+          <div class="budget-remaining" id="budgetRemaining" dir="ltr">400,00 €</div>
+          <div class="budget-stats">
+            <div class="budget-stat">
+              <div class="budget-stat-label">إجمالي المصروف</div>
+              <div class="budget-stat-value" id="budgetSpent" dir="ltr">0,00 €</div>
+            </div>
+            <div class="budget-stat">
+              <div class="budget-stat-label">الميزانية</div>
+              <div class="budget-stat-value" dir="ltr">400,00 €</div>
+            </div>
+          </div>
+          <div class="budget-progress"><div class="budget-progress-fill" id="budgetProgressFill"></div></div>
+          <div class="budget-progress-text" id="budgetProgressText">0%</div>
+        </div>
+        <div class="expense-form">
+          <input class="amount-input" type="text" inputmode="decimal" id="expenseAmount" placeholder="المبلغ باليورو"
+                 onkeydown="if(event.key==='Enter') addExpense()">
+          <input class="expense-note-input" type="text" id="expenseNote" placeholder="المكان أو ملاحظة (اختياري)"
+                 onkeydown="if(event.key==='Enter') addExpense()">
+          <button class="expense-add-btn" onclick="addExpense()">إضافة</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">🧾</span> مصروفات الدورة الحالية</div>
+          <div class="card-subtitle" id="expenseCountLabel"></div>
+        </div>
+        <div class="expense-list" id="currentExpenses">
+          <div class="empty">مفيش مصروفات متسجلة في الدورة دي</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">🗂️</span> ملخص الشهور المقفولة</div>
+          <div class="card-subtitle">من يوم 27 ليوم 26</div>
+        </div>
+        <div class="budget-history" id="budgetHistory">
+          <div class="empty">لسه مفيش دورات سابقة</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="app-toast" id="appToast" role="status" aria-live="polite">
+    <div class="app-toast-title" id="appToastTitle"></div>
+    <div class="app-toast-body" id="appToastBody"></div>
   </div>
 </div>
 
@@ -1010,6 +1302,12 @@ let openChildComposers = new Set();
 let expandedCompleted  = new Set();
 let reminderTimer      = null;
 let ownerFilter        = 'all'; // 'all' | 'mine' | 'other'
+let mainView           = 'home'; // 'home' | 'budget'
+let monthlyExpenses    = [];
+let budgetNotifyReady  = false;
+let budgetLastCycleId  = '';
+let budgetLastTotal    = 0;
+let toastTimer         = null;
 
 const SESSION_KEY = 'yhSession';
 
@@ -1042,21 +1340,30 @@ function loadOwnerFilter() {
   ownerFilter = ['all','mine','other'].includes(saved) ? saved : 'all';
 }
 
+function updateMainView() {
+  const home = document.getElementById('homeView');
+  const budget = document.getElementById('budgetView');
+  if (home) home.classList.toggle('hidden', mainView !== 'home');
+  if (budget) budget.classList.toggle('hidden', mainView !== 'budget');
+}
+
 function updateOwnerTabs() {
   if (!currentUser) return;
-  const isAhmed = currentUser === 'ahmed';
+  const isAhmed  = currentUser === 'ahmed';
   const allBtn   = document.getElementById('ownerTabAll');
   const mineBtn  = document.getElementById('ownerTabMine');
   const otherBtn = document.getElementById('ownerTabOther');
-  if (!allBtn || !mineBtn || !otherBtn) return;
+  const budgetBtn = document.getElementById('ownerTabBudget');
+  if (!allBtn || !mineBtn || !otherBtn || !budgetBtn) return;
 
   allBtn.textContent   = isAhmed ? 'أنا وهي' : 'أنا وهو';
   mineBtn.textContent  = 'أنا';
   otherBtn.textContent = isAhmed ? 'هي' : 'هو';
 
-  allBtn.classList.toggle('active', ownerFilter === 'all');
-  mineBtn.classList.toggle('active', ownerFilter === 'mine');
-  otherBtn.classList.toggle('active', ownerFilter === 'other');
+  allBtn.classList.toggle('active', mainView === 'home' && ownerFilter === 'all');
+  mineBtn.classList.toggle('active', mainView === 'home' && ownerFilter === 'mine');
+  otherBtn.classList.toggle('active', mainView === 'home' && ownerFilter === 'other');
+  budgetBtn.classList.toggle('active', mainView === 'budget');
 }
 
 function filterByOwner(items) {
@@ -1068,12 +1375,21 @@ function filterByOwner(items) {
 window.setOwnerFilter = function(filter) {
   if (!['all','mine','other'].includes(filter)) return;
   ownerFilter = filter;
+  mainView = 'home';
   if (currentUser) localStorage.setItem(ownerFilterKey(), ownerFilter);
+  updateMainView();
   updateOwnerTabs();
   renderAllLists();
 };
 
-// ── Smart dates + reminders ───────────────────────────────────────────────────
+window.openBudgetView = function() {
+  mainView = 'budget';
+  updateMainView();
+  updateOwnerTabs();
+  renderBudget();
+};
+
+// Smart dates + reminders
 function normalizeArabicDigits(s) {
   const ar = '٠١٢٣٤٥٦٧٨٩';
   const fa = '۰۱۲۳۴۵۶۷۸۹';
@@ -1089,6 +1405,275 @@ function normalizeForDateParse(s) {
     .replace(/ـ/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+
+const MONTHLY_BUDGET = 400;
+
+function localDateId(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function getBudgetCycle(date = new Date()) {
+  const d = new Date(date);
+  const start = d.getDate() >= 27
+    ? new Date(d.getFullYear(), d.getMonth(), 27)
+    : new Date(d.getFullYear(), d.getMonth() - 1, 27);
+  start.setHours(0, 0, 0, 0);
+  const end = new Date(start.getFullYear(), start.getMonth() + 1, 27);
+  const displayEnd = new Date(end);
+  displayEnd.setDate(displayEnd.getDate() - 1);
+  return { id: localDateId(start), start, end, displayEnd };
+}
+
+function getBudgetCycleById(id) {
+  const parts = String(id || '').split('-').map(Number);
+  if (parts.length !== 3 || parts.some(Number.isNaN)) return getBudgetCycle();
+  return getBudgetCycle(new Date(parts[0], parts[1] - 1, parts[2], 12, 0, 0));
+}
+
+function expenseCycleId(expense) {
+  return expense.cycleId || getBudgetCycle(new Date(Number(expense.ts) || Date.now())).id;
+}
+
+function formatBudgetDate(date) {
+  try {
+    return new Intl.DateTimeFormat('ar-EG', { day:'numeric', month:'long', year:'numeric' }).format(date);
+  } catch {
+    return localDateId(date);
+  }
+}
+
+function formatExpenseTime(ts) {
+  try {
+    return new Intl.DateTimeFormat('ar-EG', {
+      day:'numeric', month:'short', hour:'numeric', minute:'2-digit'
+    }).format(new Date(Number(ts) || Date.now()));
+  } catch {
+    return new Date(Number(ts) || Date.now()).toLocaleString();
+  }
+}
+
+function formatMoney(value) {
+  try {
+    return new Intl.NumberFormat('de-AT', {
+      style:'currency', currency:'EUR', minimumFractionDigits:2, maximumFractionDigits:2
+    }).format(Number(value) || 0);
+  } catch {
+    return `${(Number(value) || 0).toFixed(2)} EUR`;
+  }
+}
+
+function sumExpenses(items) {
+  return Math.round(items.reduce((sum, item) => sum + (Number(item.amount) || 0), 0) * 100) / 100;
+}
+
+function currentBudgetExpenses() {
+  const cycle = getBudgetCycle();
+  return monthlyExpenses.filter(item => expenseCycleId(item) === cycle.id);
+}
+
+function renderBudget() {
+  const cycleLabel = document.getElementById('budgetCycleLabel');
+  if (!cycleLabel) return;
+
+  const cycle = getBudgetCycle();
+  const current = currentBudgetExpenses().slice().sort((a,b) => (Number(b.ts)||0) - (Number(a.ts)||0));
+  const total = sumExpenses(current);
+  const remaining = Math.round((MONTHLY_BUDGET - total) * 100) / 100;
+  const over = remaining < 0;
+  const pct = total <= 0 ? 0 : Math.round(total / MONTHLY_BUDGET * 100);
+
+  cycleLabel.textContent = `${formatBudgetDate(cycle.start)} - ${formatBudgetDate(cycle.displayEnd)}`;
+  document.getElementById('budgetSpent').textContent = formatMoney(total);
+
+  const remainingLabel = document.getElementById('budgetRemainingLabel');
+  const remainingValue = document.getElementById('budgetRemaining');
+  remainingLabel.textContent = over ? 'تجاوزتم الميزانية بـ' : 'المتبقي من ميزانية الشهر';
+  remainingValue.textContent = formatMoney(Math.abs(remaining));
+  remainingValue.classList.toggle('over', over);
+
+  const fill = document.getElementById('budgetProgressFill');
+  fill.style.width = `${Math.min(100, Math.max(0, pct))}%`;
+  fill.classList.toggle('over', over);
+  document.getElementById('budgetProgressText').textContent = `${pct}%`;
+  document.getElementById('expenseCountLabel').textContent = current.length ? `${current.length} عمليات` : '';
+
+  const list = document.getElementById('currentExpenses');
+  list.innerHTML = current.length ? current.map(item => {
+    const name = item.by === 'ahmed' ? 'أحمد' : item.by === 'yousra' ? 'يسرا' : 'غير معروف';
+    const note = item.note ? esc(item.note) : 'مصروف';
+    return `<div class="expense-row">
+      ${whoBadge(item.by)}
+      <div class="expense-main">
+        <div class="expense-topline">
+          <div class="expense-note">${note}</div>
+          <div class="expense-amount" dir="ltr">${esc(formatMoney(item.amount))}</div>
+        </div>
+        <div class="expense-meta">${name} • ${esc(formatExpenseTime(item.ts))}</div>
+      </div>
+      <button class="expense-delete" onclick="delExpense('${item.id}')" title="مسح">×</button>
+    </div>`;
+  }).join('') : '<div class="empty">مفيش مصروفات متسجلة في الدورة دي</div>';
+
+  const groups = new Map();
+  monthlyExpenses.forEach(item => {
+    const id = expenseCycleId(item);
+    if (id === cycle.id) return;
+    if (!groups.has(id)) groups.set(id, []);
+    groups.get(id).push(item);
+  });
+
+  const history = Array.from(groups.entries())
+    .map(([id, items]) => ({ id, items, cycle:getBudgetCycleById(id), total:sumExpenses(items) }))
+    .sort((a,b) => b.cycle.start - a.cycle.start);
+
+  const historyEl = document.getElementById('budgetHistory');
+  historyEl.innerHTML = history.length ? history.map(row => {
+    const balance = Math.round((MONTHLY_BUDGET - row.total) * 100) / 100;
+    const rowOver = balance < 0;
+    return `<div class="history-row">
+      <div>
+        <div class="history-period">${esc(formatBudgetDate(row.cycle.start))} - ${esc(formatBudgetDate(row.cycle.displayEnd))}<span class="closed-badge">مقفولة</span></div>
+        <div class="history-meta">${row.items.length} عمليات</div>
+      </div>
+      <div class="history-values">
+        <div class="history-spent" dir="ltr">${esc(formatMoney(row.total))}</div>
+        <div class="history-result${rowOver ? ' over' : ''}">${rowOver ? 'تجاوز' : 'متبقي'}: <span dir="ltr">${esc(formatMoney(Math.abs(balance)))}</span></div>
+      </div>
+    </div>`;
+  }).join('') : '<div class="empty">لسه مفيش دورات سابقة</div>';
+}
+
+window.addExpense = async function() {
+  if (!db) { alert('اعمل إعداد Firebase من ⚙️ الأول'); return; }
+  const amountEl = document.getElementById('expenseAmount');
+  const noteEl = document.getElementById('expenseNote');
+  const normalized = normalizeArabicDigits(amountEl.value)
+    .replace(/\s+/g, '')
+    .replace(',', '.')
+    .replace(/[^0-9.]/g, '');
+  const amount = Math.round(Number(normalized) * 100) / 100;
+  if (!Number.isFinite(amount) || amount <= 0) {
+    alert('اكتب مبلغ صحيح أكبر من صفر');
+    amountEl.focus();
+    return;
+  }
+  const now = Date.now();
+  const cycle = getBudgetCycle(new Date(now));
+  if (!budgetNotifyReady || budgetLastCycleId !== cycle.id) {
+    const existingTotal = sumExpenses(monthlyExpenses.filter(item => expenseCycleId(item) === cycle.id));
+    budgetNotifyReady = true;
+    budgetLastCycleId = cycle.id;
+    budgetLastTotal = existingTotal;
+    markCurrentBudgetNoticesAsSeen(cycle.id, existingTotal);
+  }
+  await addDoc(collection(db,'monthly_expenses'), sw({
+    amount,
+    note: noteEl.value.trim(),
+    ts: now,
+    cycleId: cycle.id,
+    by: currentUser
+  }));
+  amountEl.value = '';
+  noteEl.value = '';
+  amountEl.focus();
+};
+
+window.delExpense = async function(id) {
+  if (!db) return;
+  if (!confirm('تمسح المصروف ده؟')) return;
+  await deleteDoc(doc(db,'monthly_expenses',id));
+};
+
+function showAppToast(title, body) {
+  const toast = document.getElementById('appToast');
+  if (!toast) return;
+  document.getElementById('appToastTitle').textContent = title;
+  document.getElementById('appToastBody').textContent = body;
+  toast.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 5000);
+}
+
+function budgetNoticeStorageKey(cycleId, key) {
+  return `yhBudgetNotice_${cycleId}_${key}`;
+}
+
+function rememberBudgetNotice(cycleId, key) {
+  localStorage.setItem(budgetNoticeStorageKey(cycleId, key), String(Date.now()));
+}
+
+function hasBudgetNotice(cycleId, key) {
+  return Boolean(localStorage.getItem(budgetNoticeStorageKey(cycleId, key)));
+}
+
+function emitBudgetNotice(cycleId, key, title, body) {
+  if (hasBudgetNotice(cycleId, key)) return;
+  rememberBudgetNotice(cycleId, key);
+  showAppToast(title, body);
+  if ('Notification' in window && Notification.permission === 'granted') {
+    try {
+      new Notification(title, { body, tag:`yh-budget-${cycleId}-${key}` });
+    } catch {}
+  }
+}
+
+function markCurrentBudgetNoticesAsSeen(cycleId, total) {
+  [100,200,300,400].forEach(level => {
+    if (total >= level && !hasBudgetNotice(cycleId, `spent-${level}`)) rememberBudgetNotice(cycleId, `spent-${level}`);
+  });
+  if (total > MONTHLY_BUDGET && !hasBudgetNotice(cycleId, 'over')) rememberBudgetNotice(cycleId, 'over');
+  if (total >= MONTHLY_BUDGET + 50 && !hasBudgetNotice(cycleId, 'over-50')) rememberBudgetNotice(cycleId, 'over-50');
+}
+
+function checkBudgetNotifications() {
+  const cycle = getBudgetCycle();
+  const total = sumExpenses(currentBudgetExpenses());
+
+  if (!budgetNotifyReady || budgetLastCycleId !== cycle.id) {
+    budgetNotifyReady = true;
+    budgetLastCycleId = cycle.id;
+    budgetLastTotal = total;
+    markCurrentBudgetNoticesAsSeen(cycle.id, total);
+    return;
+  }
+
+  if (total > budgetLastTotal) {
+    [100,200,300,400].forEach(level => {
+      if (budgetLastTotal < level && total >= level) {
+        emitBudgetNotice(
+          cycle.id,
+          `spent-${level}`,
+          '💶 تنبيه الميزانية',
+          `وصل إجمالي المصروفات إلى ${formatMoney(level)}.`
+        );
+      }
+    });
+
+    if (budgetLastTotal <= MONTHLY_BUDGET && total > MONTHLY_BUDGET) {
+      emitBudgetNotice(
+        cycle.id,
+        'over',
+        '⚠️ تم تجاوز الميزانية',
+        `المصروفات الحالية ${formatMoney(total)} والميزانية ${formatMoney(MONTHLY_BUDGET)}.`
+      );
+    }
+
+    if (budgetLastTotal < MONTHLY_BUDGET + 50 && total >= MONTHLY_BUDGET + 50) {
+      emitBudgetNotice(
+        cycle.id,
+        'over-50',
+        '🚨 الميزانية زادت 50 يورو',
+        `وصل إجمالي المصروفات إلى ${formatMoney(total)}.`
+      );
+    }
+  }
+
+  budgetLastTotal = total;
 }
 
 function parseSmartDate(text, base = new Date()) {
@@ -1243,7 +1828,7 @@ function updateNotificationBanner() {
     const btn = banner.querySelector('button');
     if (btn) btn.style.display = 'none';
   } else {
-    text.textContent = '🔔 فعّل الإشعارات علشان يوصلك تذكير قبل الموعد بيوم وقبلها بساعتين.';
+    text.textContent = '🔔 فعّل الإشعارات علشان يوصلك تذكيرات المواعيد وتنبيهات الميزانية.';
     banner.classList.add('show');
     const btn = banner.querySelector('button');
     if (btn) btn.style.display = '';
@@ -1465,6 +2050,8 @@ function loginSuccess() {
 
   // restore the last selected owner tab for this account
   loadOwnerFilter();
+  mainView = 'home';
+  updateMainView();
   updateOwnerTabs();
 
   // keep this device signed in until the user logs out manually
@@ -1483,6 +2070,11 @@ window.doLogout = function() {
   localStorage.removeItem(SESSION_KEY);
   if (reminderTimer) clearInterval(reminderTimer);
   reminderTimer = null;
+  monthlyExpenses = [];
+  budgetNotifyReady = false;
+  budgetLastCycleId = '';
+  budgetLastTotal = 0;
+  mainView = 'home';
   document.getElementById('app').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
   document.querySelectorAll('.user-btn').forEach(b => b.classList.remove('selected'));
@@ -1569,6 +2161,79 @@ function whoBadge(by) {
 const sw = (data) => ({ ...data, _s: APP_SECRET });
 
 // ── Child items helpers ───────────────────────────────────────────────────────
+
+function editableItem(type, id) {
+  if (type === 'shopping') return shoppingItems.find(item => item.id === id) || null;
+  if (type === 'tasks') return taskItems.find(item => item.id === id) || null;
+  if (type === 'routine') return routineItems.find(item => item.id === id) || null;
+  if (type === 'child') return childItems.find(item => item.id === id) || null;
+  return null;
+}
+
+function editableCollection(type) {
+  if (type === 'shopping') return 'shopping';
+  if (type === 'tasks') return 'tasks';
+  if (type === 'routine') return 'routine_items';
+  if (type === 'child') return 'child_items';
+  return '';
+}
+
+window.startInlineEdit = function(event, type, id) {
+  event.stopPropagation();
+  if (!db) return;
+  const holder = event.currentTarget;
+  if (!holder || holder.dataset.editing === '1') return;
+  const item = editableItem(type, id);
+  const collectionName = editableCollection(type);
+  if (!item || !collectionName) return;
+
+  holder.dataset.editing = '1';
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'inline-edit-input';
+  input.value = item.text || '';
+  input.setAttribute('aria-label', 'تعديل النص');
+  holder.textContent = '';
+  holder.appendChild(input);
+  input.focus();
+  input.setSelectionRange(input.value.length, input.value.length);
+
+  let settled = false;
+  const finish = async save => {
+    if (settled) return;
+    settled = true;
+    const nextText = input.value.trim();
+    if (!save || !nextText || nextText === item.text) {
+      renderAllLists();
+      return;
+    }
+    const reminder = reminderFields(nextText);
+    try {
+      await updateDoc(doc(db, collectionName, id), sw({
+        text: nextText,
+        dueAt: reminder.dueAt || null,
+        dueSource: reminder.dueSource || ''
+      }));
+    } catch (error) {
+      console.error(error);
+      alert('محصلش تعديل النص. حاول تاني.');
+      renderAllLists();
+    }
+  };
+
+  input.addEventListener('click', e => e.stopPropagation());
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      finish(true);
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      finish(false);
+    }
+  });
+  input.addEventListener('blur', () => finish(true));
+};
+
 function childKey(type, parentId) { return `${type}:${parentId}`; }
 function childAreaId(type, parentId) { return `childArea-${type}-${parentId}`; }
 function childInputId(type, parentId) { return `childInput-${type}-${parentId}`; }
@@ -1603,7 +2268,7 @@ function renderChildSection(type, parentId) {
         <div class="child-item">
           <div class="item-check"
                onclick="toggleChild('${child.id}',true)"></div>
-          <div class="item-text">${esc(child.text)}</div>
+          <div class="item-text editable" title="اضغط للتعديل" onclick="event.stopPropagation();startInlineEdit(event,'child','${child.id}')">${esc(child.text)}</div>
           ${dueBadge(child)}
           ${whoBadge(child.by)}
           <button class="item-del" onclick="delChild('${child.id}')">×</button>
@@ -1721,7 +2386,7 @@ function renderCompletedParent(type, item) {
     <div class="item-block">
       <div class="item">
         <div class="item-check done" onclick="event.stopPropagation();${toggle}">✓</div>
-        <div class="item-text done">${esc(item.text)}</div>
+        <div class="item-text done editable" title="اضغط للتعديل" onclick="event.stopPropagation();startInlineEdit(event,'${type}','${item.id}')">${esc(item.text)}</div>
         ${dueBadge(item)}
         ${whoBadge(item.by)}
         ${urgent}
@@ -1737,7 +2402,7 @@ function renderCompletedChild(child) {
     <div class="child-item">
       <div class="item-check done" onclick="toggleChild('${child.id}',false)">✓</div>
       <div class="completed-child-text">
-        <div class="item-text done">${esc(child.text)}</div>
+        <div class="item-text done editable" title="اضغط للتعديل" onclick="event.stopPropagation();startInlineEdit(event,'child','${child.id}')">${esc(child.text)}</div>
         <div class="completed-child-meta">↳ تابع لـ: ${esc(parentName)}</div>
       </div>
       ${dueBadge(child)}
@@ -1809,7 +2474,7 @@ function renderShopping(items) {
           <div class="item parent-item" onclick="toggleChildrenUI('shopping','${item.id}')">
             <div class="item-check"
                  onclick="event.stopPropagation();toggleShop('${item.id}',true)"></div>
-            <div class="item-text">${esc(item.text)}</div>
+            <div class="item-text editable" title="اضغط للتعديل" onclick="event.stopPropagation();startInlineEdit(event,'shopping','${item.id}')">${esc(item.text)}</div>
             ${dueBadge(item)}
             ${whoBadge(item.by)}
             <button class="item-del" onclick="event.stopPropagation();delShop('${item.id}')">×</button>
@@ -1851,7 +2516,7 @@ function renderTasks(items) {
       <div class="item parent-item" onclick="toggleChildrenUI('tasks','${item.id}')">
         <div class="item-check"
              onclick="event.stopPropagation();toggleTask('${item.id}',true)"></div>
-        <div class="item-text">${esc(item.text)}</div>
+        <div class="item-text editable" title="اضغط للتعديل" onclick="event.stopPropagation();startInlineEdit(event,'tasks','${item.id}')">${esc(item.text)}</div>
         ${dueBadge(item)}
         ${whoBadge(item.by)}
         <button class="${item.urgent ? 'badge-urgent' : 'badge-normal'}"
@@ -1906,7 +2571,7 @@ function renderRoutine() {
         <div class="item parent-item" onclick="toggleChildrenUI('routine','${item.id}')">
           <div class="item-check"
                onclick="event.stopPropagation();toggleRoutine('${item.id}',true)"></div>
-          <div class="item-text">${esc(item.text)}</div>
+          <div class="item-text editable" title="اضغط للتعديل" onclick="event.stopPropagation();startInlineEdit(event,'routine','${item.id}')">${esc(item.text)}</div>
           ${dueBadge(item)}
           ${whoBadge(item.by)}
           <button class="item-del" onclick="event.stopPropagation();delRoutineItem('${item.id}')">×</button>
@@ -2023,6 +2688,14 @@ function startListeners() {
   subs.push(onSnapshot(
     query(collection(db,'child_items'), orderBy('ts','asc')),
     snap => { childItems = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderAllLists(); checkAllReminders(); }
+  ));
+  subs.push(onSnapshot(
+    query(collection(db,'monthly_expenses'), orderBy('ts','desc')),
+    snap => {
+      monthlyExpenses = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderBudget();
+      checkBudgetNotifications();
+    }
   ));
 }
 
