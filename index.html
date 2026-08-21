@@ -386,6 +386,54 @@
     }
     .budget-stat-label { font-size: 0.68rem; color: #aaa; margin-bottom: 3px; }
     .budget-stat-value { font-size: 0.92rem; font-weight: 900; color: #544b46; }
+    .budget-goal-editor {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      direction: ltr;
+    }
+    .budget-goal-input {
+      flex: 1;
+      min-width: 0;
+      width: 68px;
+      border: 1.5px solid #e2d8d1;
+      border-radius: 8px;
+      padding: 6px 7px;
+      background: white;
+      color: #544b46;
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 900;
+      text-align: center;
+      outline: none;
+    }
+    .budget-goal-input:focus {
+      border-color: #b5726a;
+      box-shadow: 0 0 0 3px rgba(181,114,106,0.1);
+    }
+    .budget-goal-currency {
+      color: #8d817a;
+      font-size: 0.78rem;
+      font-weight: 900;
+    }
+    .budget-goal-save {
+      border: none;
+      border-radius: 8px;
+      padding: 7px 9px;
+      background: #6d8f75;
+      color: white;
+      font-family: inherit;
+      font-size: 0.72rem;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .budget-goal-save:disabled { opacity: 0.55; cursor: default; }
+    .budget-goal-hint {
+      margin-top: 4px;
+      color: #b1a59e;
+      font-size: 0.6rem;
+      line-height: 1.35;
+    }
     .budget-progress {
       height: 9px;
       background: #eee7e2;
@@ -1226,8 +1274,15 @@
               <div class="budget-stat-value" id="budgetSpent" dir="ltr">0,00 €</div>
             </div>
             <div class="budget-stat">
-              <div class="budget-stat-label">الميزانية</div>
-              <div class="budget-stat-value" dir="ltr">400,00 €</div>
+              <div class="budget-stat-label">هدف الميزانية</div>
+              <div class="budget-goal-editor">
+                <input class="budget-goal-input" type="text" inputmode="decimal" id="budgetGoalInput" value="400"
+                       aria-label="هدف ميزانية الدورة الحالية"
+                       onkeydown="if(event.key==='Enter') saveCurrentBudget()">
+                <span class="budget-goal-currency">€</span>
+                <button class="budget-goal-save" id="budgetGoalSaveBtn" onclick="saveCurrentBudget()">حفظ</button>
+              </div>
+              <div class="budget-goal-hint">التعديل يخص الدورة الحالية فقط</div>
             </div>
           </div>
           <div class="budget-progress"><div class="budget-progress-fill" id="budgetProgressFill"></div></div>
@@ -1304,9 +1359,13 @@ let reminderTimer      = null;
 let ownerFilter        = 'all'; // 'all' | 'mine' | 'other'
 let mainView           = 'home'; // 'home' | 'budget'
 let monthlyExpenses    = [];
+let monthlyBudgets     = new Map();
+let budgetExpensesLoaded = false;
+let budgetTargetsLoaded  = false;
 let budgetNotifyReady  = false;
 let budgetLastCycleId  = '';
 let budgetLastTotal    = 0;
+let budgetLastLimit    = null;
 let toastTimer         = null;
 
 const SESSION_KEY = 'yhSession';
@@ -1408,7 +1467,7 @@ function normalizeForDateParse(s) {
 }
 
 
-const MONTHLY_BUDGET = 400;
+const DEFAULT_MONTHLY_BUDGET = 400;
 
 function localDateId(date) {
   const y = date.getFullYear();
@@ -1433,6 +1492,21 @@ function getBudgetCycleById(id) {
   const parts = String(id || '').split('-').map(Number);
   if (parts.length !== 3 || parts.some(Number.isNaN)) return getBudgetCycle();
   return getBudgetCycle(new Date(parts[0], parts[1] - 1, parts[2], 12, 0, 0));
+}
+
+function budgetForCycle(cycleId) {
+  const saved = monthlyBudgets.get(cycleId);
+  const amount = Number(saved?.amount);
+  return Number.isFinite(amount) && amount > 0 ? amount : DEFAULT_MONTHLY_BUDGET;
+}
+
+function budgetNoticeAmountKey(value) {
+  return Math.round((Number(value) || 0) * 100);
+}
+
+function formatBudgetInput(value) {
+  const amount = Math.round((Number(value) || 0) * 100) / 100;
+  return Number.isInteger(amount) ? String(amount) : amount.toFixed(2).replace(/0+$/, '').replace(/\.$/, '');
 }
 
 function expenseCycleId(expense) {
@@ -1471,6 +1545,15 @@ function sumExpenses(items) {
   return Math.round(items.reduce((sum, item) => sum + (Number(item.amount) || 0), 0) * 100) / 100;
 }
 
+function parseMoneyInput(value) {
+  const normalized = normalizeArabicDigits(value)
+    .replace(/\s+/g, '')
+    .replace(',', '.')
+    .replace(/[^0-9.]/g, '');
+  const amount = Math.round(Number(normalized) * 100) / 100;
+  return Number.isFinite(amount) ? amount : NaN;
+}
+
 function currentBudgetExpenses() {
   const cycle = getBudgetCycle();
   return monthlyExpenses.filter(item => expenseCycleId(item) === cycle.id);
@@ -1481,14 +1564,19 @@ function renderBudget() {
   if (!cycleLabel) return;
 
   const cycle = getBudgetCycle();
+  const currentBudget = budgetForCycle(cycle.id);
   const current = currentBudgetExpenses().slice().sort((a,b) => (Number(b.ts)||0) - (Number(a.ts)||0));
   const total = sumExpenses(current);
-  const remaining = Math.round((MONTHLY_BUDGET - total) * 100) / 100;
+  const remaining = Math.round((currentBudget - total) * 100) / 100;
   const over = remaining < 0;
-  const pct = total <= 0 ? 0 : Math.round(total / MONTHLY_BUDGET * 100);
+  const pct = total <= 0 ? 0 : Math.round(total / currentBudget * 100);
 
   cycleLabel.textContent = `${formatBudgetDate(cycle.start)} - ${formatBudgetDate(cycle.displayEnd)}`;
   document.getElementById('budgetSpent').textContent = formatMoney(total);
+  const goalInput = document.getElementById('budgetGoalInput');
+  if (goalInput && document.activeElement !== goalInput) {
+    goalInput.value = formatBudgetInput(currentBudget);
+  }
 
   const remainingLabel = document.getElementById('budgetRemainingLabel');
   const remainingValue = document.getElementById('budgetRemaining');
@@ -1527,18 +1615,33 @@ function renderBudget() {
     groups.get(id).push(item);
   });
 
-  const history = Array.from(groups.entries())
-    .map(([id, items]) => ({ id, items, cycle:getBudgetCycleById(id), total:sumExpenses(items) }))
+  const historyCycleIds = new Set(groups.keys());
+  monthlyBudgets.forEach((value, id) => {
+    if (id !== cycle.id) historyCycleIds.add(id);
+  });
+
+  const history = Array.from(historyCycleIds)
+    .map(id => {
+      const items = groups.get(id) || [];
+      return {
+        id,
+        items,
+        cycle: getBudgetCycleById(id),
+        total: sumExpenses(items),
+        budget: budgetForCycle(id)
+      };
+    })
+    .filter(row => row.cycle.start < cycle.start)
     .sort((a,b) => b.cycle.start - a.cycle.start);
 
   const historyEl = document.getElementById('budgetHistory');
   historyEl.innerHTML = history.length ? history.map(row => {
-    const balance = Math.round((MONTHLY_BUDGET - row.total) * 100) / 100;
+    const balance = Math.round((row.budget - row.total) * 100) / 100;
     const rowOver = balance < 0;
     return `<div class="history-row">
       <div>
         <div class="history-period">${esc(formatBudgetDate(row.cycle.start))} - ${esc(formatBudgetDate(row.cycle.displayEnd))}<span class="closed-badge">مقفولة</span></div>
-        <div class="history-meta">${row.items.length} عمليات</div>
+        <div class="history-meta">${row.items.length} عمليات • الهدف: <span dir="ltr">${esc(formatMoney(row.budget))}</span></div>
       </div>
       <div class="history-values">
         <div class="history-spent" dir="ltr">${esc(formatMoney(row.total))}</div>
@@ -1548,15 +1651,55 @@ function renderBudget() {
   }).join('') : '<div class="empty">لسه مفيش دورات سابقة</div>';
 }
 
+window.saveCurrentBudget = async function() {
+  if (!db) { alert('اعمل إعداد Firebase من ⚙️ الأول'); return; }
+  const input = document.getElementById('budgetGoalInput');
+  const button = document.getElementById('budgetGoalSaveBtn');
+  const amount = parseMoneyInput(input?.value || '');
+  if (!Number.isFinite(amount) || amount <= 0) {
+    alert('اكتب هدف ميزانية صحيح أكبر من صفر');
+    input?.focus();
+    return;
+  }
+
+  const cycle = getBudgetCycle();
+  const oldAmount = budgetForCycle(cycle.id);
+  if (Math.abs(oldAmount - amount) < 0.005 && monthlyBudgets.has(cycle.id)) {
+    showAppToast('هدف الميزانية', `الهدف الحالي محفوظ بالفعل: ${formatMoney(amount)}.`);
+    input?.blur();
+    return;
+  }
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = '...';
+  }
+  try {
+    await setDoc(doc(db,'monthly_budgets',cycle.id), sw({
+      cycleId: cycle.id,
+      amount,
+      updatedAt: Date.now(),
+      updatedBy: currentUser
+    }), { merge: true });
+    input.value = formatBudgetInput(amount);
+    input.blur();
+    showAppToast('✅ تم حفظ هدف الميزانية', `هدف الدورة الحالية أصبح ${formatMoney(amount)} فقط، ولن تتغير أهداف الدورات السابقة.`);
+  } catch (error) {
+    console.error(error);
+    alert('تعذر حفظ هدف الميزانية. تأكد أن قواعد Firebase تسمح بالكتابة في monthly_budgets.');
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = 'حفظ';
+    }
+  }
+};
+
 window.addExpense = async function() {
   if (!db) { alert('اعمل إعداد Firebase من ⚙️ الأول'); return; }
   const amountEl = document.getElementById('expenseAmount');
   const noteEl = document.getElementById('expenseNote');
-  const normalized = normalizeArabicDigits(amountEl.value)
-    .replace(/\s+/g, '')
-    .replace(',', '.')
-    .replace(/[^0-9.]/g, '');
-  const amount = Math.round(Number(normalized) * 100) / 100;
+  const amount = parseMoneyInput(amountEl.value);
   if (!Number.isFinite(amount) || amount <= 0) {
     alert('اكتب مبلغ صحيح أكبر من صفر');
     amountEl.focus();
@@ -1569,7 +1712,7 @@ window.addExpense = async function() {
     budgetNotifyReady = true;
     budgetLastCycleId = cycle.id;
     budgetLastTotal = existingTotal;
-    markCurrentBudgetNoticesAsSeen(cycle.id, existingTotal);
+    markCurrentBudgetNoticesAsSeen(cycle.id, existingTotal, budgetForCycle(cycle.id));
   }
   await addDoc(collection(db,'monthly_expenses'), sw({
     amount,
@@ -1622,58 +1765,88 @@ function emitBudgetNotice(cycleId, key, title, body) {
   }
 }
 
-function markCurrentBudgetNoticesAsSeen(cycleId, total) {
-  [100,200,300,400].forEach(level => {
-    if (total >= level && !hasBudgetNotice(cycleId, `spent-${level}`)) rememberBudgetNotice(cycleId, `spent-${level}`);
-  });
-  if (total > MONTHLY_BUDGET && !hasBudgetNotice(cycleId, 'over')) rememberBudgetNotice(cycleId, 'over');
-  if (total >= MONTHLY_BUDGET + 50 && !hasBudgetNotice(cycleId, 'over-50')) rememberBudgetNotice(cycleId, 'over-50');
+function markCurrentBudgetNoticesAsSeen(cycleId, total, budget) {
+  const lastHundred = Math.floor(total / 100) * 100;
+  for (let level = 100; level <= lastHundred; level += 100) {
+    if (!hasBudgetNotice(cycleId, `spent-${level}`)) rememberBudgetNotice(cycleId, `spent-${level}`);
+  }
+  const budgetKey = budgetNoticeAmountKey(budget);
+  if (total > budget && !hasBudgetNotice(cycleId, `over-${budgetKey}`)) {
+    rememberBudgetNotice(cycleId, `over-${budgetKey}`);
+  }
+  if (total >= budget + 50 && !hasBudgetNotice(cycleId, `over-50-${budgetKey}`)) {
+    rememberBudgetNotice(cycleId, `over-50-${budgetKey}`);
+  }
 }
 
 function checkBudgetNotifications() {
+  if (!budgetExpensesLoaded || !budgetTargetsLoaded) return;
+
   const cycle = getBudgetCycle();
   const total = sumExpenses(currentBudgetExpenses());
+  const budget = budgetForCycle(cycle.id);
+  const budgetKey = budgetNoticeAmountKey(budget);
 
   if (!budgetNotifyReady || budgetLastCycleId !== cycle.id) {
     budgetNotifyReady = true;
     budgetLastCycleId = cycle.id;
     budgetLastTotal = total;
-    markCurrentBudgetNoticesAsSeen(cycle.id, total);
+    budgetLastLimit = budget;
+    markCurrentBudgetNoticesAsSeen(cycle.id, total, budget);
     return;
   }
 
   if (total > budgetLastTotal) {
-    [100,200,300,400].forEach(level => {
-      if (budgetLastTotal < level && total >= level) {
-        emitBudgetNotice(
-          cycle.id,
-          `spent-${level}`,
-          '💶 تنبيه الميزانية',
-          `وصل إجمالي المصروفات إلى ${formatMoney(level)}.`
-        );
-      }
-    });
-
-    if (budgetLastTotal <= MONTHLY_BUDGET && total > MONTHLY_BUDGET) {
+    const firstHundred = (Math.floor(budgetLastTotal / 100) + 1) * 100;
+    for (let level = firstHundred; level <= total; level += 100) {
       emitBudgetNotice(
         cycle.id,
-        'over',
-        '⚠️ تم تجاوز الميزانية',
-        `المصروفات الحالية ${formatMoney(total)} والميزانية ${formatMoney(MONTHLY_BUDGET)}.`
+        `spent-${level}`,
+        '💶 تنبيه الميزانية',
+        `وصل إجمالي المصروفات إلى ${formatMoney(level)}.`
       );
     }
 
-    if (budgetLastTotal < MONTHLY_BUDGET + 50 && total >= MONTHLY_BUDGET + 50) {
+    if (budgetLastTotal <= budget && total > budget) {
       emitBudgetNotice(
         cycle.id,
-        'over-50',
-        '🚨 الميزانية زادت 50 يورو',
-        `وصل إجمالي المصروفات إلى ${formatMoney(total)}.`
+        `over-${budgetKey}`,
+        '⚠️ تم تجاوز الميزانية',
+        `المصروفات الحالية ${formatMoney(total)} وهدف الميزانية ${formatMoney(budget)}.`
+      );
+    }
+
+    if (budgetLastTotal < budget + 50 && total >= budget + 50) {
+      emitBudgetNotice(
+        cycle.id,
+        `over-50-${budgetKey}`,
+        '🚨 تم تجاوز الميزانية بـ 50 يورو',
+        `وصل إجمالي المصروفات إلى ${formatMoney(total)} وهدف الميزانية ${formatMoney(budget)}.`
+      );
+    }
+  }
+
+  if (budgetLastLimit !== null && budget < budgetLastLimit) {
+    if (total > budget) {
+      emitBudgetNotice(
+        cycle.id,
+        `over-${budgetKey}`,
+        '⚠️ الهدف الجديد أقل من المصروفات',
+        `المصروفات الحالية ${formatMoney(total)} وهدف الميزانية الجديد ${formatMoney(budget)}.`
+      );
+    }
+    if (total >= budget + 50) {
+      emitBudgetNotice(
+        cycle.id,
+        `over-50-${budgetKey}`,
+        '🚨 تجاوزتم الهدف الجديد بـ 50 يورو',
+        `المصروفات الحالية ${formatMoney(total)} وهدف الميزانية الجديد ${formatMoney(budget)}.`
       );
     }
   }
 
   budgetLastTotal = total;
+  budgetLastLimit = budget;
 }
 
 function parseSmartDate(text, base = new Date()) {
@@ -1917,7 +2090,13 @@ function updateHeader() {
     `${AR_DAYS[n.getDay()]}، ${n.getDate()} ${AR_MONTHS[n.getMonth()]} ${n.getFullYear()}`;
 }
 updateHeader();
-setInterval(updateHeader, 60000);
+setInterval(() => {
+  updateHeader();
+  if (mainView === 'budget') {
+    renderBudget();
+    checkBudgetNotifications();
+  }
+}, 60000);
 
 // ── Password helpers (hashed in localStorage) ─────────────────────────────────
 async function hashPass(pass) {
@@ -2669,6 +2848,12 @@ window.doChangePass = async function() {
 // ── Listeners ─────────────────────────────────────────────────────────────────
 function startListeners() {
   const today = todayStr();
+  budgetExpensesLoaded = false;
+  budgetTargetsLoaded = false;
+  budgetNotifyReady = false;
+  budgetLastCycleId = '';
+  budgetLastTotal = 0;
+  budgetLastLimit = null;
   subs.push(onSnapshot(
     query(collection(db,'shopping'), orderBy('ts','desc')),
     snap => { shoppingItems = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderShopping(shoppingItems); checkAllReminders(); }
@@ -2690,9 +2875,26 @@ function startListeners() {
     snap => { childItems = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderAllLists(); checkAllReminders(); }
   ));
   subs.push(onSnapshot(
+    collection(db,'monthly_budgets'),
+    snap => {
+      monthlyBudgets = new Map(snap.docs.map(d => [d.id, { id: d.id, ...d.data() }]));
+      budgetTargetsLoaded = true;
+      renderBudget();
+      checkBudgetNotifications();
+    },
+    error => {
+      console.error('monthly_budgets listener failed', error);
+      monthlyBudgets = new Map();
+      budgetTargetsLoaded = true;
+      renderBudget();
+      checkBudgetNotifications();
+    }
+  ));
+  subs.push(onSnapshot(
     query(collection(db,'monthly_expenses'), orderBy('ts','desc')),
     snap => {
       monthlyExpenses = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      budgetExpensesLoaded = true;
       renderBudget();
       checkBudgetNotifications();
     }
