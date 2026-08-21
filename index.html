@@ -604,6 +604,62 @@
     .category-value { color:#8e837d; font-weight:800; direction:ltr; }
     .category-bar { height:7px; background:#f0ece9; border-radius:999px; overflow:hidden; margin-top:5px; }
     .category-fill { height:100%; background:#b5726a; border-radius:inherit; }
+
+    /* ── Budget analytics ── */
+    .analytics-body { padding: 4px 12px 15px; }
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin: 4px 0 12px;
+    }
+    .analytics-metric {
+      background: #faf8f6;
+      border: 1px solid #eee7e2;
+      border-radius: 13px;
+      padding: 10px 11px;
+      min-width: 0;
+    }
+    .analytics-metric-label { font-size: 0.65rem; color: #a79d97; font-weight: 800; margin-bottom: 4px; }
+    .analytics-metric-value { font-size: 0.9rem; color: #514944; font-weight: 900; line-height: 1.3; word-break: break-word; }
+    .analytics-metric-value.good { color: #4a8b61; }
+    .analytics-metric-value.bad { color: #cf5656; }
+    .analytics-insights {
+      background: #fffaf5;
+      border: 1px solid #f1e4d8;
+      border-radius: 13px;
+      padding: 9px 11px;
+      margin-bottom: 12px;
+    }
+    .analytics-insight {
+      display: flex;
+      gap: 7px;
+      align-items: flex-start;
+      font-size: 0.74rem;
+      color: #6f625b;
+      line-height: 1.55;
+      padding: 5px 0;
+      border-bottom: 1px dashed #eee2d8;
+    }
+    .analytics-insight:last-child { border-bottom: none; }
+    .analytics-insight-icon { flex-shrink: 0; }
+    .analytics-chart-block {
+      border-top: 1px solid #f0ece9;
+      padding-top: 12px;
+      margin-top: 12px;
+    }
+    .analytics-chart-title { font-size: 0.76rem; color: #6a605b; font-weight: 900; margin-bottom: 3px; }
+    .analytics-chart-sub { font-size: 0.64rem; color: #b2aaa5; margin-bottom: 9px; }
+    .monthly-trend { display: flex; flex-direction: column; gap: 8px; }
+    .trend-row { display: grid; grid-template-columns: 78px minmax(0,1fr) 80px; gap: 7px; align-items: center; }
+    .trend-label { font-size: 0.65rem; color: #8d837e; font-weight: 800; white-space: nowrap; }
+    .trend-track { height: 10px; background: #f0ece9; border-radius: 999px; overflow: hidden; }
+    .trend-fill { height: 100%; background: linear-gradient(90deg, #d9a197, #b5726a); border-radius: inherit; min-width: 0; }
+    .trend-value { font-size: 0.65rem; color: #6f6560; font-weight: 900; text-align: left; direction: ltr; white-space: nowrap; }
+    .daily-chart-wrap { width: 100%; overflow: hidden; border-radius: 12px; background: #fcfbfa; border: 1px solid #f0ece9; padding: 7px; }
+    .daily-chart-wrap svg { width: 100%; height: auto; display: block; }
+    .chart-empty { text-align: center; color: #c5bdb8; font-size: 0.76rem; padding: 18px 8px; }
+    .analytics-footnote { font-size: 0.61rem; color: #b3aaa5; line-height: 1.5; margin-top: 8px; }
     .expense-form .amount-input { direction: ltr; text-align: center; }
     .expense-add-btn {
       border: none;
@@ -802,6 +858,9 @@
       .expense-edit-actions { grid-column: 1; }
       .history-row { grid-template-columns: 1fr; gap: 5px; }
       .history-values { text-align: right; }
+      .analytics-grid { grid-template-columns: 1fr; }
+      .trend-row { grid-template-columns: 66px minmax(0,1fr) 72px; gap: 5px; }
+      .trend-label, .trend-value { font-size: 0.6rem; }
     }
 
     /* who-added badge */
@@ -1628,6 +1687,59 @@
         </div>
       </div>
 
+
+      <div class="card analytics-card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">📈</span> التحليلات</div>
+          <div class="card-subtitle">الحالي مقابل السابق</div>
+        </div>
+        <div class="analytics-body">
+          <div class="analytics-grid">
+            <div class="analytics-metric">
+              <div class="analytics-metric-label">الدورة السابقة</div>
+              <div class="analytics-metric-value" id="analyticsPreviousTotal" dir="ltr">—</div>
+            </div>
+            <div class="analytics-metric">
+              <div class="analytics-metric-label">مقارنة بالسابق</div>
+              <div class="analytics-metric-value" id="analyticsChange">—</div>
+            </div>
+            <div class="analytics-metric">
+              <div class="analytics-metric-label">متوسط الصرف اليومي</div>
+              <div class="analytics-metric-value" id="analyticsDailyAverage" dir="ltr">—</div>
+            </div>
+            <div class="analytics-metric">
+              <div class="analytics-metric-label">توقع نهاية الدورة</div>
+              <div class="analytics-metric-value" id="analyticsForecast" dir="ltr">—</div>
+            </div>
+            <div class="analytics-metric">
+              <div class="analytics-metric-label">أكبر تصنيف حاليًا</div>
+              <div class="analytics-metric-value" id="analyticsTopCategory">—</div>
+            </div>
+            <div class="analytics-metric">
+              <div class="analytics-metric-label">أكتر مكان في الدورة السابقة</div>
+              <div class="analytics-metric-value" id="analyticsTopPreviousPlace">—</div>
+            </div>
+          </div>
+
+          <div class="analytics-insights" id="analyticsInsights">
+            <div class="chart-empty">سجلوا مصروفات أكتر علشان التحليل يبقى أدق ✨</div>
+          </div>
+
+          <div class="analytics-chart-block">
+            <div class="analytics-chart-title">آخر 6 دورات</div>
+            <div class="analytics-chart-sub">إجمالي الصرف في كل دورة</div>
+            <div class="monthly-trend" id="monthlyTrendChart"></div>
+          </div>
+
+          <div class="analytics-chart-block">
+            <div class="analytics-chart-title">حركة الصرف اليومية</div>
+            <div class="analytics-chart-sub">الدورة الحالية يوم بيوم</div>
+            <div class="daily-chart-wrap" id="dailySpendChart"></div>
+            <div class="analytics-footnote">التوقع مبني على متوسط الصرف من بداية الدورة حتى النهارده، لذلك بيتغير تلقائيًا مع كل مصروف جديد أو تعديل.</div>
+          </div>
+        </div>
+      </div>
+
       <div class="card">
         <div class="card-header">
           <div class="card-title"><span class="icon">🧾</span> مصروفات الدورة الحالية</div>
@@ -2049,6 +2161,222 @@ function renderCategorySummary(current) {
     </div>`).join('');
 }
 
+
+function previousBudgetCycle(cycle) {
+  return getBudgetCycle(new Date(cycle.start.getTime() - 24 * 60 * 60 * 1000));
+}
+
+function normalizeAnalysisText(value) {
+  return normalizeArabicDigits(String(value || ''))
+    .toLowerCase()
+    .replace(/[\u064b-\u065f\u0670]/g, '')
+    .replace(/[أإآ]/g, 'ا')
+    .replace(/ى/g, 'ي')
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function categoryTotals(items) {
+  const totals = new Map();
+  items.forEach(item => {
+    const key = EXPENSE_CATEGORIES[item.category] ? item.category : 'other';
+    totals.set(key, Math.round(((totals.get(key) || 0) + (Number(item.amount) || 0)) * 100) / 100);
+  });
+  return Array.from(totals.entries()).sort((a,b) => b[1] - a[1]);
+}
+
+function topPlace(items) {
+  const places = new Map();
+  items.forEach(item => {
+    const raw = String(item.note || '').trim();
+    const key = normalizeAnalysisText(raw);
+    if (!key) return;
+    const current = places.get(key) || { label: raw, total: 0, count: 0 };
+    current.total = Math.round((current.total + (Number(item.amount) || 0)) * 100) / 100;
+    current.count += 1;
+    if (raw.length < current.label.length) current.label = raw;
+    places.set(key, current);
+  });
+  return Array.from(places.values()).sort((a,b) => b.total - a.total)[0] || null;
+}
+
+function dailyTotals(items) {
+  const totals = new Map();
+  items.forEach(item => {
+    const ts = Number(item.ts);
+    if (!Number.isFinite(ts)) return;
+    const key = localDateId(new Date(ts));
+    totals.set(key, Math.round(((totals.get(key) || 0) + (Number(item.amount) || 0)) * 100) / 100);
+  });
+  return totals;
+}
+
+function cycleDayCount(cycle) {
+  return Math.max(1, Math.round((cycle.end - cycle.start) / 86400000));
+}
+
+function elapsedCycleDays(cycle, now = new Date()) {
+  const start = new Date(cycle.start); start.setHours(0,0,0,0);
+  const today = new Date(now); today.setHours(0,0,0,0);
+  return Math.min(cycleDayCount(cycle), Math.max(1, Math.floor((today - start) / 86400000) + 1));
+}
+
+function shortCycleLabel(cycle) {
+  try {
+    return new Intl.DateTimeFormat('ar-EG', { day:'numeric', month:'short' }).format(cycle.start);
+  } catch { return localDateId(cycle.start).slice(5); }
+}
+
+function shortDayLabel(date) {
+  try {
+    return new Intl.DateTimeFormat('ar-EG', { day:'numeric', month:'short' }).format(date);
+  } catch { return localDateId(date).slice(5); }
+}
+
+function setAnalyticsMetric(id, text, tone = '') {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = text;
+  el.classList.remove('good','bad');
+  if (tone) el.classList.add(tone);
+}
+
+function renderMonthlyTrendChart(currentCycle) {
+  const el = document.getElementById('monthlyTrendChart');
+  if (!el) return;
+  const cycles = [];
+  let cursor = currentCycle;
+  for (let i = 0; i < 6; i++) {
+    cycles.push(cursor);
+    cursor = previousBudgetCycle(cursor);
+  }
+  cycles.reverse();
+  const rows = cycles.map(cycle => {
+    const items = monthlyExpenses.filter(item => expenseCycleId(item) === cycle.id);
+    return { cycle, total: sumExpenses(items) };
+  });
+  const max = Math.max(...rows.map(r => r.total), 1);
+  if (!rows.some(r => r.total > 0)) {
+    el.innerHTML = '<div class="chart-empty">لسه مفيش بيانات كفاية للرسم</div>';
+    return;
+  }
+  el.innerHTML = rows.map(row => `
+    <div class="trend-row">
+      <div class="trend-label">${esc(shortCycleLabel(row.cycle))}${row.cycle.id === currentCycle.id ? ' • الآن' : ''}</div>
+      <div class="trend-track"><div class="trend-fill" style="width:${row.total > 0 ? Math.max(3, Math.round(row.total / max * 100)) : 0}%"></div></div>
+      <div class="trend-value">${esc(formatMoney(row.total))}</div>
+    </div>`).join('');
+}
+
+function renderDailySpendChart(current, cycle) {
+  const el = document.getElementById('dailySpendChart');
+  if (!el) return;
+  if (!current.length) {
+    el.innerHTML = '<div class="chart-empty">لسه مفيش بيانات كفاية للرسم اليومي</div>';
+    return;
+  }
+
+  const totals = dailyTotals(current);
+  const days = elapsedCycleDays(cycle);
+  const points = [];
+  for (let i = 0; i < days; i++) {
+    const d = new Date(cycle.start);
+    d.setDate(d.getDate() + i);
+    const id = localDateId(d);
+    points.push({ date:d, value:totals.get(id) || 0 });
+  }
+  const maxValue = Math.max(...points.map(p => p.value), 1);
+  const W = 560, H = 180, left = 34, right = 16, top = 18, bottom = 32;
+  const chartW = W - left - right, chartH = H - top - bottom;
+  const xy = points.map((p, idx) => {
+    const x = points.length === 1 ? left + chartW / 2 : left + idx / (points.length - 1) * chartW;
+    const y = top + chartH - (p.value / maxValue * chartH);
+    return { ...p, x, y };
+  });
+  const polyline = xy.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  const circles = xy.filter(p => p.value > 0).map(p => `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.2" fill="#b5726a"><title>${esc(shortDayLabel(p.date))}: ${esc(formatMoney(p.value))}</title></circle>`).join('');
+  const first = points[0]?.date || cycle.start;
+  const last = points[points.length - 1]?.date || cycle.start;
+  el.innerHTML = `
+    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="رسم الصرف اليومي للدورة الحالية">
+      <line x1="${left}" y1="${top + chartH}" x2="${W-right}" y2="${top + chartH}" stroke="#e6dfda" stroke-width="1" />
+      <line x1="${left}" y1="${top}" x2="${left}" y2="${top + chartH}" stroke="#eee7e2" stroke-width="1" />
+      <line x1="${left}" y1="${top + chartH/2}" x2="${W-right}" y2="${top + chartH/2}" stroke="#f0ebe7" stroke-width="1" stroke-dasharray="4 5" />
+      <polyline points="${polyline}" fill="none" stroke="#b5726a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+      ${circles}
+      <text x="${left}" y="13" font-size="11" fill="#9f9691">${esc(formatMoney(maxValue))}</text>
+      <text x="${left}" y="174" font-size="11" fill="#a9a09b">${esc(shortDayLabel(first))}</text>
+      <text x="${W-right}" y="174" text-anchor="end" font-size="11" fill="#a9a09b">${esc(shortDayLabel(last))}</text>
+    </svg>`;
+}
+
+function renderAnalytics(current, cycle, currentBudget) {
+  const previousCycle = previousBudgetCycle(cycle);
+  const previous = monthlyExpenses.filter(item => expenseCycleId(item) === previousCycle.id);
+  const total = sumExpenses(current);
+  const previousTotal = sumExpenses(previous);
+  const elapsedDays = elapsedCycleDays(cycle);
+  const totalDays = cycleDayCount(cycle);
+  const dailyAverage = total / elapsedDays;
+  const forecast = Math.round(dailyAverage * totalDays * 100) / 100;
+  const currentCategories = categoryTotals(current);
+  const previousCategories = categoryTotals(previous);
+  const topCategory = currentCategories[0] || null;
+  const topPrevCategory = previousCategories[0] || null;
+  const prevPlace = topPlace(previous);
+  const currentDays = dailyTotals(current);
+  const highestDayEntry = Array.from(currentDays.entries()).sort((a,b) => b[1] - a[1])[0] || null;
+
+  setAnalyticsMetric('analyticsPreviousTotal', previous.length ? formatMoney(previousTotal) : 'لا توجد بيانات');
+  if (previousTotal > 0) {
+    const changePct = Math.round((total - previousTotal) / previousTotal * 100);
+    setAnalyticsMetric('analyticsChange', `${changePct > 0 ? '+' : ''}${changePct}%`, changePct > 0 ? 'bad' : changePct < 0 ? 'good' : '');
+  } else {
+    setAnalyticsMetric('analyticsChange', 'مفيش مقارنة كفاية');
+  }
+  setAnalyticsMetric('analyticsDailyAverage', current.length ? formatMoney(dailyAverage) : '—');
+  setAnalyticsMetric('analyticsForecast', current.length ? formatMoney(forecast) : '—', forecast > currentBudget ? 'bad' : current.length ? 'good' : '');
+  setAnalyticsMetric('analyticsTopCategory', topCategory ? `${expenseCategoryLabel(topCategory[0])} • ${formatMoney(topCategory[1])}` : '—');
+  setAnalyticsMetric('analyticsTopPreviousPlace', prevPlace ? `${prevPlace.label} • ${formatMoney(prevPlace.total)}` : previous.length ? 'المكان غير مسجل' : 'لا توجد بيانات');
+
+  const insights = [];
+  if (previousTotal > 0) {
+    const diff = total - previousTotal;
+    const pct = Math.round(Math.abs(diff) / previousTotal * 100);
+    insights.push({ icon: diff > 0 ? '📈' : diff < 0 ? '📉' : '➖', text: diff > 0
+      ? `لحد دلوقتي صرفتم أكتر من الدورة السابقة بـ ${pct}% (${formatMoney(Math.abs(diff))}).`
+      : diff < 0
+        ? `لحد دلوقتي صرفتم أقل من الدورة السابقة بـ ${pct}% (${formatMoney(Math.abs(diff))}).`
+        : 'إجمالي الصرف الحالي مساوي تقريبًا للدورة السابقة.' });
+  }
+  if (prevPlace) insights.push({ icon:'🏪', text:`أكتر مكان اتصرف فيه في الدورة السابقة كان ${prevPlace.label} بإجمالي ${formatMoney(prevPlace.total)}.` });
+  if (topPrevCategory) insights.push({ icon:'🧾', text:`أكبر تصنيف في الدورة السابقة كان ${expenseCategoryLabel(topPrevCategory[0])} بإجمالي ${formatMoney(topPrevCategory[1])}.` });
+  if (topCategory) insights.push({ icon:'🥇', text:`أكبر تصنيف في الدورة الحالية لحد الآن هو ${expenseCategoryLabel(topCategory[0])} بإجمالي ${formatMoney(topCategory[1])}.` });
+  if (highestDayEntry) {
+    const [dateId, value] = highestDayEntry;
+    const [y,m,d] = dateId.split('-').map(Number);
+    insights.push({ icon:'🔥', text:`أعلى يوم صرف في الدورة الحالية كان ${formatBudgetDate(new Date(y,m-1,d))}: ${formatMoney(value)}.` });
+  }
+  if (current.length) {
+    if (forecast > currentBudget) {
+      insights.push({ icon:'⚠️', text:`لو استمر نفس معدل الصرف، المتوقع توصلوا إلى ${formatMoney(forecast)}، أي أعلى من الميزانية بحوالي ${formatMoney(forecast-currentBudget)}.` });
+    } else {
+      insights.push({ icon:'✅', text:`لو استمر نفس معدل الصرف، المتوقع تنتهوا عند ${formatMoney(forecast)}، داخل الميزانية بحوالي ${formatMoney(currentBudget-forecast)}.` });
+    }
+  }
+
+  const insightsEl = document.getElementById('analyticsInsights');
+  if (insightsEl) {
+    insightsEl.innerHTML = insights.length ? insights.slice(0,6).map(item => `
+      <div class="analytics-insight"><span class="analytics-insight-icon">${item.icon}</span><span>${esc(item.text)}</span></div>`).join('')
+      : '<div class="chart-empty">سجلوا مصروفات أكتر علشان التحليل يبقى أدق ✨</div>';
+  }
+
+  renderMonthlyTrendChart(cycle);
+  renderDailySpendChart(current, cycle);
+}
+
 function renderBudget() {
   const cycleLabel = document.getElementById('budgetCycleLabel');
   if (!cycleLabel) return;
@@ -2080,6 +2408,7 @@ function renderBudget() {
   document.getElementById('budgetProgressText').textContent = `${pct}%`;
   document.getElementById('expenseCountLabel').textContent = current.length ? `${current.length} عمليات` : '';
   renderCategorySummary(current);
+  renderAnalytics(current, cycle, currentBudget);
 
   const list = document.getElementById('currentExpenses');
   list.innerHTML = current.length ? current.map(item => {
