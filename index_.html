@@ -511,11 +511,11 @@
     }
     .expense-form {
       display: grid;
-      grid-template-columns: minmax(90px, 0.75fr) minmax(0, 1.25fr) minmax(105px, 0.8fr) auto;
+      grid-template-columns: minmax(90px, 0.8fr) minmax(0, 1.5fr) auto;
       gap: 7px;
       padding: 13px 12px 12px;
     }
-    .expense-form input, .expense-form select, .task-options select {
+    .expense-form input {
       min-width: 0;
       border: 1.5px solid #e8e2de;
       border-radius: 11px;
@@ -525,40 +525,10 @@
       outline: none;
       background: #fafafa;
     }
-    .expense-form input:focus, .expense-form select:focus, .task-options select:focus {
+    .expense-form input:focus {
       border-color: #b5726a;
       box-shadow: 0 0 0 3px rgba(181,114,106,0.1);
     }
-    .expense-form select, .task-options select {
-      min-width: 0;
-      border: 1.5px solid #e8e2de;
-      border-radius: 11px;
-      padding: 9px 10px;
-      font-family: inherit;
-      font-size: 0.78rem;
-      outline: none;
-      background: #fafafa;
-      color: #625a56;
-      direction: rtl;
-    }
-    .task-options { padding: 0 12px 10px; display: flex; align-items: center; gap: 7px; }
-    .task-options-label { font-size: 0.72rem; color: #aaa; font-weight: 800; flex-shrink: 0; }
-    .task-options select { flex: 1; border-color: #e1e7f1; }
-    .recurrence-badge {
-      flex-shrink: 0; font-size: 0.64rem; font-weight: 900; color: #5579b8;
-      background: #eef3fb; border-radius: 7px; padding: 2px 6px; white-space: nowrap;
-    }
-    .category-badge {
-      display: inline-block; font-size: 0.62rem; font-weight: 900; color: #8a6658;
-      background: #fbf0eb; border-radius: 7px; padding: 2px 6px; margin-left: 4px;
-    }
-    .category-summary { padding: 7px 12px 14px; }
-    .category-row { margin: 9px 0; }
-    .category-top { display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:0.75rem; }
-    .category-name { font-weight:900; color:#5d5551; }
-    .category-value { color:#8e837d; font-weight:800; direction:ltr; }
-    .category-bar { height:7px; background:#f0ece9; border-radius:999px; overflow:hidden; margin-top:5px; }
-    .category-fill { height:100%; background:#b5726a; border-radius:inherit; }
     .expense-form .amount-input { direction: ltr; text-align: center; }
     .expense-add-btn {
       border: none;
@@ -624,7 +594,7 @@
       gap: 7px;
       align-items: center;
     }
-    .expense-edit-form input, .expense-edit-form select {
+    .expense-edit-form input {
       min-width: 0;
       width: 100%;
       border: 1.5px solid #e2d8d1;
@@ -635,11 +605,7 @@
       outline: none;
       background: white;
     }
-    .expense-edit-form input:focus, .expense-edit-form select:focus { border-color: #b5726a; box-shadow: 0 0 0 3px rgba(181,114,106,0.09); }
-    .expense-edit-form select {
-      width:100%; min-width:0; border:1.5px solid #e2d8d1; border-radius:9px; padding:8px 9px;
-      font-family:inherit; font-size:0.78rem; outline:none; background:white; color:#625a56; direction:rtl;
-    }
+    .expense-edit-form input:focus { border-color: #b5726a; box-shadow: 0 0 0 3px rgba(181,114,106,0.09); }
     .expense-edit-form .edit-amount { direction: ltr; text-align: center; }
     .expense-edit-actions { grid-column: 1 / -1; display: flex; gap: 6px; }
     .expense-edit-save, .expense-edit-cancel {
@@ -679,48 +645,6 @@
       font-size: 0.62rem;
       font-weight: 800;
     }
-    .feature-form {
-      display:grid; grid-template-columns:minmax(0,1.4fr) minmax(90px,.7fr) auto;
-      gap:7px; padding:12px;
-    }
-    .feature-form input {
-      min-width:0; border:1.5px solid #e8e2de; border-radius:11px; padding:10px 11px;
-      font-family:inherit; font-size:.82rem; outline:none; background:#fafafa;
-    }
-    .feature-form input:focus { border-color:#b5726a; box-shadow:0 0 0 3px rgba(181,114,106,.09); }
-    .feature-action {
-      border:none; border-radius:11px; padding:0 13px; background:#6d8f75; color:white;
-      font-family:inherit; font-weight:900; cursor:pointer; min-height:40px;
-    }
-    .savings-list { padding:4px 10px 12px; }
-    .saving-row { padding:12px 8px; border-bottom:1px solid #f1eeec; }
-    .saving-row:last-child { border-bottom:none; }
-    .saving-head { display:flex; align-items:center; justify-content:space-between; gap:8px; }
-    .saving-name { font-size:.87rem; font-weight:900; color:#4d4946; }
-    .saving-values { font-size:.7rem; color:#999; direction:ltr; text-align:left; }
-    .saving-progress { height:8px; border-radius:999px; overflow:hidden; background:#eeeae7; margin:7px 0; }
-    .saving-fill { height:100%; border-radius:inherit; background:#6d8f75; }
-    .saving-actions { display:flex; align-items:center; gap:6px; }
-    .saving-actions input { flex:1; min-width:0; border:1px solid #e5dfdb; border-radius:9px; padding:7px 9px; font-family:inherit; direction:ltr; text-align:center; }
-    .saving-small-btn { border:none; border-radius:8px; padding:7px 9px; font-family:inherit; font-size:.7rem; font-weight:900; cursor:pointer; background:#eef5ef; color:#4d7c5a; }
-    .saving-small-btn.danger { background:#fff0ef; color:#c95d57; }
-    .activity-list { padding:4px 10px 12px; }
-    .activity-row { display:flex; gap:10px; align-items:flex-start; padding:11px 7px; border-bottom:1px solid #f2efed; }
-    .activity-row:last-child { border-bottom:none; }
-    .activity-icon { width:30px; height:30px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:#f5f1ee; flex-shrink:0; }
-    .activity-main { flex:1; min-width:0; }
-    .activity-title { font-size:.8rem; font-weight:900; color:#4f4945; line-height:1.45; }
-    .activity-detail { font-size:.68rem; color:#aaa; margin-top:2px; line-height:1.45; }
-    .data-tools { display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:12px; }
-    .data-tool-btn { border:none; border-radius:12px; padding:12px 9px; font-family:inherit; font-size:.78rem; font-weight:900; cursor:pointer; background:#f4f1ef; color:#665d58; }
-    .data-tool-btn.primary { background:#b5726a; color:white; }
-    .feature-note { padding:0 14px 13px; color:#aaa; font-size:.66rem; line-height:1.55; }
-    .app-toast-content { display:flex; align-items:center; gap:10px; }
-    .app-toast-copy { flex:1; min-width:0; }
-    .app-toast-undo { display:none; border:none; border-radius:9px; padding:8px 10px; background:white; color:#3a3431; font-family:inherit; font-weight:900; cursor:pointer; flex-shrink:0; }
-    .app-toast.with-undo { pointer-events:auto; }
-    .app-toast.with-undo .app-toast-undo { display:block; }
-
     .app-toast {
       position: fixed;
       left: 50%;
@@ -744,15 +668,9 @@
 
     @media (max-width: 430px) {
       .owner-tab { font-size: 0.68rem; padding: 6px 2px; }
-      .hdr-btn { padding: 6px; font-size: 0.9rem; }
-      header h1 { font-size: 1.08rem; }
-      .user-chip { padding: 4px 7px; font-size: 0.72rem; }
       .expense-form { grid-template-columns: 1fr auto; }
       .expense-form .expense-note-input { grid-column: 1 / -1; grid-row: 2; }
-      .expense-form .expense-category { grid-column: 1 / -1; grid-row: 3; }
       .expense-form .expense-add-btn { grid-column: 2; grid-row: 1; min-height: 40px; }
-      .feature-form { grid-template-columns:1fr auto; }
-      .feature-form .feature-name { grid-column:1 / -1; }
       .expense-edit-form { grid-template-columns: 1fr; }
       .expense-edit-actions { grid-column: 1; }
       .history-row { grid-template-columns: 1fr; gap: 5px; }
@@ -1357,8 +1275,6 @@
         <div class="date" id="headerDate"></div>
       </div>
       <div class="header-right">
-        <button class="hdr-btn" onclick="openHomeRoot()" title="الرئيسية">🏠</button>
-        <button class="hdr-btn" onclick="openActivityView()" title="سجل النشاط والنسخ الاحتياطي">🕘</button>
         <button class="hdr-btn" onclick="openChangePass()" title="تغيير الباسورد">🔑</button>
         <button class="hdr-btn" onclick="doLogout()" title="خروج">🚪</button>
         <button class="hdr-btn" onclick="openOverlay()" title="إعدادات Firebase">⚙️</button>
@@ -1437,14 +1353,6 @@
             <input type="text" id="taskIn" placeholder="أضف مهمة..."
                    onkeydown="if(event.key==='Enter') addTask()">
           </div>
-          <div class="task-options">
-            <span class="task-options-label">التكرار</span>
-            <select id="taskRecurrence" aria-label="تكرار المهمة">
-              <option value="none">مرة واحدة</option>
-              <option value="weekly">كل أسبوع</option>
-              <option value="monthly">كل شهر</option>
-            </select>
-          </div>
           <div class="items-list" id="taskList">
             <div class="empty">مفيش مهام معلقة 👍</div>
           </div>
@@ -1506,28 +1414,7 @@
                  onkeydown="if(event.key==='Enter') addExpense()">
           <input class="expense-note-input" type="text" id="expenseNote" placeholder="المكان أو ملاحظة (اختياري)"
                  onkeydown="if(event.key==='Enter') addExpense()">
-          <select class="expense-category" id="expenseCategory" aria-label="تصنيف المصروف">
-            <option value="groceries">سوبرماركت وأكل</option>
-            <option value="restaurants">مطاعم</option>
-            <option value="transport">مواصلات</option>
-            <option value="home">البيت</option>
-            <option value="bills">فواتير</option>
-            <option value="shopping">تسوق</option>
-            <option value="entertainment">ترفيه</option>
-            <option value="health">صحة</option>
-            <option value="other">أخرى</option>
-          </select>
           <button class="expense-add-btn" onclick="addExpense()">إضافة</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title"><span class="icon">📊</span> المصروف حسب التصنيف</div>
-          <div class="card-subtitle">الدورة الحالية</div>
-        </div>
-        <div class="category-summary" id="categorySummary">
-          <div class="empty">لسه مفيش مصروفات نحللها</div>
         </div>
       </div>
 
@@ -1543,21 +1430,6 @@
 
       <div class="card">
         <div class="card-header">
-          <div class="card-title"><span class="icon">🎯</span> أهداف الادخار</div>
-          <div class="card-subtitle">حاجة بنجمع لها سوا</div>
-        </div>
-        <div class="feature-form">
-          <input class="feature-name" id="savingGoalName" type="text" placeholder="مثلاً: رحلة الصيف">
-          <input id="savingGoalTarget" type="text" inputmode="decimal" placeholder="الهدف €">
-          <button class="feature-action" onclick="addSavingsGoal()">إضافة</button>
-        </div>
-        <div class="savings-list" id="savingsList">
-          <div class="empty">مفيش أهداف ادخار لسه</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
           <div class="card-title"><span class="icon">🗂️</span> ملخص الشهور المقفولة</div>
           <div class="card-subtitle">من يوم 27 ليوم 26</div>
         </div>
@@ -1567,39 +1439,10 @@
       </div>
     </div>
 
-    <div id="activityView" class="app-view hidden">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title"><span class="icon">🕘</span> سجل النشاط</div>
-          <div class="card-subtitle">آخر 30 يوم</div>
-        </div>
-        <div class="activity-list" id="activityList">
-          <div class="empty">مفيش نشاط متسجل لسه</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title"><span class="icon">💾</span> نسخة احتياطية</div>
-          <div class="card-subtitle">بيانات البيت فقط</div>
-        </div>
-        <div class="data-tools">
-          <button class="data-tool-btn primary" onclick="exportBackup()">تنزيل نسخة احتياطية</button>
-          <button class="data-tool-btn" onclick="pickBackupFile()">استرجاع نسخة</button>
-        </div>
-        <div class="feature-note">النسخة تشمل المول والخطط والروتين والمصاريف والميزانيات وأهداف الادخار. الباسورد غير موجود داخل النسخة.</div>
-        <input type="file" id="restoreFileInput" accept="application/json,.json" style="display:none" onchange="restoreBackupFile(event)">
-      </div>
-    </div>
-
   </div>
   <div class="app-toast" id="appToast" role="status" aria-live="polite">
-    <div class="app-toast-content">
-      <div class="app-toast-copy">
-        <div class="app-toast-title" id="appToastTitle"></div>
-        <div class="app-toast-body" id="appToastBody"></div>
-      </div>
-      <button class="app-toast-undo" id="appToastUndo" onclick="runUndo()">تراجع</button>
-    </div>
+    <div class="app-toast-title" id="appToastTitle"></div>
+    <div class="app-toast-body" id="appToastBody"></div>
   </div>
 </div>
 
@@ -1607,7 +1450,7 @@
 import { initializeApp }          from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import {
   getFirestore, collection, addDoc, onSnapshot,
-  doc, updateDoc, deleteDoc, setDoc, query, orderBy, where, getDoc, getDocs
+  doc, updateDoc, deleteDoc, setDoc, query, orderBy, where, getDoc
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 // ── Users config ──────────────────────────────────────────────────────────────
@@ -1635,7 +1478,7 @@ let openChildComposers = new Set();
 let expandedCompleted  = new Set();
 let reminderTimer      = null;
 let ownerFilter        = 'all'; // 'all' | 'mine' | 'other'
-let mainView           = 'home'; // 'home' | 'budget' | 'activity'
+let mainView           = 'home'; // 'home' | 'budget'
 let homeSection        = 'menu'; // 'menu' | 'shopping' | 'tasks' | 'routine'
 let monthlyExpenses    = [];
 let monthlyBudgets     = new Map();
@@ -1648,10 +1491,6 @@ let budgetLastLimit    = null;
 let toastTimer         = null;
 let shoppingCleanupIds = new Set();
 let childItemsLoaded    = false;
-let activityItems       = [];
-let savingsGoals        = [];
-let undoAction          = null;
-let undoTimer           = null;
 
 const SESSION_KEY = 'yhSession';
 const SHOPPING_RETENTION_MS = 7 * 24 * 60 * 60 * 1000;
@@ -1698,10 +1537,8 @@ function updateHomeSectionView() {
 function updateMainView() {
   const home = document.getElementById('homeView');
   const budget = document.getElementById('budgetView');
-  const activity = document.getElementById('activityView');
   if (home) home.classList.toggle('hidden', mainView !== 'home');
   if (budget) budget.classList.toggle('hidden', mainView !== 'budget');
-  if (activity) activity.classList.toggle('hidden', mainView !== 'activity');
   if (mainView === 'home') updateHomeSectionView();
 }
 
@@ -1718,9 +1555,9 @@ function updateOwnerTabs() {
   mineBtn.textContent  = 'أنا';
   otherBtn.textContent = isAhmed ? 'هي' : 'هو';
 
-  allBtn.classList.toggle('active', ownerFilter === 'all');
-  mineBtn.classList.toggle('active', ownerFilter === 'mine');
-  otherBtn.classList.toggle('active', ownerFilter === 'other');
+  allBtn.classList.toggle('active', mainView === 'home' && ownerFilter === 'all');
+  mineBtn.classList.toggle('active', mainView === 'home' && ownerFilter === 'mine');
+  otherBtn.classList.toggle('active', mainView === 'home' && ownerFilter === 'other');
   budgetBtn.classList.toggle('active', mainView === 'budget');
 }
 
@@ -1733,28 +1570,11 @@ function filterByOwner(items) {
 window.setOwnerFilter = function(filter) {
   if (!['all','mine','other'].includes(filter)) return;
   ownerFilter = filter;
+  mainView = 'home';
   if (currentUser) localStorage.setItem(ownerFilterKey(), ownerFilter);
   updateMainView();
   updateOwnerTabs();
   renderAllLists();
-  renderBudget();
-  renderSavingsGoals();
-  renderActivity();
-};
-
-window.openHomeRoot = function() {
-  mainView = 'home';
-  homeSection = 'menu';
-  updateMainView();
-  updateOwnerTabs();
-  renderAllLists();
-};
-
-window.openActivityView = function() {
-  mainView = 'activity';
-  updateMainView();
-  updateOwnerTabs();
-  renderActivity();
 };
 
 window.openHomeSection = function(section, pushHistory = true) {
@@ -1796,7 +1616,6 @@ window.openBudgetView = function() {
   updateMainView();
   updateOwnerTabs();
   renderBudget();
-  renderSavingsGoals();
 };
 
 // Smart dates + reminders
@@ -1905,45 +1724,9 @@ function parseMoneyInput(value) {
   return Number.isFinite(amount) ? amount : NaN;
 }
 
-const EXPENSE_CATEGORIES = {
-  groceries: 'سوبرماركت وأكل',
-  restaurants: 'مطاعم',
-  transport: 'مواصلات',
-  home: 'البيت',
-  bills: 'فواتير',
-  shopping: 'تسوق',
-  entertainment: 'ترفيه',
-  health: 'صحة',
-  other: 'أخرى'
-};
-
-function expenseCategoryLabel(key) { return EXPENSE_CATEGORIES[key] || EXPENSE_CATEGORIES.other; }
-function expenseCategoryBadge(item) {
-  return `<span class="category-badge">${esc(expenseCategoryLabel(item?.category || 'other'))}</span>`;
-}
-
-function currentBudgetExpenses(applyOwnerFilter = true) {
+function currentBudgetExpenses() {
   const cycle = getBudgetCycle();
-  const source = applyOwnerFilter ? filterByOwner(monthlyExpenses) : monthlyExpenses;
-  return source.filter(item => expenseCycleId(item) === cycle.id);
-}
-
-function renderCategorySummary(current) {
-  const el = document.getElementById('categorySummary');
-  if (!el) return;
-  if (!current.length) { el.innerHTML = '<div class="empty">لسه مفيش مصروفات نحللها</div>'; return; }
-  const totals = new Map();
-  current.forEach(item => {
-    const key = EXPENSE_CATEGORIES[item.category] ? item.category : 'other';
-    totals.set(key, (totals.get(key) || 0) + (Number(item.amount) || 0));
-  });
-  const rows = Array.from(totals.entries()).sort((a,b) => b[1] - a[1]);
-  const max = Math.max(...rows.map(([,v]) => v), 1);
-  el.innerHTML = rows.map(([key,value]) => `
-    <div class="category-row">
-      <div class="category-top"><span class="category-name">${esc(expenseCategoryLabel(key))}</span><span class="category-value">${esc(formatMoney(value))}</span></div>
-      <div class="category-bar"><div class="category-fill" style="width:${Math.round(value/max*100)}%"></div></div>
-    </div>`).join('');
+  return monthlyExpenses.filter(item => expenseCycleId(item) === cycle.id);
 }
 
 function renderBudget() {
@@ -1976,7 +1759,6 @@ function renderBudget() {
   fill.classList.toggle('over', over);
   document.getElementById('budgetProgressText').textContent = `${pct}%`;
   document.getElementById('expenseCountLabel').textContent = current.length ? `${current.length} عمليات` : '';
-  renderCategorySummary(current);
 
   const list = document.getElementById('currentExpenses');
   list.innerHTML = current.length ? current.map(item => {
@@ -1989,7 +1771,7 @@ function renderBudget() {
           <div class="expense-note">${note}</div>
           <div class="expense-amount" dir="ltr">${esc(formatMoney(item.amount))}</div>
         </div>
-        <div class="expense-meta">${expenseCategoryBadge(item)} ${name} • ${esc(formatExpenseTime(item.ts))} • اضغط للتعديل</div>
+        <div class="expense-meta">${name} • ${esc(formatExpenseTime(item.ts))} • اضغط للتعديل</div>
       </div>
       <button class="expense-edit" onclick="startExpenseEdit(event,'${item.id}')" title="تعديل">✎</button>
       <button class="expense-delete" onclick="delExpense('${item.id}')" title="مسح">×</button>
@@ -1997,7 +1779,7 @@ function renderBudget() {
   }).join('') : '<div class="empty">مفيش مصروفات متسجلة في الدورة دي</div>';
 
   const groups = new Map();
-  filterByOwner(monthlyExpenses).forEach(item => {
+  monthlyExpenses.forEach(item => {
     const id = expenseCycleId(item);
     if (id === cycle.id) return;
     if (!groups.has(id)) groups.set(id, []);
@@ -2073,7 +1855,6 @@ window.saveCurrentBudget = async function() {
     input.value = formatBudgetInput(amount);
     input.blur();
     showAppToast('✅ تم حفظ هدف الميزانية', `هدف الدورة الحالية أصبح ${formatMoney(amount)} فقط، ولن تتغير أهداف الدورات السابقة.`);
-    logActivity('budget', 'عدّل هدف الميزانية', `${formatMoney(oldAmount)} ← ${formatMoney(amount)}`);
   } catch (error) {
     console.error(error);
     alert('تعذر حفظ هدف الميزانية. تأكد أن قواعد Firebase تسمح بالكتابة في monthly_budgets.');
@@ -2089,7 +1870,6 @@ window.addExpense = async function() {
   if (!db) { alert('اعمل إعداد Firebase من ⚙️ الأول'); return; }
   const amountEl = document.getElementById('expenseAmount');
   const noteEl = document.getElementById('expenseNote');
-  const categoryEl = document.getElementById('expenseCategory');
   const amount = parseMoneyInput(amountEl.value);
   if (!Number.isFinite(amount) || amount <= 0) {
     alert('اكتب مبلغ صحيح أكبر من صفر');
@@ -2098,23 +1878,16 @@ window.addExpense = async function() {
   }
   const now = Date.now();
   const cycle = getBudgetCycle(new Date(now));
-  const category = EXPENSE_CATEGORIES[categoryEl?.value] ? categoryEl.value : 'other';
-  const ref = await addDoc(collection(db,'monthly_expenses'), sw({
+  await addDoc(collection(db,'monthly_expenses'), sw({
     amount,
     note: noteEl.value.trim(),
-    category,
     ts: now,
     cycleId: cycle.id,
     by: currentUser
   }));
-  logActivity('expense', 'أضاف مصروف', `${formatMoney(amount)} • ${expenseCategoryLabel(category)}${noteEl.value.trim() ? ` • ${noteEl.value.trim()}` : ''}`);
   amountEl.value = '';
   noteEl.value = '';
   amountEl.focus();
-  showUndoToast('✅ اتضاف المصروف', formatMoney(amount), async () => {
-    await deleteDoc(doc(db,'monthly_expenses',ref.id));
-    await logActivity('undo', 'تراجع عن إضافة مصروف', formatMoney(amount));
-  });
 };
 
 window.startExpenseEdit = function(event, id) {
@@ -2131,9 +1904,6 @@ window.startExpenseEdit = function(event, id) {
     <div class="expense-edit-form" onclick="event.stopPropagation()">
       <input class="edit-amount" id="expenseEditAmount-${id}" type="text" inputmode="decimal" value="${esc(amountValue)}" aria-label="تعديل المبلغ">
       <input id="expenseEditNote-${id}" type="text" value="${esc(noteValue)}" placeholder="المكان أو ملاحظة" aria-label="تعديل الملاحظة">
-      <select id="expenseEditCategory-${id}" aria-label="تعديل التصنيف">
-        ${Object.entries(EXPENSE_CATEGORIES).map(([key,label]) => `<option value="${key}" ${(item.category || 'other') === key ? 'selected' : ''}>${esc(label)}</option>`).join('')}
-      </select>
       <div class="expense-edit-actions">
         <button class="expense-edit-save" onclick="saveExpenseEdit('${id}')">حفظ ✓</button>
         <button class="expense-edit-cancel" onclick="cancelExpenseEdit('${id}')">إلغاء</button>
@@ -2148,31 +1918,19 @@ window.saveExpenseEdit = async function(id) {
   if (!db) return;
   const amountEl = document.getElementById(`expenseEditAmount-${id}`);
   const noteEl = document.getElementById(`expenseEditNote-${id}`);
-  const categoryEl = document.getElementById(`expenseEditCategory-${id}`);
   const amount = parseMoneyInput(amountEl?.value || '');
   if (!Number.isFinite(amount) || amount <= 0) {
     alert('اكتب مبلغ صحيح أكبر من صفر');
     amountEl?.focus();
     return;
   }
-  const oldItem = monthlyExpenses.find(expense => expense.id === id);
-  const category = EXPENSE_CATEGORIES[categoryEl?.value] ? categoryEl.value : 'other';
   try {
     await updateDoc(doc(db,'monthly_expenses',id), sw({
       amount,
       note: noteEl?.value.trim() || '',
-      category,
       editedAt: Date.now(),
       editedBy: currentUser
     }));
-    await logActivity('expense', 'عدّل مصروف', `${oldItem ? formatMoney(oldItem.amount) : ''} ← ${formatMoney(amount)}`);
-    if (oldItem) showUndoToast('✅ اتعدل المصروف', formatMoney(amount), async () => {
-      await updateDoc(doc(db,'monthly_expenses',id), sw({
-        amount: oldItem.amount, note: oldItem.note || '', category: oldItem.category || 'other',
-        editedAt: Date.now(), editedBy: currentUser
-      }));
-      await logActivity('undo', 'تراجع عن تعديل مصروف', formatMoney(oldItem.amount));
-    });
   } catch (error) {
     console.error(error);
     alert('محصلش تعديل المصروف. حاول تاني.');
@@ -2185,60 +1943,19 @@ window.cancelExpenseEdit = function() {
 
 window.delExpense = async function(id) {
   if (!db) return;
-  const item = monthlyExpenses.find(expense => expense.id === id);
-  if (!item || !confirm('تمسح المصروف ده؟')) return;
+  if (!confirm('تمسح المصروف ده؟')) return;
   await deleteDoc(doc(db,'monthly_expenses',id));
-  await logActivity('delete', 'مسح مصروف', `${formatMoney(item.amount)}${item.note ? ` • ${item.note}` : ''}`);
-  showUndoToast('اتمسح المصروف', formatMoney(item.amount), async () => {
-    const data = { ...item }; delete data.id;
-    await setDoc(doc(db,'monthly_expenses',id), sw(data));
-    await logActivity('undo', 'رجّع مصروف ممسوح', formatMoney(item.amount));
-  });
 };
-
-function clearUndoState() {
-  undoAction = null;
-  if (undoTimer) clearTimeout(undoTimer);
-  undoTimer = null;
-  document.getElementById('appToast')?.classList.remove('with-undo');
-}
 
 function showAppToast(title, body) {
   const toast = document.getElementById('appToast');
   if (!toast) return;
-  clearUndoState();
   document.getElementById('appToastTitle').textContent = title;
   document.getElementById('appToastBody').textContent = body;
   toast.classList.add('show');
   if (toastTimer) clearTimeout(toastTimer);
   toastTimer = setTimeout(() => toast.classList.remove('show'), 5000);
 }
-
-function showUndoToast(title, body, action) {
-  const toast = document.getElementById('appToast');
-  if (!toast) return;
-  if (toastTimer) clearTimeout(toastTimer);
-  if (undoTimer) clearTimeout(undoTimer);
-  undoAction = action;
-  document.getElementById('appToastTitle').textContent = title;
-  document.getElementById('appToastBody').textContent = body;
-  toast.classList.add('show','with-undo');
-  undoTimer = setTimeout(() => clearUndoState(), 8000);
-  toastTimer = setTimeout(() => { toast.classList.remove('show'); clearUndoState(); }, 8500);
-}
-
-window.runUndo = async function() {
-  const action = undoAction;
-  if (!action) return;
-  clearUndoState();
-  try {
-    await action();
-    showAppToast('↩️ تم التراجع', 'رجعنا آخر تغيير.');
-  } catch (error) {
-    console.error(error);
-    showAppToast('تعذر التراجع', 'حاول تاني.');
-  }
-};
 
 function emitBudgetNotice(cycleId, key, title, body) {
   showAppToast(title, body);
@@ -2253,7 +1970,7 @@ function checkBudgetNotifications() {
   if (!budgetExpensesLoaded || !budgetTargetsLoaded) return;
 
   const cycle = getBudgetCycle();
-  const total = sumExpenses(currentBudgetExpenses(false));
+  const total = sumExpenses(currentBudgetExpenses());
   const budget = budgetForCycle(cycle.id);
 
   if (!budgetNotifyReady || budgetLastCycleId !== cycle.id) {
@@ -2306,145 +2023,6 @@ function checkBudgetNotifications() {
   budgetLastTotal = total;
   budgetLastLimit = budget;
 }
-
-// ── Activity, savings and backup ─────────────────────────────────────────────
-async function logActivity(type, title, detail = '', by = currentUser) {
-  if (!db || !by) return;
-  try {
-    await addDoc(collection(db,'activity_log'), sw({ type, title, detail, ts: Date.now(), by }));
-  } catch (error) { console.warn('activity log failed', error); }
-}
-
-function activityIcon(type) {
-  return ({ shopping:'🛒', task:'📋', routine:'🔄', expense:'💶', budget:'📊', delete:'🗑️', edit:'✏️', complete:'✅', savings:'🎯', backup:'💾', undo:'↩️', child:'↳' })[type] || '•';
-}
-
-function renderActivity() {
-  const el = document.getElementById('activityList');
-  if (!el) return;
-  const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
-  const visible = filterByOwner(activityItems).filter(item => Number(item.ts) >= cutoff).slice(0, 100);
-  el.innerHTML = visible.length ? visible.map(item => {
-    const who = item.by === 'ahmed' ? 'أحمد' : item.by === 'yousra' ? 'يسرا' : '';
-    return `<div class="activity-row">
-      <div class="activity-icon">${activityIcon(item.type)}</div>
-      <div class="activity-main">
-        <div class="activity-title">${esc(who)} ${esc(item.title || '')}</div>
-        <div class="activity-detail">${item.detail ? `${esc(item.detail)} • ` : ''}${esc(formatExpenseTime(item.ts))}</div>
-      </div>
-    </div>`;
-  }).join('') : '<div class="empty">مفيش نشاط في آخر 30 يوم</div>';
-}
-
-function renderSavingsGoals() {
-  const el = document.getElementById('savingsList');
-  if (!el) return;
-  const visible = filterByOwner(savingsGoals).slice().sort((a,b) => (Number(b.ts)||0) - (Number(a.ts)||0));
-  el.innerHTML = visible.length ? visible.map(goal => {
-    const target = Math.max(Number(goal.target) || 0, 0.01);
-    const saved = Math.max(Number(goal.saved) || 0, 0);
-    const pct = Math.min(100, Math.round(saved / target * 100));
-    return `<div class="saving-row">
-      <div class="saving-head"><span class="saving-name">${esc(goal.name || 'هدف')}</span><span class="saving-values">${esc(formatMoney(saved))} / ${esc(formatMoney(target))}</span></div>
-      <div class="saving-progress"><div class="saving-fill" style="width:${pct}%"></div></div>
-      <div class="saving-actions">
-        <input id="savingAdd-${goal.id}" type="text" inputmode="decimal" placeholder="زود مبلغ €">
-        <button class="saving-small-btn" onclick="addSavingAmount('${goal.id}')">إضافة</button>
-        <button class="saving-small-btn danger" onclick="deleteSavingsGoal('${goal.id}')">مسح</button>
-      </div>
-    </div>`;
-  }).join('') : '<div class="empty">مفيش أهداف ادخار لسه</div>';
-}
-
-window.addSavingsGoal = async function() {
-  if (!db) return;
-  const nameEl = document.getElementById('savingGoalName');
-  const targetEl = document.getElementById('savingGoalTarget');
-  const name = nameEl?.value.trim() || '';
-  const target = parseMoneyInput(targetEl?.value || '');
-  if (!name || !Number.isFinite(target) || target <= 0) { alert('اكتب اسم الهدف ومبلغ صحيح'); return; }
-  const ref = await addDoc(collection(db,'savings_goals'), sw({ name, target, saved:0, ts:Date.now(), by:currentUser }));
-  await logActivity('savings', 'أضاف هدف ادخار', `${name} • ${formatMoney(target)}`);
-  nameEl.value = ''; targetEl.value = '';
-  showUndoToast('🎯 اتضاف هدف الادخار', name, async () => {
-    await deleteDoc(doc(db,'savings_goals',ref.id));
-    await logActivity('undo', 'تراجع عن هدف ادخار', name);
-  });
-};
-
-window.addSavingAmount = async function(id) {
-  const goal = savingsGoals.find(g => g.id === id);
-  const input = document.getElementById(`savingAdd-${id}`);
-  const amount = parseMoneyInput(input?.value || '');
-  if (!goal || !Number.isFinite(amount) || amount <= 0) { alert('اكتب مبلغ صحيح'); return; }
-  const before = Number(goal.saved) || 0;
-  const after = Math.round((before + amount) * 100) / 100;
-  await updateDoc(doc(db,'savings_goals',id), sw({ saved:after, updatedAt:Date.now(), updatedBy:currentUser }));
-  await logActivity('savings', 'زاد مبلغ لهدف الادخار', `${goal.name} • +${formatMoney(amount)}`);
-  showUndoToast('🎯 اتضاف للهدف', `+${formatMoney(amount)}`, async () => {
-    await updateDoc(doc(db,'savings_goals',id), sw({ saved:before, updatedAt:Date.now(), updatedBy:currentUser }));
-    await logActivity('undo', 'تراجع عن إضافة للادخار', `${goal.name} • ${formatMoney(amount)}`);
-  });
-};
-
-window.deleteSavingsGoal = async function(id) {
-  const goal = savingsGoals.find(g => g.id === id);
-  if (!goal || !confirm(`تمسح هدف ${goal.name}؟`)) return;
-  await deleteDoc(doc(db,'savings_goals',id));
-  await logActivity('delete', 'مسح هدف ادخار', goal.name);
-  showUndoToast('اتمسح هدف الادخار', goal.name, async () => {
-    const data = { ...goal }; delete data.id;
-    await setDoc(doc(db,'savings_goals',id), sw(data));
-    await logActivity('undo', 'رجّع هدف ادخار', goal.name);
-  });
-};
-
-const BACKUP_COLLECTIONS = [
-  'shopping','tasks','routine_items','routine_completions','child_items',
-  'monthly_expenses','monthly_budgets','savings_goals','activity_log'
-];
-
-window.exportBackup = async function() {
-  if (!db) return;
-  try {
-    const backup = { app:'Yousras Home', version:2, exportedAt:new Date().toISOString(), collections:{} };
-    for (const name of BACKUP_COLLECTIONS) {
-      const snap = await getDocs(collection(db,name));
-      backup.collections[name] = snap.docs.map(d => ({ id:d.id, data:d.data() }));
-    }
-    const blob = new Blob([JSON.stringify(backup,null,2)], { type:'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = `yousras-home-backup-${todayStr()}.json`;
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-    await logActivity('backup', 'نزّل نسخة احتياطية', todayStr());
-    showAppToast('💾 النسخة جاهزة', 'تم تنزيل ملف النسخة الاحتياطية.');
-  } catch (error) { console.error(error); alert('تعذر إنشاء النسخة الاحتياطية.'); }
-};
-
-window.pickBackupFile = function() { document.getElementById('restoreFileInput')?.click(); };
-window.restoreBackupFile = async function(event) {
-  const file = event?.target?.files?.[0];
-  if (!file || !db) return;
-  try {
-    const backup = JSON.parse(await file.text());
-    if (!backup?.collections || typeof backup.collections !== 'object') throw new Error('invalid backup');
-    if (!confirm('الاسترجاع هيضيف/يحدّث البيانات الموجودة بنفس الـ IDs. نكمل؟')) return;
-    let restored = 0;
-    for (const name of BACKUP_COLLECTIONS) {
-      const rows = Array.isArray(backup.collections[name]) ? backup.collections[name] : [];
-      for (const row of rows) {
-        if (!row?.id || !row?.data || typeof row.data !== 'object') continue;
-        await setDoc(doc(db,name,String(row.id)), sw(row.data));
-        restored++;
-      }
-    }
-    await logActivity('backup', 'استرجع نسخة احتياطية', `${restored} سجل`);
-    showAppToast('✅ تم الاسترجاع', `تمت استعادة ${restored} سجل.`);
-  } catch (error) { console.error(error); alert('ملف النسخة الاحتياطية غير صالح أو حدث خطأ أثناء الاسترجاع.'); }
-  finally { if (event?.target) event.target.value = ''; }
-};
 
 function parseSmartDate(text, base = new Date()) {
   const raw = normalizeForDateParse(text);
@@ -2849,9 +2427,6 @@ window.doLogout = function() {
   if (reminderTimer) clearInterval(reminderTimer);
   reminderTimer = null;
   monthlyExpenses = [];
-  activityItems = [];
-  savingsGoals = [];
-  clearUndoState();
   budgetNotifyReady = false;
   budgetLastCycleId = '';
   budgetLastTotal = 0;
@@ -2994,20 +2569,12 @@ window.startInlineEdit = function(event, type, id) {
       return;
     }
     const reminder = reminderFields(nextText);
-    const oldText = item.text || '';
-    const oldDueAt = item.dueAt || null;
-    const oldDueSource = item.dueSource || '';
     try {
       await updateDoc(doc(db, collectionName, id), sw({
         text: nextText,
         dueAt: reminder.dueAt || null,
         dueSource: reminder.dueSource || ''
       }));
-      await logActivity('edit', 'عدّل عنصر', `${oldText} ← ${nextText}`);
-      showUndoToast('✏️ تم التعديل', nextText, async () => {
-        await updateDoc(doc(db, collectionName, id), sw({ text:oldText, dueAt:oldDueAt, dueSource:oldDueSource }));
-        await logActivity('undo', 'تراجع عن تعديل عنصر', oldText);
-      });
     } catch (error) {
       console.error(error);
       alert('محصلش تعديل النص. حاول تاني.');
@@ -3106,11 +2673,9 @@ window.addChild = async function(type, parentId) {
   const el = document.getElementById(childInputId(type, parentId));
   const txt = el?.value.trim();
   if (!txt) return;
-  const ref = await addDoc(collection(db,'child_items'), sw({
+  await addDoc(collection(db,'child_items'), sw({
     parentType: type, parentId, text: txt, done: false, ts: Date.now(), by: currentUser, ...reminderFields(txt)
   }));
-  await logActivity('child', 'أضاف عنصر فرعي', txt);
-  showUndoToast('اتضاف العنصر الفرعي', txt, async () => { await deleteDoc(doc(db,'child_items',ref.id)); });
   el.value = '';
   expandedChildren.add(key);
   openChildComposers.delete(key);
@@ -3143,16 +2708,7 @@ window.toggleChild = async function(id, done) {
   }
   await updateDoc(doc(db,'child_items',id), sw({ done }));
 };
-window.delChild = async function(id) {
-  if (!db) return;
-  const child = childItems.find(c => c.id === id);
-  if (!child) return;
-  await deleteDoc(doc(db,'child_items',id));
-  await logActivity('delete', 'مسح عنصر فرعي', child.text || '');
-  showUndoToast('اتمسح العنصر الفرعي', child.text || '', async () => {
-    const data = { ...child }; delete data.id; await setDoc(doc(db,'child_items',id), sw(data));
-  });
-};
+window.delChild = (id) => db && deleteDoc(doc(db,'child_items',id));
 
 async function deleteChildrenForParent(type, parentId) {
   const children = childrenOf(type, parentId);
@@ -3193,7 +2749,6 @@ function renderCompletedParent(type, item) {
         <div class="item-check done" onclick="event.stopPropagation();${toggle}">✓</div>
         <div class="item-text done editable" title="اضغط للتعديل" onclick="event.stopPropagation();startInlineEdit(event,'${type}','${item.id}')">${esc(item.text)}</div>
         ${dueBadge(item)}
-        ${recurrenceBadge(item)}
         ${whoBadge(item.by)}
         ${urgent}
         <button class="item-del" onclick="event.stopPropagation();${del}">×</button>
@@ -3335,7 +2890,7 @@ window.addShopping = async function() {
     if (duplicates.length) {
       await Promise.all(duplicates.map(item => removeShoppingItemSilently(item.id)));
     }
-    const ref = await addDoc(collection(db,'shopping'), sw({
+    await addDoc(collection(db,'shopping'), sw({
       text: txt,
       date: todayStr(),
       done: false,
@@ -3343,8 +2898,6 @@ window.addShopping = async function() {
       by: currentUser,
       ...reminderFields(txt)
     }));
-    await logActivity('shopping', 'أضاف للمول', txt);
-    showUndoToast('🛒 اتضاف للمول', txt, async () => { await removeShoppingItemSilently(ref.id); });
     el.value = '';
     el.focus();
   } catch (error) {
@@ -3385,58 +2938,22 @@ function renderShopping(items) {
   list.innerHTML = pendingHtml + renderCompletedSection('shopping', completedParents, completedChildren);
 }
 
-window.toggleShop = async function(id, done) {
-  if (!db) return;
-  const item = shoppingItems.find(i => i.id === id);
-  if (!item) return;
-  await updateDoc(doc(db,'shopping',id), sw({ done }));
-  await logActivity(done ? 'complete' : 'shopping', done ? 'جاب من المول' : 'رجّع للمول', item.text || '');
-  showUndoToast(done ? '✅ اتعلمت إنها اتجابت' : '↩️ رجعت للمول', item.text || '', async () => {
-    await updateDoc(doc(db,'shopping',id), sw({ done:!done }));
-  });
-};
+window.toggleShop = (id, done) => db && updateDoc(doc(db,'shopping',id), sw({ done }));
 window.delShop = async function(id) {
   if (!db) return;
-  const item = shoppingItems.find(i => i.id === id);
-  if (!item) return;
-  const children = childrenOf('shopping',id).map(c => ({...c}));
   await deleteChildrenForParent('shopping', id);
   await deleteDoc(doc(db,'shopping',id));
-  await logActivity('delete', 'مسح من المول', item.text || '');
-  showUndoToast('اتمسحت من المول', item.text || '', async () => {
-    const data = {...item}; delete data.id; await setDoc(doc(db,'shopping',id), sw(data));
-    for (const child of children) { const d={...child}; delete d.id; await setDoc(doc(db,'child_items',child.id), sw(d)); }
-  });
 };
 
 // ── TASKS ─────────────────────────────────────────────────────────────────────
-window.addTask = async function() {
+window.addTask = function() {
   if (!db) { alert('اعمل إعداد Firebase من ⚙️ الأول'); return; }
   const el = document.getElementById('taskIn');
-  const recurrenceEl = document.getElementById('taskRecurrence');
   const txt = el.value.trim();
   if (!txt) return;
-  const recurrence = ['weekly','monthly'].includes(recurrenceEl?.value) ? recurrenceEl.value : 'none';
-  const ref = await addDoc(collection(db,'tasks'), sw({ text: txt, done: false, urgent: false, recurrence, ts: Date.now(), by: currentUser, ...reminderFields(txt) }));
-  await logActivity('task', 'أضاف خطة', `${txt}${recurrence !== 'none' ? ` • ${recurrence === 'weekly' ? 'كل أسبوع' : 'كل شهر'}` : ''}`);
-  showUndoToast('📋 اتضافت الخطة', txt, async () => { await deleteDoc(doc(db,'tasks',ref.id)); });
+  addDoc(collection(db,'tasks'), sw({ text: txt, done: false, urgent: false, ts: Date.now(), by: currentUser, ...reminderFields(txt) }));
   el.value = '';
 };
-
-function recurrenceBadge(item) {
-  if (item?.recurrence === 'weekly') return '<span class="recurrence-badge">كل أسبوع</span>';
-  if (item?.recurrence === 'monthly') return '<span class="recurrence-badge">كل شهر</span>';
-  return '';
-}
-
-function nextRecurringDue(item) {
-  const base = item?.dueAt ? new Date(Number(item.dueAt)) : new Date();
-  const now = new Date();
-  if (base < now) base.setTime(now.getTime());
-  if (item?.recurrence === 'weekly') base.setDate(base.getDate() + 7);
-  else if (item?.recurrence === 'monthly') base.setMonth(base.getMonth() + 1);
-  return base.getTime();
-}
 
 function renderTasks(items) {
   const list = document.getElementById('taskList');
@@ -3452,7 +2969,6 @@ function renderTasks(items) {
              onclick="event.stopPropagation();toggleTask('${item.id}',true)"></div>
         <div class="item-text editable" title="اضغط للتعديل" onclick="event.stopPropagation();startInlineEdit(event,'tasks','${item.id}')">${esc(item.text)}</div>
         ${dueBadge(item)}
-        ${recurrenceBadge(item)}
         ${whoBadge(item.by)}
         <button class="${item.urgent ? 'badge-urgent' : 'badge-normal'}"
                 onclick="event.stopPropagation();toggleUrgent('${item.id}',${!item.urgent})">
@@ -3470,46 +2986,21 @@ function renderTasks(items) {
   list.innerHTML = pendingHtml + renderCompletedSection('tasks', completedParents, completedChildren);
 }
 
-window.toggleTask = async function(id, done) {
-  if (!db) return;
-  const item = taskItems.find(i => i.id === id);
-  if (!item) return;
-  const previous = { done:!!item.done, dueAt:item.dueAt || null, dueSource:item.dueSource || '', lastCompletedAt:item.lastCompletedAt || null };
-  if (done && ['weekly','monthly'].includes(item.recurrence)) {
-    const nextDue = nextRecurringDue(item);
-    await updateDoc(doc(db,'tasks',id), sw({ done:false, dueAt:nextDue, dueSource:'متكرر', lastCompletedAt:Date.now() }));
-    await logActivity('complete', 'أنجز خطة متكررة', `${item.text} • الموعد القادم ${formatDue(nextDue)}`);
-    showUndoToast('✅ خلصت واتجدّدت', item.text || '', async () => { await updateDoc(doc(db,'tasks',id), sw(previous)); });
-  } else {
-    await updateDoc(doc(db,'tasks',id), sw({ done }));
-    await logActivity(done ? 'complete' : 'task', done ? 'أنجز خطة' : 'رجّع خطة', item.text || '');
-    showUndoToast(done ? '✅ اتعلمت كمكتملة' : '↩️ رجعت للخطة', item.text || '', async () => { await updateDoc(doc(db,'tasks',id), sw({ done:!done })); });
-  }
-};
+window.toggleTask   = (id, done)   => db && updateDoc(doc(db,'tasks',id), sw({ done }));
 window.toggleUrgent = (id, urgent) => db && updateDoc(doc(db,'tasks',id), sw({ urgent }));
 window.delTask = async function(id) {
   if (!db) return;
-  const item = taskItems.find(i => i.id === id);
-  if (!item) return;
-  const children = childrenOf('tasks',id).map(c => ({...c}));
   await deleteChildrenForParent('tasks', id);
   await deleteDoc(doc(db,'tasks',id));
-  await logActivity('delete', 'مسح خطة', item.text || '');
-  showUndoToast('اتمسحت الخطة', item.text || '', async () => {
-    const data={...item}; delete data.id; await setDoc(doc(db,'tasks',id), sw(data));
-    for (const child of children) { const d={...child}; delete d.id; await setDoc(doc(db,'child_items',child.id), sw(d)); }
-  });
 };
 
 // ── ROUTINE ───────────────────────────────────────────────────────────────────
-window.addRoutine = async function() {
+window.addRoutine = function() {
   if (!db) { alert('اعمل إعداد Firebase من ⚙️ الأول'); return; }
   const el = document.getElementById('routineIn');
   const txt = el.value.trim();
   if (!txt) return;
-  const ref = await addDoc(collection(db,'routine_items'), sw({ text: txt, ts: Date.now(), by: currentUser, ...reminderFields(txt) }));
-  await logActivity('routine', 'أضاف للروتين', txt);
-  showUndoToast('🔄 اتضاف للروتين', txt, async () => { await deleteDoc(doc(db,'routine_items',ref.id)); });
+  addDoc(collection(db,'routine_items'), sw({ text: txt, ts: Date.now(), by: currentUser, ...reminderFields(txt) }));
   el.value = '';
 };
 
@@ -3546,7 +3037,6 @@ window.toggleRoutine = async function(itemId, completed) {
   if (!db) return;
   const today = todayStr();
   const compId = `${today}_${itemId}`;
-  const item = routineItems.find(i => i.id === itemId);
   if (completed) {
     await setDoc(doc(db,'routine_completions',compId), sw({ itemId, date: today, ts: Date.now(), by: currentUser }));
     routineCompletions.add(itemId);
@@ -3554,26 +3044,14 @@ window.toggleRoutine = async function(itemId, completed) {
     await deleteDoc(doc(db,'routine_completions',compId));
     routineCompletions.delete(itemId);
   }
-  await logActivity(completed ? 'complete' : 'routine', completed ? 'أنجز من الروتين' : 'رجّع من الروتين', item?.text || '');
-  showUndoToast(completed ? '✅ اتعمل النهارده' : '↩️ رجع للروتين', item?.text || '', async () => {
-    if (completed) await deleteDoc(doc(db,'routine_completions',compId));
-    else await setDoc(doc(db,'routine_completions',compId), sw({ itemId, date:today, ts:Date.now(), by:currentUser }));
-  });
   renderRoutine();
 };
 
 window.delRoutineItem = async function(id) {
   if (!db) return;
-  const item = routineItems.find(i => i.id === id);
-  if (!item || !confirm('تمسح النشاط ده من الروتين؟')) return;
-  const children = childrenOf('routine',id).map(c => ({...c}));
+  if (!confirm('تمسح النشاط ده من الروتين؟')) return;
   await deleteChildrenForParent('routine', id);
   await deleteDoc(doc(db,'routine_items',id));
-  await logActivity('delete', 'مسح من الروتين', item.text || '');
-  showUndoToast('اتمسح من الروتين', item.text || '', async () => {
-    const data={...item}; delete data.id; await setDoc(doc(db,'routine_items',id), sw(data));
-    for (const child of children) { const d={...child}; delete d.id; await setDoc(doc(db,'child_items',child.id), sw(d)); }
-  });
 };
 
 // ── Change Password ───────────────────────────────────────────────────────────
@@ -3704,16 +3182,6 @@ function startListeners() {
       renderBudget();
       checkBudgetNotifications();
     }
-  ));
-  subs.push(onSnapshot(
-    query(collection(db,'activity_log'), orderBy('ts','desc')),
-    snap => { activityItems = snap.docs.map(d => ({ id:d.id, ...d.data() })); renderActivity(); },
-    error => { console.warn('activity_log listener failed', error); activityItems = []; renderActivity(); }
-  ));
-  subs.push(onSnapshot(
-    query(collection(db,'savings_goals'), orderBy('ts','desc')),
-    snap => { savingsGoals = snap.docs.map(d => ({ id:d.id, ...d.data() })); renderSavingsGoals(); },
-    error => { console.warn('savings_goals listener failed', error); savingsGoals = []; renderSavingsGoals(); }
   ));
 }
 
