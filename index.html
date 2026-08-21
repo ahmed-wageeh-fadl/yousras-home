@@ -371,7 +371,52 @@
     .home-menu-btn.shop { border-right: 5px solid #b5726a; }
     .home-menu-btn.tasks { border-right: 5px solid #5580cc; }
     .home-menu-btn.routine { border-right: 5px solid #4aa068; }
+    .home-menu-btn.events { border-right: 5px solid #c58a42; }
     .section-view { display: flex; flex-direction: column; gap: 10px; }
+
+    /* Upcoming events */
+    .upcoming-list { padding: 4px 10px 12px; }
+    .upcoming-day { margin-top: 8px; }
+    .upcoming-day:first-child { margin-top: 0; }
+    .upcoming-day-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 9px 6px 5px;
+      font-size: 0.78rem;
+      font-weight: 900;
+      color: #8a6b42;
+    }
+    .upcoming-day-title.today { color: #b5726a; }
+    .upcoming-count { font-size: 0.67rem; color: #bbb0a7; font-weight: 800; }
+    .upcoming-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 5px 0;
+      padding: 11px 10px;
+      border-radius: 13px;
+      background: #fcfaf8;
+      border: 1px solid #f0e9e3;
+      cursor: pointer;
+    }
+    .upcoming-item:active { transform: scale(0.99); }
+    .upcoming-type {
+      flex-shrink: 0;
+      min-width: 54px;
+      text-align: center;
+      border-radius: 8px;
+      padding: 4px 6px;
+      background: #f2ece8;
+      color: #866f63;
+      font-size: 0.64rem;
+      font-weight: 900;
+    }
+    .upcoming-main { flex: 1; min-width: 0; }
+    .upcoming-text { font-size: 0.88rem; font-weight: 850; color: #403a36; line-height: 1.4; word-break: break-word; }
+    .upcoming-meta { margin-top: 3px; font-size: 0.67rem; color: #aaa09a; line-height: 1.35; }
+    .upcoming-time { flex-shrink: 0; font-size: 0.73rem; font-weight: 900; color: #9a6d36; direction: ltr; }
     .section-back {
       align-self: flex-start;
       border: none;
@@ -945,16 +990,44 @@
     .sec-tasks .completed-toggle { color: #5579b8; background: #f6f8fc; }
     .sec-daily .completed-toggle { color: #4d9164; background: #f6fbf7; }
 
-    /* ── Owner tabs ── */
-    .owner-tabs {
+    /* ── Main + owner tabs ── */
+    .main-tabs {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 6px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px;
       margin-top: 12px;
       padding: 4px;
       background: rgba(255,255,255,0.15);
       border-radius: 13px;
     }
+    .main-tab {
+      border: none;
+      border-radius: 10px;
+      min-height: 37px;
+      padding: 7px 10px;
+      background: transparent;
+      color: rgba(255,255,255,0.82);
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 900;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .main-tab.active {
+      background: white;
+      color: #a75f58;
+      box-shadow: 0 2px 8px rgba(80,35,30,0.16);
+    }
+    .owner-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 7px;
+      padding: 4px;
+      background: rgba(255,255,255,0.10);
+      border-radius: 13px;
+    }
+    .owner-tabs.hidden { display: none; }
     .owner-tab {
       flex: 1;
       border: none;
@@ -1364,11 +1437,14 @@
         <button class="hdr-btn" onclick="openOverlay()" title="إعدادات Firebase">⚙️</button>
       </div>
     </div>
-    <div class="owner-tabs" id="ownerTabs" aria-label="عرض العناصر حسب صاحبها">
+    <div class="main-tabs" id="mainTabs" aria-label="أقسام التطبيق الرئيسية">
+      <button class="main-tab" id="mainTabHome" onclick="openHomeRoot()">🏠 البيت</button>
+      <button class="main-tab" id="mainTabBudget" onclick="openBudgetView()">💶 الفلوس</button>
+    </div>
+    <div class="owner-tabs" id="ownerTabs" aria-label="عرض عناصر البيت حسب صاحبها">
       <button class="owner-tab" id="ownerTabAll" onclick="setOwnerFilter('all')">أنا وهي</button>
       <button class="owner-tab" id="ownerTabMine" onclick="setOwnerFilter('mine')">أنا</button>
       <button class="owner-tab" id="ownerTabOther" onclick="setOwnerFilter('other')">هي</button>
-      <button class="owner-tab" id="ownerTabBudget" onclick="openBudgetView()">الاستهلاك الشهري</button>
     </div>
   </header>
 
@@ -1402,6 +1478,14 @@
           <span class="menu-copy">
             <span class="menu-title">الروتين</span>
             <span class="menu-sub">الروتين اليومي ومتابعة الإنجاز</span>
+          </span>
+          <span class="menu-arrow">‹</span>
+        </button>
+        <button class="home-menu-btn events" onclick="openHomeSection('upcoming')">
+          <span class="menu-icon">📅</span>
+          <span class="menu-copy">
+            <span class="menu-title">المواعيد القريبة</span>
+            <span class="menu-sub">من النهارده وحتى أسبوعين قدام</span>
           </span>
           <span class="menu-arrow">‹</span>
         </button>
@@ -1469,6 +1553,19 @@
           </div>
           <div class="items-list" id="routineList">
             <div class="empty">ما فيش روتين اتضاف لسه</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="upcomingSectionView" class="section-view hidden">
+        <button class="section-back" onclick="backHomeMenu()">رجوع للقائمة →</button>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><span class="icon">📅</span> المواعيد القريبة</div>
+            <div class="card-subtitle">النهارده + 14 يوم</div>
+          </div>
+          <div class="upcoming-list" id="upcomingList">
+            <div class="empty">مفيش مواعيد خلال الأسبوعين الجايين ✨</div>
           </div>
         </div>
       </div>
@@ -1636,7 +1733,7 @@ let expandedCompleted  = new Set();
 let reminderTimer      = null;
 let ownerFilter        = 'all'; // 'all' | 'mine' | 'other'
 let mainView           = 'home'; // 'home' | 'budget' | 'activity'
-let homeSection        = 'menu'; // 'menu' | 'shopping' | 'tasks' | 'routine'
+let homeSection        = 'menu'; // 'menu' | 'shopping' | 'tasks' | 'routine' | 'upcoming'
 let monthlyExpenses    = [];
 let monthlyBudgets     = new Map();
 let budgetExpensesLoaded = false;
@@ -1686,7 +1783,7 @@ function loadOwnerFilter() {
 }
 
 function updateHomeSectionView() {
-  const sections = ['shopping','tasks','routine'];
+  const sections = ['shopping','tasks','routine','upcoming'];
   const menu = document.getElementById('homeMenu');
   if (menu) menu.classList.toggle('hidden', homeSection !== 'menu');
   sections.forEach(section => {
@@ -1711,8 +1808,10 @@ function updateOwnerTabs() {
   const allBtn   = document.getElementById('ownerTabAll');
   const mineBtn  = document.getElementById('ownerTabMine');
   const otherBtn = document.getElementById('ownerTabOther');
-  const budgetBtn = document.getElementById('ownerTabBudget');
-  if (!allBtn || !mineBtn || !otherBtn || !budgetBtn) return;
+  const ownerTabs = document.getElementById('ownerTabs');
+  const homeTab = document.getElementById('mainTabHome');
+  const budgetTab = document.getElementById('mainTabBudget');
+  if (!allBtn || !mineBtn || !otherBtn) return;
 
   allBtn.textContent   = isAhmed ? 'أنا وهي' : 'أنا وهو';
   mineBtn.textContent  = 'أنا';
@@ -1721,9 +1820,12 @@ function updateOwnerTabs() {
   allBtn.classList.toggle('active', ownerFilter === 'all');
   mineBtn.classList.toggle('active', ownerFilter === 'mine');
   otherBtn.classList.toggle('active', ownerFilter === 'other');
-  budgetBtn.classList.toggle('active', mainView === 'budget');
-}
 
+  // The people filter belongs to the household side only, never to money.
+  if (ownerTabs) ownerTabs.classList.toggle('hidden', mainView === 'budget');
+  if (homeTab) homeTab.classList.toggle('active', mainView === 'home');
+  if (budgetTab) budgetTab.classList.toggle('active', mainView === 'budget');
+}
 function filterByOwner(items) {
   if (!currentUser || ownerFilter === 'all') return items;
   if (ownerFilter === 'mine') return items.filter(i => i.by === currentUser);
@@ -1737,8 +1839,7 @@ window.setOwnerFilter = function(filter) {
   updateMainView();
   updateOwnerTabs();
   renderAllLists();
-  renderBudget();
-  renderSavingsGoals();
+  renderUpcomingEvents();
   renderActivity();
 };
 
@@ -1758,12 +1859,13 @@ window.openActivityView = function() {
 };
 
 window.openHomeSection = function(section, pushHistory = true) {
-  if (!['shopping','tasks','routine'].includes(section)) return;
+  if (!['shopping','tasks','routine','upcoming'].includes(section)) return;
   mainView = 'home';
   homeSection = section;
   updateMainView();
   updateOwnerTabs();
   renderAllLists();
+  if (section === 'upcoming') renderUpcomingEvents();
   if (pushHistory) {
     try { history.pushState({ yhHomeSection: section }, '', location.href); } catch {}
   }
@@ -1784,7 +1886,7 @@ window.backHomeMenu = function() {
 window.addEventListener('popstate', event => {
   if (!currentUser) return;
   const section = event.state?.yhHomeSection;
-  homeSection = ['shopping','tasks','routine'].includes(section) ? section : 'menu';
+  homeSection = ['shopping','tasks','routine','upcoming'].includes(section) ? section : 'menu';
   mainView = 'home';
   updateMainView();
   updateOwnerTabs();
@@ -1922,10 +2024,9 @@ function expenseCategoryBadge(item) {
   return `<span class="category-badge">${esc(expenseCategoryLabel(item?.category || 'other'))}</span>`;
 }
 
-function currentBudgetExpenses(applyOwnerFilter = true) {
+function currentBudgetExpenses() {
   const cycle = getBudgetCycle();
-  const source = applyOwnerFilter ? filterByOwner(monthlyExpenses) : monthlyExpenses;
-  return source.filter(item => expenseCycleId(item) === cycle.id);
+  return monthlyExpenses.filter(item => expenseCycleId(item) === cycle.id);
 }
 
 function renderCategorySummary(current) {
@@ -1997,7 +2098,7 @@ function renderBudget() {
   }).join('') : '<div class="empty">مفيش مصروفات متسجلة في الدورة دي</div>';
 
   const groups = new Map();
-  filterByOwner(monthlyExpenses).forEach(item => {
+  monthlyExpenses.forEach(item => {
     const id = expenseCycleId(item);
     if (id === cycle.id) return;
     if (!groups.has(id)) groups.set(id, []);
@@ -2339,7 +2440,7 @@ function renderActivity() {
 function renderSavingsGoals() {
   const el = document.getElementById('savingsList');
   if (!el) return;
-  const visible = filterByOwner(savingsGoals).slice().sort((a,b) => (Number(b.ts)||0) - (Number(a.ts)||0));
+  const visible = savingsGoals.slice().sort((a,b) => (Number(b.ts)||0) - (Number(a.ts)||0));
   el.innerHTML = visible.length ? visible.map(goal => {
     const target = Math.max(Number(goal.target) || 0, 0.01);
     const saved = Math.max(Number(goal.saved) || 0, 0);
@@ -2643,6 +2744,122 @@ function getAllReminderItems() {
     ...routineItems.map(i => ({ ...i, _type:'routine' })),
     ...childItems.map(i => ({ ...i, _type:'child' }))
   ].filter(i => i.dueAt && !i.done);
+}
+
+function upcomingTypeInfo(item) {
+  if (item._type === 'shopping') return { label:'المول', section:'shopping' };
+  if (item._type === 'tasks') return { label:'خططنا', section:'tasks' };
+  if (item._type === 'routine') return { label:'الروتين', section:'routine' };
+  if (item._type === 'child') {
+    const parentType = item.parentType || 'tasks';
+    const section = ['shopping','tasks','routine'].includes(parentType) ? parentType : 'tasks';
+    const label = section === 'shopping' ? 'المول' : section === 'routine' ? 'الروتين' : 'خططنا';
+    return { label:`فرعي • ${label}`, section };
+  }
+  return { label:'موعد', section:'tasks' };
+}
+
+function upcomingDateLabel(date) {
+  const start = new Date();
+  start.setHours(0,0,0,0);
+  const d = new Date(date);
+  d.setHours(0,0,0,0);
+  const diff = Math.round((d - start) / 86400000);
+  if (diff === 0) return { text:'النهارده', today:true };
+  if (diff === 1) return { text:'بكره', today:false };
+  if (diff === 2) return { text:'بعد بكره', today:false };
+  try {
+    return {
+      text:new Intl.DateTimeFormat('ar-EG', { weekday:'long', day:'numeric', month:'long' }).format(d),
+      today:false
+    };
+  } catch {
+    return { text:localDateId(d), today:false };
+  }
+}
+
+function upcomingTimeLabel(ts) {
+  try {
+    return new Intl.DateTimeFormat('ar-EG', { hour:'numeric', minute:'2-digit' }).format(new Date(Number(ts)));
+  } catch {
+    return new Date(Number(ts)).toLocaleTimeString();
+  }
+}
+
+function upcomingItemsForTwoWeeks() {
+  const start = new Date();
+  start.setHours(0,0,0,0);
+  const end = new Date(start);
+  end.setDate(end.getDate() + 15); // today plus the following 14 calendar days
+
+  const all = [
+    ...shoppingItems.map(i => ({ ...i, _type:'shopping' })),
+    ...taskItems.map(i => ({ ...i, _type:'tasks' })),
+    ...routineItems.map(i => ({ ...i, _type:'routine' })),
+    ...childItems.map(i => ({ ...i, _type:'child' }))
+  ].filter(item => {
+    const ts = Number(item.dueAt);
+    if (!Number.isFinite(ts) || ts < start.getTime() || ts >= end.getTime()) return false;
+    if (item.done) return false;
+    if (item._type === 'routine') {
+      const dueDate = localDateId(new Date(ts));
+      if (dueDate === todayStr() && routineCompletions.has(item.id)) return false;
+    }
+    return true;
+  });
+
+  return filterByOwner(all).sort((a,b) => Number(a.dueAt) - Number(b.dueAt));
+}
+
+window.openUpcomingSource = function(type, id) {
+  const item = type === 'child' ? childItems.find(i => i.id === id) : null;
+  const info = upcomingTypeInfo(item ? { ...item, _type:'child' } : { _type:type });
+  openHomeSection(info.section);
+};
+
+function renderUpcomingEvents() {
+  const list = document.getElementById('upcomingList');
+  if (!list) return;
+  const items = upcomingItemsForTwoWeeks();
+  if (!items.length) {
+    list.innerHTML = '<div class="empty">مفيش مواعيد من النهارده ولحد أسبوعين قدام ✨</div>';
+    return;
+  }
+
+  const groups = new Map();
+  items.forEach(item => {
+    const key = localDateId(new Date(Number(item.dueAt)));
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(item);
+  });
+
+  list.innerHTML = Array.from(groups.entries()).map(([dateId, dayItems]) => {
+    const label = upcomingDateLabel(new Date(`${dateId}T12:00:00`));
+    return `<div class="upcoming-day">
+      <div class="upcoming-day-title${label.today ? ' today' : ''}">
+        <span>${esc(label.text)}</span>
+        <span class="upcoming-count">${dayItems.length} ${dayItems.length === 1 ? 'موعد' : 'مواعيد'}</span>
+      </div>
+      ${dayItems.map(item => {
+        const info = upcomingTypeInfo(item);
+        let extra = '';
+        if (item._type === 'child') {
+          const parent = parentFor(item.parentType, item.parentId);
+          if (parent?.text) extra = `تابع لـ: ${parent.text}`;
+        }
+        const who = item.by === 'ahmed' ? 'أحمد' : item.by === 'yousra' ? 'يسرا' : '';
+        const meta = [extra, who].filter(Boolean).join(' • ');
+        return `<div class="upcoming-item" onclick="openUpcomingSource('${item._type}','${item.id}')">
+          <span class="upcoming-type">${esc(info.label)}</span>
+          <div class="upcoming-main">
+            <div class="upcoming-text">${esc(item.text || '')}</div>
+            ${meta ? `<div class="upcoming-meta">${esc(meta)}</div>` : ''}
+          </div>
+          <span class="upcoming-time">${esc(upcomingTimeLabel(item.dueAt))}</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
 }
 
 function checkAllReminders() {
@@ -3245,6 +3462,7 @@ function renderAllLists() {
   renderShopping(shoppingItems);
   renderTasks(taskItems);
   renderRoutine();
+  renderUpcomingEvents();
 }
 
 // ── SHOPPING ──────────────────────────────────────────────────────────────────
@@ -3654,21 +3872,22 @@ function startListeners() {
     snap => {
       shoppingItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       renderShopping(shoppingItems);
+      renderUpcomingEvents();
       checkAllReminders();
       cleanupExpiredShopping(shoppingItems);
     }
   ));
   subs.push(onSnapshot(
     query(collection(db,'tasks'), orderBy('ts','asc')),
-    snap => { taskItems = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderTasks(taskItems); checkAllReminders(); }
+    snap => { taskItems = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderTasks(taskItems); renderUpcomingEvents(); checkAllReminders(); }
   ));
   subs.push(onSnapshot(
     query(collection(db,'routine_items'), orderBy('ts','asc')),
-    snap => { routineItems = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderRoutine(); checkAllReminders(); }
+    snap => { routineItems = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderRoutine(); renderUpcomingEvents(); checkAllReminders(); }
   ));
   subs.push(onSnapshot(
     query(collection(db,'routine_completions'), where('date','==',today)),
-    snap => { routineCompletions = new Set(snap.docs.map(d => d.data().itemId)); renderRoutine(); }
+    snap => { routineCompletions = new Set(snap.docs.map(d => d.data().itemId)); renderRoutine(); renderUpcomingEvents(); }
   ));
   subs.push(onSnapshot(
     query(collection(db,'child_items'), orderBy('ts','asc')),
