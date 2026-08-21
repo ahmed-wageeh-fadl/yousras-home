@@ -335,6 +335,58 @@
       color: #2d2d2d;
     }
 
+    /* Home section launcher */
+    .home-menu {
+      min-height: calc(100vh - 230px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 14px;
+      padding: 18px 6px 36px;
+    }
+    .home-menu.hidden, .section-view.hidden { display: none; }
+    .home-menu-btn {
+      width: 100%;
+      min-height: 82px;
+      border: none;
+      border-radius: 20px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      background: white;
+      box-shadow: 0 3px 14px rgba(0,0,0,0.07);
+      font-family: inherit;
+      cursor: pointer;
+      text-align: right;
+      transition: transform 0.12s, box-shadow 0.18s;
+    }
+    .home-menu-btn:active { transform: scale(0.985); }
+    .home-menu-btn .menu-icon { font-size: 2rem; flex-shrink: 0; }
+    .home-menu-btn .menu-copy { flex: 1; min-width: 0; }
+    .home-menu-btn .menu-title { display: block; font-size: 1.03rem; font-weight: 900; color: #36302d; }
+    .home-menu-btn .menu-sub { display: block; font-size: 0.73rem; color: #aaa19c; margin-top: 4px; }
+    .home-menu-btn .menu-arrow { font-size: 1.35rem; color: #c8bfba; flex-shrink: 0; }
+    .home-menu-btn.shop { border-right: 5px solid #b5726a; }
+    .home-menu-btn.tasks { border-right: 5px solid #5580cc; }
+    .home-menu-btn.routine { border-right: 5px solid #4aa068; }
+    .section-view { display: flex; flex-direction: column; gap: 10px; }
+    .section-back {
+      align-self: flex-start;
+      border: none;
+      border-radius: 11px;
+      background: #fff;
+      color: #766c67;
+      padding: 9px 13px;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 2px 9px rgba(0,0,0,0.05);
+    }
+    .section-back:active { transform: scale(0.97); }
+
     /* Monthly budget */
     .app-view {
       display: flex;
@@ -520,17 +572,53 @@
       font-weight: 900;
     }
     .expense-meta { font-size: 0.68rem; color: #b6afaa; margin-top: 3px; }
-    .expense-delete {
+    .expense-click-edit { cursor: pointer; border-radius: 9px; padding: 3px 4px; margin: -3px -4px; }
+    .expense-click-edit:hover { background: #faf7f5; }
+    .expense-edit, .expense-delete {
       border: none;
-      background: #fff0ef;
-      color: #d26760;
-      width: 28px;
-      height: 28px;
+      width: 30px;
+      height: 30px;
       border-radius: 9px;
       cursor: pointer;
-      font-size: 1rem;
+      font-size: 0.92rem;
       flex-shrink: 0;
+      font-family: inherit;
     }
+    .expense-edit { background: #f4f1ef; color: #7f746f; }
+    .expense-delete { background: #fff0ef; color: #d26760; font-size: 1rem; }
+    .expense-edit-form {
+      flex: 1;
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(78px, 0.7fr) minmax(0, 1.3fr);
+      gap: 7px;
+      align-items: center;
+    }
+    .expense-edit-form input {
+      min-width: 0;
+      width: 100%;
+      border: 1.5px solid #e2d8d1;
+      border-radius: 9px;
+      padding: 8px 9px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      outline: none;
+      background: white;
+    }
+    .expense-edit-form input:focus { border-color: #b5726a; box-shadow: 0 0 0 3px rgba(181,114,106,0.09); }
+    .expense-edit-form .edit-amount { direction: ltr; text-align: center; }
+    .expense-edit-actions { grid-column: 1 / -1; display: flex; gap: 6px; }
+    .expense-edit-save, .expense-edit-cancel {
+      border: none;
+      border-radius: 8px;
+      padding: 7px 11px;
+      font-family: inherit;
+      font-size: 0.74rem;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .expense-edit-save { background: #6d8f75; color: white; }
+    .expense-edit-cancel { background: #f1efed; color: #777; }
     .budget-history { padding: 5px 10px 12px; }
     .history-row {
       display: grid;
@@ -583,6 +671,8 @@
       .expense-form { grid-template-columns: 1fr auto; }
       .expense-form .expense-note-input { grid-column: 1 / -1; grid-row: 2; }
       .expense-form .expense-add-btn { grid-column: 2; grid-row: 1; min-height: 40px; }
+      .expense-edit-form { grid-template-columns: 1fr; }
+      .expense-edit-actions { grid-column: 1; }
       .history-row { grid-template-columns: 1fr; gap: 5px; }
       .history-values { text-align: right; }
     }
@@ -1202,63 +1292,94 @@
 
     <div id="homeView" class="app-view">
       <div class="notif-banner" id="notifBanner">
-      <span id="notifBannerText">🔔 فعّل الإشعارات علشان يوصلك تذكير قبل المواعيد.</span>
-      <button class="notif-enable" onclick="enableNotifications()">تفعيل</button>
-    </div>
+        <span id="notifBannerText">🔔 فعّل الإشعارات علشان يوصلك تذكير قبل المواعيد.</span>
+        <button class="notif-enable" onclick="enableNotifications()">تفعيل</button>
+      </div>
 
-    <!-- SHOPPING -->
-    <div class="card sec-shop">
-      <div class="card-header">
-        <div class="card-title"><span class="icon">🛒</span> محتاجين</div>
-        <div class="card-subtitle">آخر 15 يوم</div>
+      <div class="home-menu" id="homeMenu">
+        <button class="home-menu-btn shop" onclick="openHomeSection('shopping')">
+          <span class="menu-icon">🛒</span>
+          <span class="menu-copy">
+            <span class="menu-title">المول</span>
+            <span class="menu-sub">الحاجات اللي هنجيبها خلال الأسبوع</span>
+          </span>
+          <span class="menu-arrow">‹</span>
+        </button>
+        <button class="home-menu-btn tasks" onclick="openHomeSection('tasks')">
+          <span class="menu-icon">📋</span>
+          <span class="menu-copy">
+            <span class="menu-title">خططنا</span>
+            <span class="menu-sub">المهام والخطط القريبة</span>
+          </span>
+          <span class="menu-arrow">‹</span>
+        </button>
+        <button class="home-menu-btn routine" onclick="openHomeSection('routine')">
+          <span class="menu-icon">🔄</span>
+          <span class="menu-copy">
+            <span class="menu-title">الروتين</span>
+            <span class="menu-sub">الروتين اليومي ومتابعة الإنجاز</span>
+          </span>
+          <span class="menu-arrow">‹</span>
+        </button>
       </div>
-      <div class="add-form">
-        <button class="btn-add" onclick="addShopping()">+</button>
-        <input type="text" id="shopIn" placeholder="أضف حاجة محتاجينها اليوم..."
-               onkeydown="if(event.key==='Enter') addShopping()">
-      </div>
-      <div class="items-list" id="shopList">
-        <div class="empty">لا في حاجات دلوقتي ✨</div>
-      </div>
-    </div>
 
-    <!-- TASKS -->
-    <div class="card sec-tasks">
-      <div class="card-header">
-        <div class="card-title"><span class="icon">📋</span> مهام قريبة</div>
-        <div class="card-subtitle">تفضل لحد ما تتشطب</div>
+      <div id="shoppingSectionView" class="section-view hidden">
+        <button class="section-back" onclick="backHomeMenu()">رجوع للقائمة →</button>
+        <div class="card sec-shop">
+          <div class="card-header">
+            <div class="card-title"><span class="icon">🛒</span> محتاجين</div>
+            <div class="card-subtitle">آخر أسبوع</div>
+          </div>
+          <div class="add-form">
+            <button class="btn-add" onclick="addShopping()">+</button>
+            <input type="text" id="shopIn" placeholder="أضف حاجة محتاجينها اليوم..."
+                   onkeydown="if(event.key==='Enter') addShopping()">
+          </div>
+          <div class="items-list" id="shopList">
+            <div class="empty">لا في حاجات دلوقتي ✨</div>
+          </div>
+        </div>
       </div>
-      <div class="add-form">
-        <button class="btn-add" onclick="addTask()">+</button>
-        <input type="text" id="taskIn" placeholder="أضف مهمة..."
-               onkeydown="if(event.key==='Enter') addTask()">
-      </div>
-      <div class="items-list" id="taskList">
-        <div class="empty">مفيش مهام معلقة 👍</div>
-      </div>
-    </div>
 
-    <!-- DAILY ROUTINE -->
-    <div class="card sec-daily">
-      <div class="card-header">
-        <div class="card-title"><span class="icon">🔄</span> الروتين اليومي</div>
-        <div class="card-subtitle">بيتجدد كل يوم</div>
+      <div id="tasksSectionView" class="section-view hidden">
+        <button class="section-back" onclick="backHomeMenu()">رجوع للقائمة →</button>
+        <div class="card sec-tasks">
+          <div class="card-header">
+            <div class="card-title"><span class="icon">📋</span> مهام قريبة</div>
+            <div class="card-subtitle">تفضل لحد ما تتشطب</div>
+          </div>
+          <div class="add-form">
+            <button class="btn-add" onclick="addTask()">+</button>
+            <input type="text" id="taskIn" placeholder="أضف مهمة..."
+                   onkeydown="if(event.key==='Enter') addTask()">
+          </div>
+          <div class="items-list" id="taskList">
+            <div class="empty">مفيش مهام معلقة 👍</div>
+          </div>
+        </div>
       </div>
-      <div class="routine-progress">
-        <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
-        <div class="prog-text" id="progText">0/0</div>
-      </div>
-      <div class="add-form">
-        <button class="btn-add" onclick="addRoutine()">+</button>
-        <input type="text" id="routineIn" placeholder="أضف نشاط يومي..."
-               onkeydown="if(event.key==='Enter') addRoutine()">
-      </div>
-      <div class="items-list" id="routineList">
-        <div class="empty">ما فيش روتين اتضاف لسه</div>
-      </div>
-    </div>
 
-
+      <div id="routineSectionView" class="section-view hidden">
+        <button class="section-back" onclick="backHomeMenu()">رجوع للقائمة →</button>
+        <div class="card sec-daily">
+          <div class="card-header">
+            <div class="card-title"><span class="icon">🔄</span> الروتين اليومي</div>
+            <div class="card-subtitle">بيتجدد كل يوم</div>
+          </div>
+          <div class="routine-progress">
+            <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+            <div class="prog-text" id="progText">0/0</div>
+          </div>
+          <div class="add-form">
+            <button class="btn-add" onclick="addRoutine()">+</button>
+            <input type="text" id="routineIn" placeholder="أضف نشاط يومي..."
+                   onkeydown="if(event.key==='Enter') addRoutine()">
+          </div>
+          <div class="items-list" id="routineList">
+            <div class="empty">ما فيش روتين اتضاف لسه</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div id="budgetView" class="app-view hidden">
@@ -1358,6 +1479,7 @@ let expandedCompleted  = new Set();
 let reminderTimer      = null;
 let ownerFilter        = 'all'; // 'all' | 'mine' | 'other'
 let mainView           = 'home'; // 'home' | 'budget'
+let homeSection        = 'menu'; // 'menu' | 'shopping' | 'tasks' | 'routine'
 let monthlyExpenses    = [];
 let monthlyBudgets     = new Map();
 let budgetExpensesLoaded = false;
@@ -1367,8 +1489,11 @@ let budgetLastCycleId  = '';
 let budgetLastTotal    = 0;
 let budgetLastLimit    = null;
 let toastTimer         = null;
+let shoppingCleanupIds = new Set();
+let childItemsLoaded    = false;
 
 const SESSION_KEY = 'yhSession';
+const SHOPPING_RETENTION_MS = 7 * 24 * 60 * 60 * 1000;
 
 // ── Utils ─────────────────────────────────────────────────────────────────────
 const todayStr = () => new Date().toISOString().slice(0, 10);
@@ -1399,11 +1524,22 @@ function loadOwnerFilter() {
   ownerFilter = ['all','mine','other'].includes(saved) ? saved : 'all';
 }
 
+function updateHomeSectionView() {
+  const sections = ['shopping','tasks','routine'];
+  const menu = document.getElementById('homeMenu');
+  if (menu) menu.classList.toggle('hidden', homeSection !== 'menu');
+  sections.forEach(section => {
+    const el = document.getElementById(`${section}SectionView`);
+    if (el) el.classList.toggle('hidden', homeSection !== section);
+  });
+}
+
 function updateMainView() {
   const home = document.getElementById('homeView');
   const budget = document.getElementById('budgetView');
   if (home) home.classList.toggle('hidden', mainView !== 'home');
   if (budget) budget.classList.toggle('hidden', mainView !== 'budget');
+  if (mainView === 'home') updateHomeSectionView();
 }
 
 function updateOwnerTabs() {
@@ -1440,6 +1576,40 @@ window.setOwnerFilter = function(filter) {
   updateOwnerTabs();
   renderAllLists();
 };
+
+window.openHomeSection = function(section, pushHistory = true) {
+  if (!['shopping','tasks','routine'].includes(section)) return;
+  mainView = 'home';
+  homeSection = section;
+  updateMainView();
+  updateOwnerTabs();
+  renderAllLists();
+  if (pushHistory) {
+    try { history.pushState({ yhHomeSection: section }, '', location.href); } catch {}
+  }
+};
+
+window.backHomeMenu = function() {
+  if (homeSection === 'menu') return;
+  if (history.state && history.state.yhHomeSection === homeSection) {
+    history.back();
+    return;
+  }
+  homeSection = 'menu';
+  mainView = 'home';
+  updateMainView();
+  updateOwnerTabs();
+};
+
+window.addEventListener('popstate', event => {
+  if (!currentUser) return;
+  const section = event.state?.yhHomeSection;
+  homeSection = ['shopping','tasks','routine'].includes(section) ? section : 'menu';
+  mainView = 'home';
+  updateMainView();
+  updateOwnerTabs();
+  renderAllLists();
+});
 
 window.openBudgetView = function() {
   mainView = 'budget';
@@ -1594,15 +1764,16 @@ function renderBudget() {
   list.innerHTML = current.length ? current.map(item => {
     const name = item.by === 'ahmed' ? 'أحمد' : item.by === 'yousra' ? 'يسرا' : 'غير معروف';
     const note = item.note ? esc(item.note) : 'مصروف';
-    return `<div class="expense-row">
+    return `<div class="expense-row" id="expenseRow-${item.id}">
       ${whoBadge(item.by)}
-      <div class="expense-main">
+      <div class="expense-main expense-click-edit" onclick="startExpenseEdit(event,'${item.id}')" title="اضغط للتعديل">
         <div class="expense-topline">
           <div class="expense-note">${note}</div>
           <div class="expense-amount" dir="ltr">${esc(formatMoney(item.amount))}</div>
         </div>
-        <div class="expense-meta">${name} • ${esc(formatExpenseTime(item.ts))}</div>
+        <div class="expense-meta">${name} • ${esc(formatExpenseTime(item.ts))} • اضغط للتعديل</div>
       </div>
+      <button class="expense-edit" onclick="startExpenseEdit(event,'${item.id}')" title="تعديل">✎</button>
       <button class="expense-delete" onclick="delExpense('${item.id}')" title="مسح">×</button>
     </div>`;
   }).join('') : '<div class="empty">مفيش مصروفات متسجلة في الدورة دي</div>';
@@ -1707,13 +1878,6 @@ window.addExpense = async function() {
   }
   const now = Date.now();
   const cycle = getBudgetCycle(new Date(now));
-  if (!budgetNotifyReady || budgetLastCycleId !== cycle.id) {
-    const existingTotal = sumExpenses(monthlyExpenses.filter(item => expenseCycleId(item) === cycle.id));
-    budgetNotifyReady = true;
-    budgetLastCycleId = cycle.id;
-    budgetLastTotal = existingTotal;
-    markCurrentBudgetNoticesAsSeen(cycle.id, existingTotal, budgetForCycle(cycle.id));
-  }
   await addDoc(collection(db,'monthly_expenses'), sw({
     amount,
     note: noteEl.value.trim(),
@@ -1724,6 +1888,57 @@ window.addExpense = async function() {
   amountEl.value = '';
   noteEl.value = '';
   amountEl.focus();
+};
+
+window.startExpenseEdit = function(event, id) {
+  event?.stopPropagation();
+  if (!db) return;
+  const item = monthlyExpenses.find(expense => expense.id === id);
+  const row = document.getElementById(`expenseRow-${id}`);
+  if (!item || !row || row.dataset.editing === '1') return;
+  row.dataset.editing = '1';
+  const amountValue = formatBudgetInput(item.amount);
+  const noteValue = item.note || '';
+  row.innerHTML = `
+    ${whoBadge(item.by)}
+    <div class="expense-edit-form" onclick="event.stopPropagation()">
+      <input class="edit-amount" id="expenseEditAmount-${id}" type="text" inputmode="decimal" value="${esc(amountValue)}" aria-label="تعديل المبلغ">
+      <input id="expenseEditNote-${id}" type="text" value="${esc(noteValue)}" placeholder="المكان أو ملاحظة" aria-label="تعديل الملاحظة">
+      <div class="expense-edit-actions">
+        <button class="expense-edit-save" onclick="saveExpenseEdit('${id}')">حفظ ✓</button>
+        <button class="expense-edit-cancel" onclick="cancelExpenseEdit('${id}')">إلغاء</button>
+      </div>
+    </div>`;
+  const amountInput = document.getElementById(`expenseEditAmount-${id}`);
+  amountInput?.focus();
+  amountInput?.select();
+};
+
+window.saveExpenseEdit = async function(id) {
+  if (!db) return;
+  const amountEl = document.getElementById(`expenseEditAmount-${id}`);
+  const noteEl = document.getElementById(`expenseEditNote-${id}`);
+  const amount = parseMoneyInput(amountEl?.value || '');
+  if (!Number.isFinite(amount) || amount <= 0) {
+    alert('اكتب مبلغ صحيح أكبر من صفر');
+    amountEl?.focus();
+    return;
+  }
+  try {
+    await updateDoc(doc(db,'monthly_expenses',id), sw({
+      amount,
+      note: noteEl?.value.trim() || '',
+      editedAt: Date.now(),
+      editedBy: currentUser
+    }));
+  } catch (error) {
+    console.error(error);
+    alert('محصلش تعديل المصروف. حاول تاني.');
+  }
+};
+
+window.cancelExpenseEdit = function() {
+  renderBudget();
 };
 
 window.delExpense = async function(id) {
@@ -1742,40 +1957,12 @@ function showAppToast(title, body) {
   toastTimer = setTimeout(() => toast.classList.remove('show'), 5000);
 }
 
-function budgetNoticeStorageKey(cycleId, key) {
-  return `yhBudgetNotice_${cycleId}_${key}`;
-}
-
-function rememberBudgetNotice(cycleId, key) {
-  localStorage.setItem(budgetNoticeStorageKey(cycleId, key), String(Date.now()));
-}
-
-function hasBudgetNotice(cycleId, key) {
-  return Boolean(localStorage.getItem(budgetNoticeStorageKey(cycleId, key)));
-}
-
 function emitBudgetNotice(cycleId, key, title, body) {
-  if (hasBudgetNotice(cycleId, key)) return;
-  rememberBudgetNotice(cycleId, key);
   showAppToast(title, body);
   if ('Notification' in window && Notification.permission === 'granted') {
     try {
-      new Notification(title, { body, tag:`yh-budget-${cycleId}-${key}` });
+      new Notification(title, { body, tag:`yh-budget-${cycleId}-${key}-${Date.now()}` });
     } catch {}
-  }
-}
-
-function markCurrentBudgetNoticesAsSeen(cycleId, total, budget) {
-  const lastHundred = Math.floor(total / 100) * 100;
-  for (let level = 100; level <= lastHundred; level += 100) {
-    if (!hasBudgetNotice(cycleId, `spent-${level}`)) rememberBudgetNotice(cycleId, `spent-${level}`);
-  }
-  const budgetKey = budgetNoticeAmountKey(budget);
-  if (total > budget && !hasBudgetNotice(cycleId, `over-${budgetKey}`)) {
-    rememberBudgetNotice(cycleId, `over-${budgetKey}`);
-  }
-  if (total >= budget + 50 && !hasBudgetNotice(cycleId, `over-50-${budgetKey}`)) {
-    rememberBudgetNotice(cycleId, `over-50-${budgetKey}`);
   }
 }
 
@@ -1785,19 +1972,22 @@ function checkBudgetNotifications() {
   const cycle = getBudgetCycle();
   const total = sumExpenses(currentBudgetExpenses());
   const budget = budgetForCycle(cycle.id);
-  const budgetKey = budgetNoticeAmountKey(budget);
 
   if (!budgetNotifyReady || budgetLastCycleId !== cycle.id) {
     budgetNotifyReady = true;
     budgetLastCycleId = cycle.id;
     budgetLastTotal = total;
     budgetLastLimit = budget;
-    markCurrentBudgetNoticesAsSeen(cycle.id, total, budget);
     return;
   }
 
-  if (total > budgetLastTotal) {
-    const firstHundred = (Math.floor(budgetLastTotal / 100) + 1) * 100;
+  const previousTotal = budgetLastTotal;
+  const previousBudget = budgetLastLimit ?? budget;
+
+  // Every time spending climbs through a 100-euro level, notify again.
+  // If a wrong expense is corrected downward, crossing that level later is a new crossing.
+  if (total > previousTotal) {
+    const firstHundred = (Math.floor(previousTotal / 100) + 1) * 100;
     for (let level = firstHundred; level <= total; level += 100) {
       emitBudgetNotice(
         cycle.id,
@@ -1806,43 +1996,28 @@ function checkBudgetNotifications() {
         `وصل إجمالي المصروفات إلى ${formatMoney(level)}.`
       );
     }
-
-    if (budgetLastTotal <= budget && total > budget) {
-      emitBudgetNotice(
-        cycle.id,
-        `over-${budgetKey}`,
-        '⚠️ تم تجاوز الميزانية',
-        `المصروفات الحالية ${formatMoney(total)} وهدف الميزانية ${formatMoney(budget)}.`
-      );
-    }
-
-    if (budgetLastTotal < budget + 50 && total >= budget + 50) {
-      emitBudgetNotice(
-        cycle.id,
-        `over-50-${budgetKey}`,
-        '🚨 تم تجاوز الميزانية بـ 50 يورو',
-        `وصل إجمالي المصروفات إلى ${formatMoney(total)} وهدف الميزانية ${formatMoney(budget)}.`
-      );
-    }
   }
 
-  if (budgetLastLimit !== null && budget < budgetLastLimit) {
-    if (total > budget) {
-      emitBudgetNotice(
-        cycle.id,
-        `over-${budgetKey}`,
-        '⚠️ الهدف الجديد أقل من المصروفات',
-        `المصروفات الحالية ${formatMoney(total)} وهدف الميزانية الجديد ${formatMoney(budget)}.`
-      );
-    }
-    if (total >= budget + 50) {
-      emitBudgetNotice(
-        cycle.id,
-        `over-50-${budgetKey}`,
-        '🚨 تجاوزتم الهدف الجديد بـ 50 يورو',
-        `المصروفات الحالية ${formatMoney(total)} وهدف الميزانية الجديد ${formatMoney(budget)}.`
-      );
-    }
+  const wasOver = previousTotal > previousBudget;
+  const isOver = total > budget;
+  if (!wasOver && isOver) {
+    emitBudgetNotice(
+      cycle.id,
+      'over-budget',
+      '⚠️ تم تجاوز الميزانية',
+      `المصروفات الحالية ${formatMoney(total)} وهدف الميزانية ${formatMoney(budget)}.`
+    );
+  }
+
+  const wasOverBy50 = previousTotal >= previousBudget + 50;
+  const isOverBy50 = total >= budget + 50;
+  if (!wasOverBy50 && isOverBy50) {
+    emitBudgetNotice(
+      cycle.id,
+      'over-budget-50',
+      '🚨 تم تجاوز الميزانية بـ 50 يورو',
+      `وصل إجمالي المصروفات إلى ${formatMoney(total)} وهدف الميزانية ${formatMoney(budget)}.`
+    );
   }
 
   budgetLastTotal = total;
@@ -2230,6 +2405,8 @@ function loginSuccess() {
   // restore the last selected owner tab for this account
   loadOwnerFilter();
   mainView = 'home';
+  homeSection = 'menu';
+  try { history.replaceState(null, '', location.href); } catch {}
   updateMainView();
   updateOwnerTabs();
 
@@ -2253,7 +2430,12 @@ window.doLogout = function() {
   budgetNotifyReady = false;
   budgetLastCycleId = '';
   budgetLastTotal = 0;
+  budgetLastLimit = null;
   mainView = 'home';
+  homeSection = 'menu';
+  shoppingCleanupIds.clear();
+  childItemsLoaded = false;
+  try { history.replaceState(null, '', location.href); } catch {}
   document.getElementById('app').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
   document.querySelectorAll('.user-btn').forEach(b => b.classList.remove('selected'));
@@ -2621,22 +2803,112 @@ function renderAllLists() {
 }
 
 // ── SHOPPING ──────────────────────────────────────────────────────────────────
-window.addShopping = function() {
+function normalizeShoppingText(value) {
+  return normalizeArabicDigits(value || '')
+    .toLowerCase()
+    .replace(/[\u064b-\u065f\u0670]/g, '')
+    .replace(/[أإآٱ]/g, 'ا')
+    .replace(/ى/g, 'ي')
+    .replace(/ة/g, 'ه')
+    .replace(/ؤ/g, 'و')
+    .replace(/ئ/g, 'ي')
+    .replace(/[^\p{L}\p{N}]+/gu, '');
+}
+
+function levenshteinDistance(a, b) {
+  if (a === b) return 0;
+  if (!a.length) return b.length;
+  if (!b.length) return a.length;
+  let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    const curr = [i];
+    for (let j = 1; j <= b.length; j++) {
+      curr[j] = Math.min(
+        curr[j - 1] + 1,
+        prev[j] + 1,
+        prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)
+      );
+    }
+    prev = curr;
+  }
+  return prev[b.length];
+}
+
+function shoppingTextsAreNear(a, b) {
+  const x = normalizeShoppingText(a);
+  const y = normalizeShoppingText(b);
+  if (!x || !y) return false;
+  if (x === y) return true;
+  const maxLen = Math.max(x.length, y.length);
+  const minLen = Math.min(x.length, y.length);
+  if (maxLen <= 5) return x.length === y.length && levenshteinDistance(x, y) <= 1;
+  if (minLen / maxLen < 0.88) return false;
+  const allowed = maxLen <= 10 ? 1 : Math.max(1, Math.floor(maxLen * 0.1));
+  return levenshteinDistance(x, y) <= allowed;
+}
+
+function shoppingItemTimestamp(item) {
+  const ts = Number(item?.ts);
+  if (Number.isFinite(ts) && ts > 0) return ts;
+  const fallback = item?.date ? new Date(`${item.date}T00:00:00`).getTime() : NaN;
+  return Number.isFinite(fallback) ? fallback : Date.now();
+}
+
+function shoppingItemExpired(item, now = Date.now()) {
+  return now - shoppingItemTimestamp(item) >= SHOPPING_RETENTION_MS;
+}
+
+async function removeShoppingItemSilently(id) {
+  await deleteChildrenForParent('shopping', id);
+  await deleteDoc(doc(db,'shopping',id));
+}
+
+async function cleanupExpiredShopping(items) {
+  if (!db || !childItemsLoaded) return;
+  const expired = items.filter(item => shoppingItemExpired(item) && !shoppingCleanupIds.has(item.id));
+  if (!expired.length) return;
+  expired.forEach(item => shoppingCleanupIds.add(item.id));
+  try {
+    await Promise.all(expired.map(item => removeShoppingItemSilently(item.id)));
+  } catch (error) {
+    console.error('shopping cleanup failed', error);
+  } finally {
+    expired.forEach(item => shoppingCleanupIds.delete(item.id));
+  }
+}
+
+window.addShopping = async function() {
   if (!db) { alert('اعمل إعداد Firebase من ⚙️ الأول'); return; }
   const el = document.getElementById('shopIn');
   const txt = el.value.trim();
   if (!txt) return;
-  addDoc(collection(db,'shopping'), sw({ text: txt, date: todayStr(), done: false, ts: Date.now(), by: currentUser, ...reminderFields(txt) }));
-  el.value = '';
+
+  // A newly requested item replaces old entries with the same / almost identical full text,
+  // including entries that were already marked done.
+  const duplicates = shoppingItems.filter(item => shoppingTextsAreNear(item.text, txt));
+  try {
+    if (duplicates.length) {
+      await Promise.all(duplicates.map(item => removeShoppingItemSilently(item.id)));
+    }
+    await addDoc(collection(db,'shopping'), sw({
+      text: txt,
+      date: todayStr(),
+      done: false,
+      ts: Date.now(),
+      by: currentUser,
+      ...reminderFields(txt)
+    }));
+    el.value = '';
+    el.focus();
+  } catch (error) {
+    console.error(error);
+    alert('محصلش إضافة للحاجة. حاول تاني.');
+  }
 };
 
 function renderShopping(items) {
   const list = document.getElementById('shopList');
-  const cutoff = new Date();
-  cutoff.setDate(cutoff.getDate() - 15);
-  const cutoffStr = cutoff.toISOString().slice(0, 10);
-
-  const visible = filterByOwner(items).filter(i => i.date >= cutoffStr);
+  const visible = filterByOwner(items).filter(item => !shoppingItemExpired(item));
   const pending = visible.filter(i => !i.done);
   const completedParents = visible.filter(i => i.done).sort((a,b) => a.ts - b.ts);
   const completedChildren = completedChildrenFor('shopping', visible);
@@ -2854,9 +3126,15 @@ function startListeners() {
   budgetLastCycleId = '';
   budgetLastTotal = 0;
   budgetLastLimit = null;
+  childItemsLoaded = false;
   subs.push(onSnapshot(
     query(collection(db,'shopping'), orderBy('ts','desc')),
-    snap => { shoppingItems = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderShopping(shoppingItems); checkAllReminders(); }
+    snap => {
+      shoppingItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderShopping(shoppingItems);
+      checkAllReminders();
+      cleanupExpiredShopping(shoppingItems);
+    }
   ));
   subs.push(onSnapshot(
     query(collection(db,'tasks'), orderBy('ts','asc')),
@@ -2872,7 +3150,13 @@ function startListeners() {
   ));
   subs.push(onSnapshot(
     query(collection(db,'child_items'), orderBy('ts','asc')),
-    snap => { childItems = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderAllLists(); checkAllReminders(); }
+    snap => {
+      childItems = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      childItemsLoaded = true;
+      renderAllLists();
+      checkAllReminders();
+      cleanupExpiredShopping(shoppingItems);
+    }
   ));
   subs.push(onSnapshot(
     collection(db,'monthly_budgets'),
