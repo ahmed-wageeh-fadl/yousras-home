@@ -1562,7 +1562,7 @@
         <div class="card">
           <div class="card-header">
             <div class="card-title"><span class="icon">📅</span> المواعيد القريبة</div>
-            <div class="card-subtitle">النهارده + 14 يوم</div>
+            <div class="card-subtitle">مشتركة بينكم • النهارده + 14 يوم</div>
           </div>
           <div class="upcoming-list" id="upcomingList">
             <div class="empty">مفيش مواعيد خلال الأسبوعين الجايين ✨</div>
@@ -1821,8 +1821,10 @@ function updateOwnerTabs() {
   mineBtn.classList.toggle('active', ownerFilter === 'mine');
   otherBtn.classList.toggle('active', ownerFilter === 'other');
 
-  // The people filter belongs to the household side only, never to money.
-  if (ownerTabs) ownerTabs.classList.toggle('hidden', mainView === 'budget');
+  // The people filter belongs only to the normal household lists.
+  // Upcoming appointments are always shared between both people and never filtered.
+  const hidePeopleFilter = mainView === 'budget' || mainView === 'activity' || (mainView === 'home' && homeSection === 'upcoming');
+  if (ownerTabs) ownerTabs.classList.toggle('hidden', hidePeopleFilter);
   if (homeTab) homeTab.classList.toggle('active', mainView === 'home');
   if (budgetTab) budgetTab.classList.toggle('active', mainView === 'budget');
 }
@@ -2723,7 +2725,10 @@ async function requestNotificationsOnEntry() {
 }
 
 function reminderStorageKey(type, id, offset) {
-  return `yhReminder_${type}_${id}_${offset}`;
+  // Reminder acknowledgement is per account, so both Ahmed and Yousra
+  // can receive the same shared appointment notification on the same device.
+  const userKey = currentUser || 'guest';
+  return `yhReminder_${userKey}_${type}_${id}_${offset}`;
 }
 
 function showReminderNotification(item, type, offset) {
@@ -2808,7 +2813,9 @@ function upcomingItemsForTwoWeeks() {
     return true;
   });
 
-  return filterByOwner(all).sort((a,b) => Number(a.dueAt) - Number(b.dueAt));
+  // Upcoming appointments are a shared household calendar.
+  // Never apply the currently selected people filter here.
+  return all.sort((a,b) => Number(a.dueAt) - Number(b.dueAt));
 }
 
 window.openUpcomingSource = function(type, id) {
