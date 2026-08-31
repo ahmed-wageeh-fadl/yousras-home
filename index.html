@@ -303,7 +303,8 @@
 
     .item-text {
       flex: 1;
-      font-size: 0.93rem;
+      font-size: 1rem;
+      font-weight: 700;
       line-height: 1.4;
       transition: all 0.2s;
       word-break: break-word;
@@ -908,7 +909,7 @@
     .badge-normal:hover { color: #aaa; }
 
     .item-del {
-      opacity: 0;
+      opacity: 1;
       background: none;
       border: none;
       color: #ccc;
@@ -920,7 +921,6 @@
       transition: all 0.18s;
       flex-shrink: 0;
     }
-    .item:hover .item-del { opacity: 1; }
     .item-del:hover { background: #feeaea; color: #e44; }
 
     /* ── Child items ── */
@@ -964,8 +964,8 @@
     }
     .child-item:hover { background: #f7f4f2; }
     .child-item .item-check { width: 19px; height: 19px; font-size: 9px; }
-    .child-item .item-text { font-size: 0.84rem; }
-    .child-item .item-del { opacity: 0.55; font-size: 1rem; }
+    .child-item .item-text { font-size: 0.84rem; font-weight: 500; }
+    .child-item .item-del { opacity: 1; font-size: 1rem; }
     .child-add-form {
       display: none;
       gap: 6px;
@@ -1555,7 +1555,7 @@
         <div class="card sec-shop">
           <div class="card-header">
             <div class="card-title"><span class="icon">🛒</span> محتاجين</div>
-            <div class="card-subtitle">آخر أسبوع</div>
+            <div class="card-subtitle">تفضل موجودة لحد ما تمسحوها</div>
           </div>
           <div class="add-form">
             <button class="btn-add" onclick="addShopping()">+</button>
@@ -1855,7 +1855,6 @@ let budgetLastCycleId  = '';
 let budgetLastTotal    = 0;
 let budgetLastLimit    = null;
 let toastTimer         = null;
-let shoppingCleanupIds = new Set();
 let childItemsLoaded    = false;
 let activityItems       = [];
 let savingsGoals        = [];
@@ -1863,7 +1862,6 @@ let undoAction          = null;
 let undoTimer           = null;
 
 const SESSION_KEY = 'yhSession';
-const SHOPPING_RETENTION_MS = 7 * 24 * 60 * 60 * 1000;
 
 // ── Utils ─────────────────────────────────────────────────────────────────────
 const todayStr = () => new Date().toISOString().slice(0, 10);
@@ -2019,16 +2017,48 @@ window.openBudgetView = function() {
 function normalizeArabicDigits(s) {
   const ar = '٠١٢٣٤٥٦٧٨٩';
   const fa = '۰۱۲۳۴۵۶۷۸۹';
-  return String(s).replace(/[٠-٩]/g, d => ar.indexOf(d)).replace(/[۰-۹]/g, d => fa.indexOf(d));
+  return String(s)
+    .replace(/[٠-٩]/g, d => ar.indexOf(d))
+    .replace(/[۰-۹]/g, d => fa.indexOf(d));
+}
+
+function normalizeArabicNumberWords(s) {
+  const words = {
+    'واحد':'1','واحدة':'1','احد':'1','احدى':'1',
+    'اثنين':'2','اتنين':'2','اثنان':'2','اثنتين':'2','اثنتان':'2',
+    'ثلاثة':'3','تلاتة':'3','ثلاث':'3','تلات':'3',
+    'اربعة':'4','اربع':'4','خمسة':'5','خمس':'5','ستة':'6','ست':'6',
+    'سبعة':'7','سبع':'7','ثمانية':'8','ثمان':'8','تمانية':'8','تمنية':'8',
+    'تسعة':'9','تسع':'9','عشرة':'10','عشر':'10',
+    'احد عشر':'11','احدى عشر':'11','حداشر':'11',
+    'اثنا عشر':'12','اثني عشر':'12','اتناشر':'12',
+    'ثلاثة عشر':'13','تلاتاشر':'13','اربعة عشر':'14','اربعتاشر':'14',
+    'خمسة عشر':'15','خمستاشر':'15','ستة عشر':'16','ستاشر':'16',
+    'سبعة عشر':'17','سبعتاشر':'17','ثمانية عشر':'18','تمنتاشر':'18',
+    'تسعة عشر':'19','تسعتاشر':'19','عشرين':'20','عشرون':'20',
+    'واحد وعشرين':'21','واحد وعشرون':'21','اتنين وعشرين':'22','اثنين وعشرين':'22',
+    'ثلاثة وعشرين':'23','تلاتة وعشرين':'23','اربعة وعشرين':'24','اربعه وعشرين':'24',
+    'خمسة وعشرين':'25','خمسه وعشرين':'25','ستة وعشرين':'26','سته وعشرين':'26',
+    'سبعة وعشرين':'27','سبعه وعشرين':'27','ثمانية وعشرين':'28','تمانية وعشرين':'28',
+    'تسعة وعشرين':'29','تسعه وعشرين':'29','ثلاثين':'30','ثلاثون':'30',
+    'واحد وثلاثين':'31','واحد وثلاثون':'31'
+  };
+  let out = String(s);
+  Object.keys(words).sort((a,b) => b.length - a.length).forEach(word => {
+    out = out.replace(new RegExp(`(^|\\s)${word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}(?=\\s|$)`, 'g'), (_, pre) => `${pre}${words[word]}`);
+  });
+  return out;
 }
 
 function normalizeForDateParse(s) {
-  return normalizeArabicDigits(s)
+  return normalizeArabicNumberWords(normalizeArabicDigits(s))
     .toLowerCase()
     .replace(/[\u064b-\u065f\u0670]/g, '')
     .replace(/[أإآ]/g, 'ا')
     .replace(/ى/g, 'ي')
     .replace(/ـ/g, ' ')
+    .replace(/[\u200e\u200f\u202a-\u202e\u2066-\u2069]/g, '')
+    .replace(/[٫،]/g, '.')
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -2113,10 +2143,22 @@ function sumExpenses(items) {
 }
 
 function parseMoneyInput(value) {
-  const normalized = normalizeArabicDigits(value)
+  let normalized = normalizeArabicDigits(value)
+    .replace(/[\u200e\u200f\u202a-\u202e\u2066-\u2069]/g, '')
     .replace(/\s+/g, '')
-    .replace(',', '.')
-    .replace(/[^0-9.]/g, '');
+    .replace(/[€ججم]/g, '')
+    .replace(/٬/g, '')
+    .replace(/٫/g, '.')
+    .replace(/،/g, '.')
+    .replace(/,/g, '.');
+
+  // لو المستخدم كتب فواصل آلاف ونقطة عشرية معًا، نخلي آخر فاصل فقط هو العشري.
+  const dots = [...normalized.matchAll(/\./g)].map(m => m.index);
+  if (dots.length > 1) {
+    const last = dots[dots.length - 1];
+    normalized = normalized.slice(0, last).replace(/\./g, '') + normalized.slice(last);
+  }
+  normalized = normalized.replace(/[^0-9.]/g, '');
   const amount = Math.round(Number(normalized) * 100) / 100;
   return Number.isFinite(amount) ? amount : NaN;
 }
@@ -2911,11 +2953,21 @@ function parseSmartDate(text, base = new Date()) {
 
   if (!dateFound) {
     const monthMap = {
-      'يناير':0, 'فبراير':1, 'مارس':2, 'ابريل':3, 'مايو':4, 'يونيو':5,
-      'يوليو':6, 'اغسطس':7, 'سبتمبر':8, 'اكتوبر':9, 'نوفمبر':10, 'ديسمبر':11
+      'يناير':0, 'يناير':0,
+      'فبراير':1, 'فبراير':1,
+      'مارس':2,
+      'ابريل':3, 'أبريل':3,
+      'مايو':4,
+      'يونيو':5, 'يونيه':5,
+      'يوليو':6, 'يوليه':6,
+      'اغسطس':7, 'أغسطس':7,
+      'سبتمبر':8, 'شتنبر':8,
+      'اكتوبر':9, 'أكتوبر':9,
+      'نوفمبر':10,
+      'ديسمبر':11
     };
-    const monthNames = Object.keys(monthMap).join('|');
-    m = raw.match(new RegExp(`\\b(\\d{1,2})\\s+(${monthNames})(?:\\s+(20\\d{2}))?\\b`));
+    const monthNames = Object.keys(monthMap).map(x => x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|');
+    m = raw.match(new RegExp(`(?:^|\\s)(\\d{1,2})\\s+(${monthNames})(?:\\s+(20\\d{2}))?(?=\\s|$)`));
     if (m) setDate(Number(m[3] || base.getFullYear()), monthMap[m[2]], Number(m[1]));
   }
 
@@ -3411,7 +3463,6 @@ window.doLogout = function() {
   budgetLastLimit = null;
   mainView = 'home';
   homeSection = 'menu';
-  shoppingCleanupIds.clear();
   childItemsLoaded = false;
   try { history.replaceState(null, '', location.href); } catch {}
   document.getElementById('app').style.display = 'none';
@@ -3846,36 +3897,6 @@ function shoppingTextsAreNear(a, b) {
   return levenshteinDistance(x, y) <= allowed;
 }
 
-function shoppingItemTimestamp(item) {
-  const ts = Number(item?.ts);
-  if (Number.isFinite(ts) && ts > 0) return ts;
-  const fallback = item?.date ? new Date(`${item.date}T00:00:00`).getTime() : NaN;
-  return Number.isFinite(fallback) ? fallback : Date.now();
-}
-
-function shoppingItemExpired(item, now = Date.now()) {
-  return now - shoppingItemTimestamp(item) >= SHOPPING_RETENTION_MS;
-}
-
-async function removeShoppingItemSilently(id) {
-  await deleteChildrenForParent('shopping', id);
-  await deleteDoc(doc(db,'shopping',id));
-}
-
-async function cleanupExpiredShopping(items) {
-  if (!db || !childItemsLoaded) return;
-  const expired = items.filter(item => shoppingItemExpired(item) && !shoppingCleanupIds.has(item.id));
-  if (!expired.length) return;
-  expired.forEach(item => shoppingCleanupIds.add(item.id));
-  try {
-    await Promise.all(expired.map(item => removeShoppingItemSilently(item.id)));
-  } catch (error) {
-    console.error('shopping cleanup failed', error);
-  } finally {
-    expired.forEach(item => shoppingCleanupIds.delete(item.id));
-  }
-}
-
 window.addShopping = async function() {
   if (!db) { alert('اعمل إعداد Firebase من ⚙️ الأول'); return; }
   const el = document.getElementById('shopIn');
@@ -3909,7 +3930,7 @@ window.addShopping = async function() {
 
 function renderShopping(items) {
   const list = document.getElementById('shopList');
-  const visible = filterByOwner(items).filter(item => !shoppingItemExpired(item));
+  const visible = filterByOwner(items);
   const pending = visible.filter(i => !i.done);
   const completedParents = visible.filter(i => i.done).sort((a,b) => a.ts - b.ts);
   const completedChildren = completedChildrenFor('shopping', visible);
@@ -4210,7 +4231,6 @@ function startListeners() {
       renderShopping(shoppingItems);
       renderUpcomingEvents();
       checkAllReminders();
-      cleanupExpiredShopping(shoppingItems);
     }
   ));
   subs.push(onSnapshot(
@@ -4232,7 +4252,6 @@ function startListeners() {
       childItemsLoaded = true;
       renderAllLists();
       checkAllReminders();
-      cleanupExpiredShopping(shoppingItems);
     }
   ));
   subs.push(onSnapshot(
