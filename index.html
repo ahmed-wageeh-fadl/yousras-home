@@ -959,7 +959,49 @@
 
     /* ── Child items ── */
     .item-block { border-radius: 12px; }
-    .parent-item { cursor: pointer; }
+    .parent-item {
+      cursor: pointer;
+      display: block;
+      padding: 10px 8px 8px;
+    }
+    .parent-main-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      min-width: 0;
+      width: 100%;
+    }
+    .parent-main-row .item-text {
+      flex: 1 1 auto;
+      min-width: 0;
+      width: auto;
+    }
+    .parent-main-row .item-check,
+    .parent-main-row .drag-handle {
+      margin-top: 2px;
+    }
+    .parent-meta-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      min-width: 0;
+      padding-inline-start: 68px;
+      margin-top: 7px;
+    }
+    .parent-meta-row .due-badge {
+      white-space: normal;
+      line-height: 1.45;
+      max-width: 100%;
+    }
+    .parent-main-row .inline-edit-input {
+      width: 100%;
+      min-height: 40px;
+      font-size: 1rem;
+    }
+    .completed-parent-item .parent-meta-row {
+      padding-inline-start: 31px;
+    }
     .child-tools {
       display: flex;
       align-items: center;
@@ -1577,8 +1619,8 @@
     <!-- Update this stamp on every deployed client build. -->
     <div class="build-stamp" id="buildStamp" aria-label="معلومات آخر تحديث">
       <span>آخر تحديث:</span>
-      <b dir="ltr">31/08/2026 20:16:00</b>
-      <span class="build-id" dir="ltr">Build 2026.08.31-2016</span>
+      <b dir="ltr">31/08/2026 20:46:11</b>
+      <span class="build-id" dir="ltr">Build 2026.08.31-2046</span>
     </div>
   </header>
 
@@ -4086,14 +4128,18 @@ function renderCompletedParent(type, item) {
 
   return `
     <div class="item-block">
-      <div class="item">
-        <div class="item-check done" onclick="event.stopPropagation();${toggle}">✓</div>
-        <div class="item-text done editable" title="اضغط للتعديل" onclick="event.stopPropagation();startInlineEdit(event,'${type}','${item.id}')">${esc(item.text)}</div>
-        ${dueBadge(item)}
-        ${recurrenceBadge(item)}
-        ${whoBadge(item.by)}
-        ${urgent}
-        <button class="item-del" onclick="event.stopPropagation();${del}">×</button>
+      <div class="item parent-item completed-parent-item">
+        <div class="parent-main-row">
+          <div class="item-check done" onclick="event.stopPropagation();${toggle}">✓</div>
+          <div class="item-text done editable" title="اضغط للتعديل" onclick="event.stopPropagation();startInlineEdit(event,'${type}','${item.id}')">${esc(item.text)}</div>
+        </div>
+        <div class="parent-meta-row">
+          ${dueBadge(item)}
+          ${recurrenceBadge(item)}
+          ${whoBadge(item.by)}
+          ${urgent}
+          <button class="item-del" onclick="event.stopPropagation();${del}">×</button>
+        </div>
       </div>
     </div>`;
 }
@@ -4242,12 +4288,16 @@ function renderShopping(items) {
       pendingHtml += `
         <div class="item-block">
           <div class="item parent-item" data-sort-kind="parent" data-sort-type="shopping" data-sort-id="${item.id}" onclick="toggleChildrenUI('shopping','${item.id}')">
-            ${sortHandle('parent','shopping',item.id)}
-            <div class="item-check" onclick="event.stopPropagation();toggleShop('${item.id}',true)"></div>
-            <div class="item-text editable" title="اضغط للتعديل" onclick="event.stopPropagation();startInlineEdit(event,'shopping','${item.id}')">${esc(item.text)}</div>
-            ${dueBadge(item)}
-            ${whoBadge(item.by)}
-            <button class="item-del" onclick="event.stopPropagation();delShop('${item.id}')">×</button>
+            <div class="parent-main-row">
+              ${sortHandle('parent','shopping',item.id)}
+              <div class="item-check" onclick="event.stopPropagation();toggleShop('${item.id}',true)"></div>
+              <div class="item-text editable" title="اضغط للتعديل" onclick="event.stopPropagation();startInlineEdit(event,'shopping','${item.id}')">${esc(item.text)}</div>
+            </div>
+            <div class="parent-meta-row">
+              ${dueBadge(item)}
+              ${whoBadge(item.by)}
+              <button class="item-del" onclick="event.stopPropagation();delShop('${item.id}')">×</button>
+            </div>
           </div>
           ${renderChildSection('shopping', item.id)}
         </div>`;
@@ -4326,18 +4376,22 @@ function renderTasks(items) {
   const renderItem = item => `
     <div class="item-block">
       <div class="item parent-item" data-sort-kind="parent" data-sort-type="tasks" data-sort-id="${item.id}" onclick="toggleChildrenUI('tasks','${item.id}')">
-        ${sortHandle('parent','tasks',item.id)}
-        <div class="item-check"
-             onclick="event.stopPropagation();toggleTask('${item.id}',true)"></div>
-        <div class="item-text editable" title="اضغط للتعديل" onclick="event.stopPropagation();startInlineEdit(event,'tasks','${item.id}')">${esc(item.text)}</div>
-        ${dueBadge(item)}
-        ${recurrenceBadge(item)}
-        ${whoBadge(item.by)}
-        <button class="${item.urgent ? 'badge-urgent' : 'badge-normal'}"
-                onclick="event.stopPropagation();toggleUrgent('${item.id}',${!item.urgent})">
-          ${item.urgent ? '🔴 عاجل' : '☆ عادي'}
-        </button>
-        <button class="item-del" onclick="event.stopPropagation();delTask('${item.id}')">×</button>
+        <div class="parent-main-row">
+          ${sortHandle('parent','tasks',item.id)}
+          <div class="item-check"
+               onclick="event.stopPropagation();toggleTask('${item.id}',true)"></div>
+          <div class="item-text editable" title="اضغط للتعديل" onclick="event.stopPropagation();startInlineEdit(event,'tasks','${item.id}')">${esc(item.text)}</div>
+        </div>
+        <div class="parent-meta-row">
+          ${dueBadge(item)}
+          ${recurrenceBadge(item)}
+          ${whoBadge(item.by)}
+          <button class="${item.urgent ? 'badge-urgent' : 'badge-normal'}"
+                  onclick="event.stopPropagation();toggleUrgent('${item.id}',${!item.urgent})">
+            ${item.urgent ? '🔴 عاجل' : '☆ عادي'}
+          </button>
+          <button class="item-del" onclick="event.stopPropagation();delTask('${item.id}')">×</button>
+        </div>
       </div>
       ${renderChildSection('tasks', item.id)}
     </div>`;
@@ -4437,13 +4491,17 @@ function renderRoutine() {
   const pendingHtml = pending.length ? pending.map(item => `
       <div class="item-block">
         <div class="item parent-item" data-sort-kind="parent" data-sort-type="routine" data-sort-id="${item.id}" onclick="toggleChildrenUI('routine','${item.id}')">
-          ${sortHandle('parent','routine',item.id)}
-          <div class="item-check"
-               onclick="event.stopPropagation();toggleRoutine('${item.id}',true)"></div>
-          <div class="item-text editable" title="اضغط للتعديل" onclick="event.stopPropagation();startInlineEdit(event,'routine','${item.id}')">${esc(item.text)}</div>
-          ${dueBadge(item)}
-          ${whoBadge(item.by)}
-          <button class="item-del" onclick="event.stopPropagation();delRoutineItem('${item.id}')">×</button>
+          <div class="parent-main-row">
+            ${sortHandle('parent','routine',item.id)}
+            <div class="item-check"
+                 onclick="event.stopPropagation();toggleRoutine('${item.id}',true)"></div>
+            <div class="item-text editable" title="اضغط للتعديل" onclick="event.stopPropagation();startInlineEdit(event,'routine','${item.id}')">${esc(item.text)}</div>
+          </div>
+          <div class="parent-meta-row">
+            ${dueBadge(item)}
+            ${whoBadge(item.by)}
+            <button class="item-del" onclick="event.stopPropagation();delRoutineItem('${item.id}')">×</button>
+          </div>
         </div>
         ${renderChildSection('routine', item.id)}
       </div>`).join('') : `<div class="empty">${total ? 'روتين النهارده خلص ✨' : 'ما فيش روتين اتضاف لسه'}</div>`;
