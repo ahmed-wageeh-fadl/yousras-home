@@ -966,6 +966,41 @@
     .child-item .item-check { width: 19px; height: 19px; font-size: 9px; }
     .child-item .item-text { font-size: 0.84rem; font-weight: 500; }
     .child-item .item-del { opacity: 1; font-size: 1rem; }
+
+    /* ── Drag & drop sorting ── */
+    .drag-handle {
+      width: 28px;
+      height: 28px;
+      border: none;
+      border-radius: 8px;
+      background: #f5f2f0;
+      color: #aaa19c;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      font-size: 1rem;
+      line-height: 1;
+      padding: 0;
+    }
+    .drag-handle:hover { background: #eee9e6; color: #776e69; }
+    .drag-handle:active { cursor: grabbing; }
+    .child-item .drag-handle { width: 25px; height: 25px; font-size: 0.9rem; background: #f2efed; }
+    body.sorting-active { user-select: none; -webkit-user-select: none; }
+    .parent-item.sorting-dragging, .child-item.sorting-dragging {
+      opacity: 0.42;
+      background: #f4efec;
+    }
+    .parent-item.sort-target-before, .child-item.sort-target-before {
+      box-shadow: inset 0 3px 0 #b5726a;
+    }
+    .parent-item.sort-target-after, .child-item.sort-target-after {
+      box-shadow: inset 0 -3px 0 #b5726a;
+    }
     .child-add-form {
       display: none;
       gap: 6px;
@@ -3639,9 +3674,224 @@ function childFormId(type, parentId) { return `childForm-${type}-${parentId}`; }
 function completedAreaId(type) { return `completedArea-${type}`; }
 function completedToggleId(type) { return `completedToggle-${type}`; }
 
-function childrenOf(type, parentId) {
-  return childItems.filter(c => c.parentType === type && c.parentId === parentId).sort((a,b) => a.ts - b.ts);
+const SORT_STEP = 1000;
+let activeSortDrag = null;
+
+function sortCollectionName(type) {
+  if (type === 'shopping') return 'shopping';
+  if (type === 'tasks') return 'tasks';
+  if (type === 'routine') return 'routine_items';
+  return '';
 }
+
+function itemSortValue(item, type, kind = 'parent') {
+  const saved = Number(item?.sortOrder);
+  if (Number.isFinite(saved)) return saved;
+  const ts = Number(item?.ts);
+  const safeTs = Number.isFinite(ts) ? ts : 0;
+  // Keep the old display behavior until an item gets a manual position:
+  // shopping newest first, tasks/routine/children oldest first.
+  return kind === 'parent' && type === 'shopping' ? -safeTs : safeTs;
+}
+
+function sortByManualOrder(items, type, kind = 'parent') {
+  return [...items].sort((a,b) => {
+    const diff = itemSortValue(a,type,kind) - itemSortValue(b,type,kind);
+    return diff || (Number(a.ts) || 0) - (Number(b.ts) || 0) || String(a.id).localeCompare(String(b.id));
+  });
+}
+
+// Tasks always keep urgent parents above normal parents. Manual drag order is
+// respected inside each group only, so a normal task can never be placed above
+// an urgent one while urgent tasks can still be freely reordered together.
+function sortPendingParents(items, type) {
+  if (type !== 'tasks') return sortByManualOrder(items, type, 'parent');
+  const urgent = sortByManualOrder(items.filter(i => !!i.urgent), type, 'parent');
+  const normal = sortByManualOrder(items.filter(i => !i.urgent), type, 'parent');
+  return [...urgent, ...normal];
+}
+
+function taskGroupSortOrder(urgent, excludeId = '') {
+  const items = sortByManualOrder(
+    activeParentItems('tasks').filter(i => i.id !== excludeId && !!i.urgent === !!urgent),
+    'tasks', 'parent'
+  );
+  return items.length
+    ? itemSortValue(items[items.length - 1], 'tasks', 'parent') + SORT_STEP
+    : Date.now();
+}
+
+function activeParentItems(type) {
+  if (type === 'shopping') return shoppingItems.filter(i => !i.done);
+  if (type === 'tasks') return taskItems.filter(i => !i.done);
+  if (type === 'routine') return routineItems.filter(i => !routineCompletions.has(i.id));
+  return [];
+}
+
+function nextParentSortOrder(type, atStart = false) {
+  // New tasks are normal by default, therefore append them inside the normal
+  // group without letting urgent-task positions affect their manual order.
+  if (type === 'tasks') return taskGroupSortOrder(false);
+  const items = sortByManualOrder(activeParentItems(type), type, 'parent');
+  if (!items.length) return type === 'shopping' ? -Date.now() : Date.now();
+  return atStart
+    ? itemSortValue(items[0],type,'parent') - SORT_STEP
+    : itemSortValue(items[items.length-1],type,'parent') + SORT_STEP;
+}
+
+function nextChildSortOrder(type, parentId) {
+  const items = sortByManualOrder(
+    childItems.filter(c => c.parentType === type && c.parentId === parentId && !c.done),
+    type, 'child'
+  );
+  return items.length ? itemSortValue(items[items.length-1],type,'child') + SORT_STEP : Date.now();
+}
+
+function childrenOf(type, parentId) {
+  return sortByManualOrder(
+    childItems.filter(c => c.parentType === type && c.parentId === parentId),
+    type, 'child'
+  );
+}
+
+function sortHandle(kind, type, id, parentId = '') {
+  const parentArg = parentId ? `,'${parentId}'` : '';
+  return `<button class="drag-handle" type="button" title="اسحب لتغيير الترتيب" aria-label="اسحب لتغيير الترتيب"
+          onpointerdown="startSortDrag(event,'${kind}','${type}','${id}'${parentArg})"
+          onclick="event.preventDefault();event.stopPropagation()">☰</button>`;
+}
+
+function clearSortTarget() {
+  if (!activeSortDrag?.targetEl) return;
+  activeSortDrag.targetEl.classList.remove('sort-target-before','sort-target-after');
+  activeSortDrag.targetEl = null;
+  activeSortDrag.targetId = '';
+}
+
+window.startSortDrag = function(event, kind, type, id, parentId = '') {
+  if (!db || (event.pointerType === 'mouse' && event.button !== 0)) return;
+  const selector = kind === 'parent' ? '.parent-item' : '.child-item';
+  const sourceEl = event.currentTarget.closest(selector);
+  if (!sourceEl) return;
+  event.preventDefault();
+  event.stopPropagation();
+  clearSortTarget();
+  activeSortDrag = {
+    kind, type, id, parentId, pointerId:event.pointerId, sourceEl,
+    targetEl:null, targetId:'', before:true
+  };
+  sourceEl.classList.add('sorting-dragging');
+  document.body.classList.add('sorting-active');
+  try { event.currentTarget.setPointerCapture(event.pointerId); } catch {}
+};
+
+function sortableTargetFromPoint(clientX, clientY) {
+  if (!activeSortDrag) return null;
+  const raw = document.elementFromPoint(clientX, clientY);
+  if (!raw) return null;
+  const selector = activeSortDrag.kind === 'parent'
+    ? '.parent-item[data-sort-kind="parent"]'
+    : '.child-item[data-sort-kind="child"]';
+  const target = raw.closest(selector);
+  if (!target || target.dataset.sortId === activeSortDrag.id) return null;
+  if (target.dataset.sortType !== activeSortDrag.type) return null;
+  if (activeSortDrag.kind === 'child' && target.dataset.parentId !== activeSortDrag.parentId) return null;
+
+  // Urgent task parents and normal task parents are two locked sorting groups.
+  // This prevents dragging a normal task above an urgent one (or vice versa).
+  if (activeSortDrag.kind === 'parent' && activeSortDrag.type === 'tasks') {
+    const sourceItem = taskItems.find(i => i.id === activeSortDrag.id);
+    const targetItem = taskItems.find(i => i.id === target.dataset.sortId);
+    if (!sourceItem || !targetItem || !!sourceItem.urgent !== !!targetItem.urgent) return null;
+  }
+  return target;
+}
+
+function autoScrollWhileSorting(clientY) {
+  const edge = Math.min(90, window.innerHeight * 0.16);
+  if (clientY < edge) window.scrollBy(0, -14);
+  else if (clientY > window.innerHeight - edge) window.scrollBy(0, 14);
+}
+
+document.addEventListener('pointermove', event => {
+  if (!activeSortDrag || event.pointerId !== activeSortDrag.pointerId) return;
+  event.preventDefault();
+  autoScrollWhileSorting(event.clientY);
+  const target = sortableTargetFromPoint(event.clientX, event.clientY);
+  if (!target) { clearSortTarget(); return; }
+  const rect = target.getBoundingClientRect();
+  const before = event.clientY < rect.top + rect.height / 2;
+  if (activeSortDrag.targetEl !== target || activeSortDrag.before !== before) {
+    clearSortTarget();
+    activeSortDrag.targetEl = target;
+    activeSortDrag.targetId = target.dataset.sortId || '';
+    activeSortDrag.before = before;
+    target.classList.add(before ? 'sort-target-before' : 'sort-target-after');
+  }
+}, { passive:false });
+
+async function persistMovedSortOrder(kind, type, id, parentId, targetId, before) {
+  let sourceItems;
+  if (kind === 'parent') {
+    sourceItems = sortByManualOrder(activeParentItems(type), type, 'parent');
+    if (type === 'tasks') {
+      const sourceTask = sourceItems.find(i => i.id === id);
+      if (!sourceTask) return;
+      sourceItems = sourceItems.filter(i => !!i.urgent === !!sourceTask.urgent);
+    }
+  } else {
+    sourceItems = sortByManualOrder(
+      childItems.filter(c => c.parentType === type && c.parentId === parentId && !c.done),
+      type, 'child'
+    );
+  }
+  const moving = sourceItems.find(i => i.id === id);
+  if (!moving) return;
+  const without = sourceItems.filter(i => i.id !== id);
+  const targetIndex = without.findIndex(i => i.id === targetId);
+  if (targetIndex < 0) return;
+  const insertIndex = before ? targetIndex : targetIndex + 1;
+  without.splice(insertIndex, 0, moving);
+  const newIndex = without.findIndex(i => i.id === id);
+  const prev = newIndex > 0 ? without[newIndex - 1] : null;
+  const next = newIndex < without.length - 1 ? without[newIndex + 1] : null;
+  const prevValue = prev ? itemSortValue(prev,type,kind) : null;
+  const nextValue = next ? itemSortValue(next,type,kind) : null;
+  let nextOrder;
+  if (prevValue != null && nextValue != null) nextOrder = (prevValue + nextValue) / 2;
+  else if (prevValue != null) nextOrder = prevValue + SORT_STEP;
+  else if (nextValue != null) nextOrder = nextValue - SORT_STEP;
+  else nextOrder = 0;
+  if (!Number.isFinite(nextOrder)) return;
+
+  const oldOrder = moving.sortOrder;
+  moving.sortOrder = nextOrder;
+  renderAllLists();
+  try {
+    const collectionName = kind === 'parent' ? sortCollectionName(type) : 'child_items';
+    await updateDoc(doc(db, collectionName, id), sw({ sortOrder:nextOrder, sortUpdatedAt:Date.now(), sortUpdatedBy:currentUser }));
+  } catch (error) {
+    console.error('sorting failed', error);
+    if (oldOrder === undefined) delete moving.sortOrder; else moving.sortOrder = oldOrder;
+    renderAllLists();
+    alert('محصلش حفظ للترتيب. حاول تاني.');
+  }
+}
+
+async function finishSortDrag(event) {
+  if (!activeSortDrag || (event.pointerId != null && event.pointerId !== activeSortDrag.pointerId)) return;
+  const drag = activeSortDrag;
+  const targetId = drag.targetId;
+  const before = drag.before;
+  drag.sourceEl?.classList.remove('sorting-dragging');
+  clearSortTarget();
+  activeSortDrag = null;
+  document.body.classList.remove('sorting-active');
+  if (targetId) await persistMovedSortOrder(drag.kind, drag.type, drag.id, drag.parentId, targetId, before);
+}
+
+document.addEventListener('pointerup', finishSortDrag);
+document.addEventListener('pointercancel', finishSortDrag);
 
 function parentFor(type, parentId) {
   if (type === 'shopping') return shoppingItems.find(i => i.id === parentId) || null;
@@ -3663,7 +3913,8 @@ function renderChildSection(type, parentId) {
     </div>
     <div class="child-area${expanded ? ' show' : ''}" id="${childAreaId(type, parentId)}">
       ${children.map(child => `
-        <div class="child-item">
+        <div class="child-item" data-sort-kind="child" data-sort-type="${type}" data-sort-id="${child.id}" data-parent-id="${parentId}">
+          ${sortHandle('child', type, child.id, parentId)}
           <div class="item-check"
                onclick="toggleChild('${child.id}',true)"></div>
           <div class="item-text editable" title="اضغط للتعديل" onclick="event.stopPropagation();startInlineEdit(event,'child','${child.id}')">${esc(child.text)}</div>
@@ -3711,7 +3962,8 @@ window.addChild = async function(type, parentId) {
   const txt = el?.value.trim();
   if (!txt) return;
   const ref = await addDoc(collection(db,'child_items'), sw({
-    parentType: type, parentId, text: txt, done: false, ts: Date.now(), by: currentUser, ...reminderFields(txt)
+    parentType: type, parentId, text: txt, done: false, ts: Date.now(), by: currentUser,
+    sortOrder: nextChildSortOrder(type, parentId), ...reminderFields(txt)
   }));
   await logActivity('child', 'أضاف عنصر فرعي', txt);
   showUndoToast('اتضاف العنصر الفرعي', txt, async () => { await deleteDoc(doc(db,'child_items',ref.id)); });
@@ -3916,6 +4168,7 @@ window.addShopping = async function() {
       done: false,
       ts: Date.now(),
       by: currentUser,
+      sortOrder: nextParentSortOrder('shopping', true),
       ...reminderFields(txt)
     }));
     await logActivity('shopping', 'أضاف للمول', txt);
@@ -3931,31 +4184,37 @@ window.addShopping = async function() {
 function renderShopping(items) {
   const list = document.getElementById('shopList');
   const visible = filterByOwner(items);
-  const pending = visible.filter(i => !i.done);
+  const pending = sortByManualOrder(visible.filter(i => !i.done), 'shopping', 'parent');
   const completedParents = visible.filter(i => i.done).sort((a,b) => a.ts - b.ts);
   const completedChildren = completedChildrenFor('shopping', visible);
 
-  const groups = {};
-  pending.forEach(i => { (groups[i.date] = groups[i.date] || []).push(i); });
-
-  const pendingHtml = pending.length ? Object.keys(groups).sort().reverse().map(date => {
-    const { label, today } = dayLabel(date);
-    return `<div class="day-group">
-      <div class="day-label${today ? ' today' : ''}">${label}</div>
-      ${groups[date].map(item => `
+  let pendingHtml = '';
+  if (pending.length) {
+    let openDate = null;
+    pending.forEach(item => {
+      if (item.date !== openDate) {
+        if (openDate !== null) pendingHtml += '</div>';
+        const { label, today } = dayLabel(item.date);
+        pendingHtml += `<div class="day-group"><div class="day-label${today ? ' today' : ''}">${label}</div>`;
+        openDate = item.date;
+      }
+      pendingHtml += `
         <div class="item-block">
-          <div class="item parent-item" onclick="toggleChildrenUI('shopping','${item.id}')">
-            <div class="item-check"
-                 onclick="event.stopPropagation();toggleShop('${item.id}',true)"></div>
+          <div class="item parent-item" data-sort-kind="parent" data-sort-type="shopping" data-sort-id="${item.id}" onclick="toggleChildrenUI('shopping','${item.id}')">
+            ${sortHandle('parent','shopping',item.id)}
+            <div class="item-check" onclick="event.stopPropagation();toggleShop('${item.id}',true)"></div>
             <div class="item-text editable" title="اضغط للتعديل" onclick="event.stopPropagation();startInlineEdit(event,'shopping','${item.id}')">${esc(item.text)}</div>
             ${dueBadge(item)}
             ${whoBadge(item.by)}
             <button class="item-del" onclick="event.stopPropagation();delShop('${item.id}')">×</button>
           </div>
           ${renderChildSection('shopping', item.id)}
-        </div>`).join('')}
-    </div>`;
-  }).join('') : '<div class="empty">لا في حاجات دلوقتي ✨</div>';
+        </div>`;
+    });
+    if (openDate !== null) pendingHtml += '</div>';
+  } else {
+    pendingHtml = '<div class="empty">لا في حاجات دلوقتي ✨</div>';
+  }
 
   list.innerHTML = pendingHtml + renderCompletedSection('shopping', completedParents, completedChildren);
 }
@@ -3992,7 +4251,10 @@ window.addTask = async function() {
   const txt = el.value.trim();
   if (!txt) return;
   const recurrence = ['weekly','monthly'].includes(recurrenceEl?.value) ? recurrenceEl.value : 'none';
-  const ref = await addDoc(collection(db,'tasks'), sw({ text: txt, done: false, urgent: false, recurrence, ts: Date.now(), by: currentUser, ...reminderFields(txt) }));
+  const ref = await addDoc(collection(db,'tasks'), sw({
+    text: txt, done: false, urgent: false, recurrence, ts: Date.now(), by: currentUser,
+    sortOrder: nextParentSortOrder('tasks', false), ...reminderFields(txt)
+  }));
   await logActivity('task', 'أضاف خطة', `${txt}${recurrence !== 'none' ? ` • ${recurrence === 'weekly' ? 'كل أسبوع' : 'كل شهر'}` : ''}`);
   showUndoToast('📋 اتضافت الخطة', txt, async () => { await deleteDoc(doc(db,'tasks',ref.id)); });
   el.value = '';
@@ -4016,13 +4278,14 @@ function nextRecurringDue(item) {
 function renderTasks(items) {
   const list = document.getElementById('taskList');
   const visible = filterByOwner(items);
-  const pending = visible.filter(i => !i.done).sort((a,b) => (b.urgent?1:0)-(a.urgent?1:0) || a.ts-b.ts);
+  const pending = sortPendingParents(visible.filter(i => !i.done), 'tasks');
   const completedParents = visible.filter(i => i.done).sort((a,b) => a.ts - b.ts);
   const completedChildren = completedChildrenFor('tasks', visible);
 
   const renderItem = item => `
     <div class="item-block">
-      <div class="item parent-item" onclick="toggleChildrenUI('tasks','${item.id}')">
+      <div class="item parent-item" data-sort-kind="parent" data-sort-type="tasks" data-sort-id="${item.id}" onclick="toggleChildrenUI('tasks','${item.id}')">
+        ${sortHandle('parent','tasks',item.id)}
         <div class="item-check"
              onclick="event.stopPropagation();toggleTask('${item.id}',true)"></div>
         <div class="item-text editable" title="اضغط للتعديل" onclick="event.stopPropagation();startInlineEdit(event,'tasks','${item.id}')">${esc(item.text)}</div>
@@ -4061,7 +4324,34 @@ window.toggleTask = async function(id, done) {
     showUndoToast(done ? '✅ اتعلمت كمكتملة' : '↩️ رجعت للخطة', item.text || '', async () => { await updateDoc(doc(db,'tasks',id), sw({ done:!done })); });
   }
 };
-window.toggleUrgent = (id, urgent) => db && updateDoc(doc(db,'tasks',id), sw({ urgent }));
+window.toggleUrgent = async function(id, urgent) {
+  if (!db) return;
+  const item = taskItems.find(i => i.id === id);
+  if (!item) return;
+
+  // When a task moves between urgent/normal, place it at the end of its new
+  // group. Afterwards the user can drag it anywhere inside that group.
+  const sortOrder = taskGroupSortOrder(urgent, id);
+  const oldUrgent = item.urgent;
+  const oldOrder = item.sortOrder;
+  item.urgent = !!urgent;
+  item.sortOrder = sortOrder;
+  renderTasks(taskItems);
+  try {
+    await updateDoc(doc(db,'tasks',id), sw({
+      urgent:!!urgent,
+      sortOrder,
+      sortUpdatedAt:Date.now(),
+      sortUpdatedBy:currentUser
+    }));
+  } catch (error) {
+    console.error('urgent update failed', error);
+    item.urgent = oldUrgent;
+    if (oldOrder === undefined) delete item.sortOrder; else item.sortOrder = oldOrder;
+    renderTasks(taskItems);
+    alert('محصلش حفظ لتغيير العاجل. حاول تاني.');
+  }
+};
 window.delTask = async function(id) {
   if (!db) return;
   const item = taskItems.find(i => i.id === id);
@@ -4082,7 +4372,9 @@ window.addRoutine = async function() {
   const el = document.getElementById('routineIn');
   const txt = el.value.trim();
   if (!txt) return;
-  const ref = await addDoc(collection(db,'routine_items'), sw({ text: txt, ts: Date.now(), by: currentUser, ...reminderFields(txt) }));
+  const ref = await addDoc(collection(db,'routine_items'), sw({
+    text: txt, ts: Date.now(), by: currentUser, sortOrder: nextParentSortOrder('routine', false), ...reminderFields(txt)
+  }));
   await logActivity('routine', 'أضاف للروتين', txt);
   showUndoToast('🔄 اتضاف للروتين', txt, async () => { await deleteDoc(doc(db,'routine_items',ref.id)); });
   el.value = '';
@@ -4097,13 +4389,14 @@ function renderRoutine() {
   document.getElementById('progFill').style.width = pct + '%';
   document.getElementById('progText').textContent = `${done}/${total}`;
 
-  const pending = visible.filter(i => !routineCompletions.has(i.id));
+  const pending = sortByManualOrder(visible.filter(i => !routineCompletions.has(i.id)), 'routine', 'parent');
   const completedParents = visible.filter(i => routineCompletions.has(i.id));
   const completedChildren = completedChildrenFor('routine', visible);
 
   const pendingHtml = pending.length ? pending.map(item => `
       <div class="item-block">
-        <div class="item parent-item" onclick="toggleChildrenUI('routine','${item.id}')">
+        <div class="item parent-item" data-sort-kind="parent" data-sort-type="routine" data-sort-id="${item.id}" onclick="toggleChildrenUI('routine','${item.id}')">
+          ${sortHandle('parent','routine',item.id)}
           <div class="item-check"
                onclick="event.stopPropagation();toggleRoutine('${item.id}',true)"></div>
           <div class="item-text editable" title="اضغط للتعديل" onclick="event.stopPropagation();startInlineEdit(event,'routine','${item.id}')">${esc(item.text)}</div>
